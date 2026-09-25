@@ -1,0 +1,33 @@
+# Dependencies and build output
+node_modules/
+dist/
+out/
+build/
+release/
+.turbo/
+.cache/
+*.tsbuildinfo
+
+# Environment and secrets: never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Test and coverage artefacts
+coverage/
+playwright-report/
+test-results/
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Local browser profile data created while developing
+userData/
