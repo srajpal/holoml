@@ -32,7 +32,9 @@ The rules in the browser repo's AGENTS.md apply here in full. In short:
 8. Never remove or weaken a requirement, test, or assertion to get a pass.
 9. Keep the README and other docs current with every change.
 10. Mark run and test steps "not checked yet" until they have run here.
-11. Do not commit or push without being asked.
+11. Commit after each completed, approved change with a clear message.
+    Do not push unless asked. When five or more commits are waiting to
+    be pushed, remind the owner.
 
 ## Prompt log
 
