@@ -10,18 +10,23 @@ alongside HyperSol WebSurfer 3D, the browser that renders it.
 
 - This repo: https://github.com/srajpal/holoml
 - Browser repo: https://github.com/srajpal/hypersol-websurfer-3d
-- The brief, architecture, and prompt log live in the browser repo:
-  BRIEF.md, ARCHITECTURE.md (section 6 covers this repo), PROMPTS.md.
+- The brief, architecture, roadmap, prompt log, and handoff live in the
+  browser repo: BRIEF.md, ARCHITECTURE.md (section 6 covers this repo),
+  TODO.md, PROMPTS.md, HANDOFF.md.
 - Local layout: this folder and the browser folder sit side by side
-  (`holoml/` next to `hypersol-websurfer-3d/`).
+  (`holoml/` next to `hypersol-websurfer-3d/`). Never nest one in the
+  other.
 - License: Apache 2.0 for code, CC BY 4.0 for SPEC.md.
 
 ## Rules
 
 The rules in the browser repo's AGENTS.md apply here in full. In short:
 
-1. Work only in this project (and the browser folder when approved).
-2. Build only the part the owner has approved, one step at a time.
+1. Work only in this folder, the sibling browser folder, and the session
+   scratchpad. Caches that installs write elsewhere by design are allowed.
+2. Build only what the owner has approved: first the milestone plan, then
+   its build, which covers every task in that plan. Check in at marked
+   decision points and at the end.
 3. Use only agreed data and services. No new network calls or services
    without separate approval.
 4. Ask before adding software, deleting work, resetting saved data,
@@ -35,11 +40,16 @@ The rules in the browser repo's AGENTS.md apply here in full. In short:
 11. Commit after each completed, approved change with a clear message.
     Do not push unless asked. When five or more commits are waiting to
     be pushed, remind the owner.
+12. One active agent session per working tree at a time. Owner prompts
+    are logged in the browser repo's PROMPTS.md with a session tag;
+    read its last heading before appending.
 
 ## Prompt log
 
 Owner prompts are logged verbatim in the browser repo's PROMPTS.md, which
 is the single log for both projects. Do not keep a second log here.
+Contributors do not log prompts. Owner-only session automation lives in
+CLAUDE.local.md, which is gitignored.
 
 ## Language design principles
 
@@ -57,6 +67,8 @@ Where tests will live (nothing exists yet):
 
 How to run: not checked yet.
 
-What to recheck after any change: nothing yet. The first milestone will
-add: parser round-trips every conformance sample; schema rejects every
-invalid sample.
+What to recheck after any change: nothing yet. This repo's first result
+(browser milestone 7 in TODO.md) is a README, a SPEC.md outline, and a
+parser package with one passing test. Browser milestone 8 (HoloML v0.1)
+adds the conformance samples and the checks that the parser round-trips
+every sample and the schema rejects every invalid one.

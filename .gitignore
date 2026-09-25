@@ -31,3 +31,6 @@ Thumbs.db
 
 # Local browser profile data created while developing
 userData/
+
+# Owner-only Claude Code automation; recreate from HANDOFF.md on a new machine
+CLAUDE.local.md
