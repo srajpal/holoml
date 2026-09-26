@@ -7,10 +7,12 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: planning.** The language is being designed alongside
-[HyperSol WebSurfer 3D](https://github.com/srajpal/hypersol-websurfer-3d),
-the open-source 3D browser that will be its first renderer. No parser
-code exists yet.
+**Status: planning.** HoloML is the markup language of
+[HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
+(short: HyperSpace 3D), the open-source 3D browser that is being built
+alongside it and will be its first renderer. No parser code exists yet.
+(The browser was called HyperSol WebSurfer 3D until 2026-09-26; the
+language keeps its name, HoloML, and its file extension, `.holo`.)
 
 ## Why a new language
 

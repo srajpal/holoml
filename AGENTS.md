@@ -6,15 +6,19 @@ automatically.
 ## Project
 
 HoloML: an open markup language for fully 3D websites. It is designed
-alongside HyperSol WebSurfer 3D, the browser that renders it.
+alongside HyperSol HyperSpace 3D (short: HyperSpace 3D; called HyperSol
+WebSurfer 3D until 2026-09-26), the browser that renders it. The
+language keeps the name HoloML and the extension `.holo`.
 
 - This repo: https://github.com/srajpal/holoml
-- Browser repo: https://github.com/srajpal/hypersol-websurfer-3d
+- Browser repo: https://github.com/srajpal/hypersol-hyperspace-3d
+  (renamed from hypersol-websurfer-3d; GitHub redirects the old address)
 - The brief, architecture, roadmap, prompt log, and handoff live in the
   browser repo: BRIEF.md, ARCHITECTURE.md (section 6 covers this repo),
   TODO.md, PROMPTS.md, HANDOFF.md.
 - Local layout: this folder and the browser folder sit side by side
-  (`holoml/` next to `hypersol-websurfer-3d/`). Never nest one in the
+  (`holoml/` next to the browser folder, which on the owner's machine
+  keeps its old name `hypersol-websurfer-3d/`). Never nest one in the
   other.
 - License: Apache 2.0 for code, CC BY 4.0 for SPEC.md.
 
