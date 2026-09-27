@@ -431,6 +431,21 @@ should load models only from the page's own site or from sites it
 permits, apply the same privacy protection as for other pages, and never
 let a page read anything from the viewer's computer.
 
+A renderer may set limits on what one page can use, so that a heavy or
+hostile page cannot exhaust the viewer's memory or freeze the renderer:
+for example the size of the page's text, the number of elements, the
+number and size of model files, the size of pictures inside models, and
+the number of triangles. When a page goes past a limit, the renderer
+should show as much of the scene as it can, leave out what crossed the
+limit, and tell the viewer what was left out and why. Such limits are
+the renderer's choice, not part of the language: a valid page stays
+valid whatever a renderer's limits are.
+
+For example, HyperSol HyperSpace 3D allows per page 2 MB of text,
+10,000 elements, 64 models, 32 MB for one model file and 128 MB for all
+of them, pictures up to 4096 by 4096 pixels, 2 million triangles in all,
+and 30 seconds for a model to load.
+
 ## 8. Conformance
 
 The repository's `conformance/` folder holds sample documents that pin
