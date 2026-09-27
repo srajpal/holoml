@@ -6,8 +6,10 @@
     <script src="game.js" />
   </head>
   <scene id="sky" background="#87ceeb">
-    <!-- The island is made by game.js; the walker falls onto it. -->
-    <viewpoint position="0.5 16 3.5" look-at="0.5 15 -8" mode="walk" gravity jump crosshair />
+    <!-- The island is made by game.js; the walker falls onto it. It walks
+         at 4.3 metres a second and turns at 120 degrees a second; the
+         Speed slider changes both (game.js, "Speed"). -->
+    <viewpoint position="0.5 16 3.5" look-at="0.5 15 -8" mode="walk" gravity jump crosshair speed="4.3" turn-speed="120" />
 
     <light id="daylight" type="ambient" intensity="0.55" />
     <light id="sun" type="directional" position="30 60 20" look-at="0 0 0" intensity="1" color="#fff4d6" />
@@ -37,6 +39,7 @@
       Placing: Grass
       1 Grass · 2 Dirt · 3 Stone · 4 Planks · 5 Torch
     </hud>
+    <slider id="pace" corner="top-left" min="0.5" max="2" step="0.25" value="1">Speed 1×</slider>
     <hud id="score" corner="top-right">
       Gems carried: 0
       In the chest: 0 of 5

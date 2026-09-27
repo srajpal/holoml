@@ -234,8 +234,8 @@ the scene, and only from the page's own site.
 ### `scene`
 
 Everything that is shown. Holds `group`, `model`, `light`, `label`, `a`,
-`animate`, and (0.2) `sound` and `hud`, in any order and number, and at
-most one `viewpoint`.
+`animate`, and (0.2) `sound`, `hud`, and `slider`, in any order and
+number, and at most one `viewpoint`.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
@@ -327,11 +327,15 @@ Where the viewer starts, and how they move. At most one, directly in
 | `gravity` | flag | off | (0.2) Walk only: the walker falls, and stands on solid things or on the floor |
 | `jump` | flag | off | (0.2) Walk with gravity: the Space key jumps, about 1.2 m up |
 | `crosshair` | flag | off | (0.2) A small cross in the middle of the view, for aiming with the keyboard (section 10, `holoml.aim()`) |
+| `speed` | number, 0.5 to 10 | `2.2` | (0.2) Walk only: how fast the viewer walks, in metres a second. A renderer's key for running (HyperSpace 3D: Shift) goes faster than this |
+| `turn-speed` | number, 10 to 720 | `90` | (0.2) Walk only: how fast the viewer turns, and looks up and down, from the keyboard, in degrees a second |
 
 - `orbit`: the viewer circles the `look-at` point: drag to go around it,
   scroll or pinch to come closer or move away.
 - `walk`: the viewer walks on the floor at the height of `position`:
-  the arrow keys or W, A, S, D to move, drag to look around.
+  the arrow keys or W, A, S, D to move, drag to look around. A script
+  can change the speeds while the page is open (`holoml.viewer.speed`
+  and `turnSpeed`, section 10).
 
 Renderers should also offer keyboard and touch equivalents, including
 turning and looking up and down from the keyboard, so that a page with
@@ -340,6 +344,7 @@ a `crosshair` can be used without a mouse.
 ```
 <viewpoint position="0 1.6 6" look-at="0 0.8 0" mode="orbit" />
 <viewpoint position="0 12 4" look-at="0 10 0" mode="walk" gravity jump crosshair />
+<viewpoint position="0 1.6 8" mode="walk" speed="4.3" turn-speed="120" />
 ```
 
 ### Walls and gravity
@@ -509,6 +514,31 @@ and show it in any text-only view of the page.
 </hud>
 ```
 
+### `slider`
+
+(0.2) A number the viewer chooses, with a slider fixed to a corner of
+the screen, in front of the scene: how fast to walk, how loud, how much.
+Holds text: its label, which may not be empty. Only directly in `scene`.
+A slider does nothing on its own: a page's script reads it (section 10,
+the `change` event). A renderer lets the mouse, touch, and the keyboard
+move it (the arrow keys, Home, End, Page Up, and Page Down, while it
+has the keyboard), lets screen readers read and move it, shows it in
+any text-only view of the page, and stacks it with the corner's `hud`
+text, in page order.
+
+| Attribute | Value | Default | Meaning |
+|---|---|---|---|
+| `id` | id | none | A name, for scripts |
+| `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-left` | Where on the screen |
+| `min` | number | `0` | The smallest value |
+| `max` | number, more than `min` | `1` | The largest value |
+| `step` | number, more than 0 | a hundredth of the range | The steps between values |
+| `value` | number, from `min` to `max` | `min` | The value at the start |
+
+```
+<slider id="pace" corner="top-left" min="0.5" max="2" step="0.25" value="1">Speed</slider>
+```
+
 ## 6. Checking
 
 A document that follows the syntax may still break the rules above. A
@@ -602,9 +632,10 @@ a reader that knows only 0.1 refuses a 0.2 page with
 - 0.1 (2026-09-26): models, groups, lights, labels, links, materials,
   animation of position, rotation, and scale, orbit and walk.
 - 0.2 (draft, from 2026-09-27): scripts and the scene API (section 10),
-  `sound`, `hud`, walls and gravity (`solid`, `gravity`, `jump`), a
-  crosshair, and the animation of a light's position, brightness, and
-  colour, and of the background. Everything in 0.1 means the same in a
+  `sound`, `hud`, `slider`, walls and gravity (`solid`, `gravity`,
+  `jump`), a crosshair, walking and turning speeds (`speed`,
+  `turn-speed`), and the animation of a light's position, brightness,
+  and colour, and of the background. Everything in 0.1 means the same in a
   0.2 page. Still to come in 0.2, as the example sites need them:
   changing a material in place without a new page, shadows, text of
   more than one line in the scene, movement along paths, sounds that
@@ -646,7 +677,7 @@ holoml.on('click', (e) => {
 | `holoml.remove(thing)` | Removes an element and everything in it |
 | `holoml.on(type, listener)` | Calls `listener` with each event of that type (below). Returns a function that stops it |
 | `holoml.aim()` | What is in the middle of the view, under the crosshair: `{ thing, point, normal }` as for a click, or `null` |
-| `holoml.viewer` | The viewer: `position` (can be set, to move them), `direction` (a vector of length 1), and `lookAt(point)` |
+| `holoml.viewer` | The viewer: `position` (can be set, to move them), `direction` (a vector of length 1), `lookAt(point)`, and, for walking, `speed` (metres a second, 0.5 to 10) and `turnSpeed` (degrees a second, 10 to 720), which start as the `viewpoint` says and can be set; a value outside its range is an error |
 | `holoml.background` | The scene's background colour; can be set |
 | `holoml.reducedMotion` | `true` when the viewer asked for reduced motion; keep still what would only move for effect |
 
@@ -662,18 +693,20 @@ nothing. After a thing is removed, setting its members does nothing.
 | Member | Kinds | What it is |
 |---|---|---|
 | `id` | all | Its id, or `null` |
-| `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"sound"`, or `"hud"` |
+| `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"sound"`, `"hud"`, or `"slider"` |
 | `parent` | all | The group thing it is in, or `null` |
 | `position` | model, group, label, light | Where it is; can be set |
 | `rotation`, `scale` | model, group | How it is turned, and how big; can be set |
 | `visible` | model, group, label | Whether it is shown; can be set |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
-| `text` | label, hud | Its words (for a `hud`, lines separated by `"\n"`); can be set |
+| `text` | label, hud, slider | Its words (for a `hud`, lines separated by `"\n"`; for a `slider`, its label); can be set |
 | `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
 | `intensity` | light | How bright; can be set |
 | `material(name, change)` | model | Changes one of the model's materials; `change` may have `color`, `metalness`, `roughness`, and `opacity`, as `material` has |
 | `play()`, `stop()`, `playing` | sound | Plays from the start; stops; whether it plays. Before sounds may play (section 5, `sound`), `play()` does nothing |
 | `volume` | sound | How loud, from 0 to 1; can be set, also while it plays |
+| `value` | slider | The number chosen; can be set (from `min` to `max`, kept to its steps), which moves the slider without a `change` event |
+| `min`, `max`, `step` | slider | Its range and steps, as the page says |
 | `remove()` | all | As `holoml.remove(thing)` |
 
 ### Events
@@ -683,10 +716,26 @@ nothing. After a thing is removed, setting its members does nothing.
 | `click` | The viewer clicks or taps a point of the scene (not a drag), with any button | `thing` (the innermost element with a place that was hit, or `null`), `point` and `normal` (where it was hit, and which way the face hit is facing, or `null`), and `button` (`"left"`, `"right"`, or `"middle"`). A right-click goes to the page instead of opening the renderer's menu while a script listens for clicks. A click on a link still follows it |
 | `key` | A key goes down or up while the page has the keyboard | `key` (the key, as a web page's `KeyboardEvent.key`: `"e"`, `"1"`, `" "`) and `down` (`true` or `false`). The renderer's own keys (walking, turning) still work |
 | `frame` | Before each frame is drawn | `time` (milliseconds since the scene was shown) and `dt` (milliseconds since the last frame). While a script listens for frames, the renderer keeps drawing |
+| `change` | The viewer moves a slider | `thing` (the slider) and `value` (its new value) |
 
 The keyboard can do whatever the mouse does: with a crosshair, a script
 uses `holoml.aim()` to act on what is in the middle of the view when a
 key is pressed.
+
+A slider and the viewer's speeds, together:
+
+```
+// pace.js: the slider "pace" (from 0.5 to 2) sets how fast the viewer walks and turns.
+const WALK = 4.3; // metres a second at 1
+const TURN = 120; // degrees a second at 1
+const pace = holoml.find('pace');
+holoml.on('change', (e) => {
+  if (e.thing !== pace) return;
+  holoml.viewer.speed = WALK * e.value;
+  holoml.viewer.turnSpeed = TURN * e.value;
+  pace.text = `Speed ${e.value}×`;
+});
+```
 
 ### Limits
 

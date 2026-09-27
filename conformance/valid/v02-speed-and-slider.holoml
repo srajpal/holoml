@@ -1,0 +1,11 @@
+<holoml version="0.2">
+  <head>
+    <title>Walking speed and a slider</title>
+    <script src="pace.js" />
+  </head>
+  <scene>
+    <viewpoint position="0 1.6 6" mode="walk" speed="4.3" turn-speed="120" />
+    <slider id="pace" corner="top-left" min="0.5" max="2" step="0.25" value="1">Speed</slider>
+    <slider id="volume">Volume</slider>
+  </scene>
+</holoml>

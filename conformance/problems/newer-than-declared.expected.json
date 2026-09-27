@@ -27,17 +27,27 @@
     },
     {
       "code": "unknown-attribute",
+      "line": 8,
+      "column": 36
+    },
+    {
+      "code": "unknown-element",
       "line": 9,
+      "column": 5
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 10,
       "column": 31
     },
     {
       "code": "bad-value",
-      "line": 11,
+      "line": 12,
       "column": 28
     },
     {
       "code": "bad-value",
-      "line": 11,
+      "line": 12,
       "column": 50
     }
   ]
