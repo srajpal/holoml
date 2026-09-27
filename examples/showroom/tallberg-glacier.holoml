@@ -1,0 +1,35 @@
+<holoml version="0.1">
+  <head>
+    <title>Tallberg in glacier · HoloML showroom</title>
+    <meta name="description" content="Tallberg: a tall seven-seater for the mountains. Walk around it." />
+    <meta name="author" content="The HoloML Authors" />
+  </head>
+  <scene background="#07090f">
+    <viewpoint position="2 1.7 9" look-at="0.6 1.1 0" mode="walk" />
+    <light type="ambient" intensity="0.35" />
+    <light type="directional" position="5 12 9" look-at="0 0 0" intensity="0.7" />
+    <light type="spot" position="0 9 0" look-at="0 0 0" angle="22" range="16" intensity="9" color="#fff4e0" />
+    <model src="models/hall.gltf" />
+
+    <model src="models/plinth.gltf" />
+    <model src="models/tallberg.glb" position="0 0.25 0" scale="1.8">
+      <material name="Paint" color="#dfe7ee" metalness="0.5" roughness="0.45" />
+      <material name="Glass" opacity="0.55" />
+    </model>
+    <label id="name" position="0 4 0" size="0.6">Tallberg</label>
+    <label position="0 3.45 0" size="0.24" color="#b8c4e0">A tall seven-seater for the mountains</label>
+    <label position="0 3.1 0" size="0.2" color="#b8c4e0">5 doors · 7 seats · four-wheel drive</label>
+
+    <label position="3.6 2.2 1" size="0.24">Glacier, shown. Also in:</label>
+    <a href="tallberg.holoml">
+      <label position="3.6 1.75 1" size="0.26" color="#7fd8ff">Amber</label>
+    </a>
+    <a href="tallberg-graphite.holoml">
+      <label position="3.6 1.35 1" size="0.26" color="#7fd8ff">Graphite</label>
+    </a>
+    <a href="index.holoml">
+      <label position="3.6 0.75 1" size="0.26" color="#7fd8ff">Back to the hall</label>
+    </a>
+    <label position="3.6 0.3 1" size="0.16" color="#b8c4e0">Walk: W, A, S, D or the arrows · drag to look</label>
+  </scene>
+</holoml>
