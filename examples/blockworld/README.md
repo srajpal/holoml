@@ -5,8 +5,10 @@ by the page's script from a seed. Break blocks, place them, and find the
 five gems hidden in the stone before bringing them to the chest. A day
 lasts four minutes; at night, torches give light.
 
-- Walk with W, A, S, D or the arrows; Space jumps; Shift runs; drag to
-  look around.
+- Walk with W, A, S, D (or the up and down arrows); Space jumps; Shift
+  runs; drag to look around. In HyperSpace 3D the left and right arrows
+  turn, and Page Up and Page Down look up and down, so the game can be
+  played from the keyboard alone.
 - Click a block to break it, right-click to place one; from the
   keyboard, E breaks and Q places the block under the crosshair. Keys 1
   to 5 choose what to place.

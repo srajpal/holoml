@@ -43,7 +43,8 @@
     </hud>
     <hud id="clock" corner="top-right" size="15">Day 1, 09:00</hud>
     <hud corner="bottom-left" size="14">
-      Walk: W, A, S, D or the arrows · Space jumps · Shift runs · drag to look
+      Walk: W, A, S, D · Space jumps · Shift runs
+      Turn: ← → · Look up and down: Page Up, Page Down · or drag
       Break a block: click it, or E · Place one: right-click, or Q
       Find the five gems in the stone and bring them to the chest
     </hud>

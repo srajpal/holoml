@@ -333,7 +333,9 @@ Where the viewer starts, and how they move. At most one, directly in
 - `walk`: the viewer walks on the floor at the height of `position`:
   the arrow keys or W, A, S, D to move, drag to look around.
 
-Renderers should also offer keyboard and touch equivalents.
+Renderers should also offer keyboard and touch equivalents, including
+turning and looking up and down from the keyboard, so that a page with
+a `crosshair` can be used without a mouse.
 
 ```
 <viewpoint position="0 1.6 6" look-at="0 0.8 0" mode="orbit" />
