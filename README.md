@@ -78,6 +78,38 @@ pnpm typecheck
 121 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
+## Built with the Buildwright approach
+
+Sunny Rajpal developed this project through agentic coding: directing AI
+coding agents to implement software while retaining responsibility for
+scope, decisions, review, and acceptance. It applies the concepts taught
+in [Buildwright](https://buildwrightcourses.com), organized around five
+repeatable moves:
+
+| Move | What it means |
+| --- | --- |
+| **Brief** | Define who the software helps, the problem it solves, and the first useful result. |
+| **Architect** | Decide how the parts fit together, including the screens, data, constraints, and boundaries. |
+| **Decompose** | Break the work into small tasks, each with a result that can be checked. |
+| **Delegate** | Give an AI coding agent a focused task, review its plan, and guide its implementation. |
+| **Verify** | Try the result, inspect the evidence, and correct what does not meet the brief. |
+
+For HoloML, the brief was a readable way to describe a 3D website. The
+architecture kept the language independent of its companion browser,
+with a [specification](SPEC.md), a parser that reads the markup, and a
+checker that validates its meaning. The work was divided into the language
+rules, reusable packages, sample scenes, and conformance cases: examples
+with an agreed expected result. AI agents implemented those focused pieces
+under project rules and owner-approved plans; unit tests and conformance
+checks provided evidence to compare the implementation with the specification.
+See the [shared owner prompt log](https://github.com/srajpal/hypersol-hyperspace-3d/blob/main/PROMPTS.md)
+for the decisions behind the language and its browser integration.
+
+HoloML demonstrates how the method can support language and tooling design
+as well as applications. It is a sustained project informed by Sunny's
+software engineering experience, not the scope promised to a beginner.
+Buildwright starts with a small prototype and a repeatable way to make progress.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Ideas for the language start as
