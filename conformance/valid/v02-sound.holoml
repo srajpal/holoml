@@ -1,0 +1,10 @@
+<holoml version="0.2">
+  <scene>
+    <sound id="birds" src="sounds/birds.ogg" loop autoplay volume="0.4" />
+    <sound id="pop" src="sounds/pop.wav" />
+    <group id="radio" position="2 0 0">
+      <model src="models/radio.glb" />
+      <sound id="song" src="music/song.mp3" volume="1" />
+    </group>
+  </scene>
+</holoml>

@@ -1,0 +1,44 @@
+{
+  "problems": [
+    {
+      "code": "unknown-element",
+      "line": 3,
+      "column": 5
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 5,
+      "column": 10
+    },
+    {
+      "code": "unknown-element",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "code": "unknown-element",
+      "line": 7,
+      "column": 5
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 8,
+      "column": 28
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 9,
+      "column": 31
+    },
+    {
+      "code": "bad-value",
+      "line": 11,
+      "column": 28
+    },
+    {
+      "code": "bad-value",
+      "line": 11,
+      "column": 50
+    }
+  ]
+}

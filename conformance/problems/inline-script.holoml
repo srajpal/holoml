@@ -1,0 +1,6 @@
+<holoml version="0.2">
+  <head>
+    <script src="a.js">alert(1)</script>
+  </head>
+  <scene />
+</holoml>

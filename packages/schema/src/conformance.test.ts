@@ -46,6 +46,12 @@ describe('conformance samples (O2, O3, O4)', () => {
         'identifier-spaces': 'bad-value',
         overflow: 'bad-value',
         'inherited-names': 'unknown-attribute',
+        // HoloML 0.2 (draft).
+        'newer-than-declared': 'unknown-element',
+        'bad-02-values': 'bad-value',
+        'animated-light-targets': 'bad-target',
+        'inline-script': 'text-not-allowed',
+        'hud-in-group': 'child-not-allowed',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }

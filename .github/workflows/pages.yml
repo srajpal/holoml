@@ -1,6 +1,7 @@
 # Publishes examples/ with GitHub Pages, so the showroom is at
 # https://srajpal.github.io/holoml/showroom/ (browser milestone 16, owner
-# prompt 81, Q1 a). Static files only; nothing is built.
+# prompt 81, Q1 a) and Blockworld at .../blockworld/ (milestone 17).
+# Static files only; nothing is built.
 name: Pages
 
 on:
@@ -28,11 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: The site (without the scripts that make it)
+      - name: The sites (without the scripts that make them)
         run: |
           mkdir -p _site
           cp -r examples/. _site/
-          rm -rf _site/showroom/tools
+          find _site -type d -name tools -prune -exec rm -rf {} +
           touch _site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3

@@ -1,0 +1,10 @@
+<holoml version="0.2">
+  <scene>
+    <group>
+      <hud>Score</hud>
+    </group>
+    <a href="x.holoml">
+      <sound src="s.ogg" />
+    </a>
+  </scene>
+</holoml>
