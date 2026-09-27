@@ -1,0 +1,124 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "sound",
+            "at": "3:5",
+            "attributes": [
+              [
+                "id",
+                "birds",
+                "3:12"
+              ],
+              [
+                "src",
+                "sounds/birds.ogg",
+                "3:23"
+              ],
+              [
+                "loop",
+                null,
+                "3:46"
+              ],
+              [
+                "autoplay",
+                null,
+                "3:51"
+              ],
+              [
+                "volume",
+                "0.4",
+                "3:60"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "sound",
+            "at": "4:5",
+            "attributes": [
+              [
+                "id",
+                "pop",
+                "4:12"
+              ],
+              [
+                "src",
+                "sounds/pop.wav",
+                "4:21"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "group",
+            "at": "5:5",
+            "attributes": [
+              [
+                "id",
+                "radio",
+                "5:12"
+              ],
+              [
+                "position",
+                "2 0 0",
+                "5:23"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "6:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/radio.glb",
+                    "6:14"
+                  ]
+                ],
+                "children": []
+              },
+              {
+                "element": "sound",
+                "at": "7:7",
+                "attributes": [
+                  [
+                    "id",
+                    "song",
+                    "7:14"
+                  ],
+                  [
+                    "src",
+                    "music/song.mp3",
+                    "7:24"
+                  ],
+                  [
+                    "volume",
+                    "1",
+                    "7:45"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

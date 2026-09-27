@@ -1,0 +1,11 @@
+<holoml version="0.2">
+  <scene id="world">
+    <model id="car" src="car.glb" />
+    <group id="g" />
+    <light id="glow" type="ambient" />
+    <animate target="#car" attribute="intensity" to="1" duration="1s" />
+    <animate target="#g" attribute="background" to="#000" duration="1s" />
+    <animate target="#glow" attribute="position" to="0 1 0" duration="1s" />
+    <animate target="#world" attribute="color" to="#fff" duration="1s" />
+  </scene>
+</holoml>

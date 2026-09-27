@@ -1,0 +1,159 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Scripts and screen text",
+                "at": "3:12"
+              }
+            ]
+          },
+          {
+            "element": "script",
+            "at": "4:5",
+            "attributes": [
+              [
+                "src",
+                "game.js",
+                "4:13"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "script",
+            "at": "5:5",
+            "attributes": [
+              [
+                "src",
+                "lib/helpers.mjs",
+                "5:13"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "7:3",
+        "attributes": [
+          [
+            "id",
+            "world",
+            "7:10"
+          ],
+          [
+            "background",
+            "#87ceeb",
+            "7:21"
+          ]
+        ],
+        "children": [
+          {
+            "element": "hud",
+            "at": "8:5",
+            "attributes": [
+              [
+                "id",
+                "score",
+                "8:10"
+              ],
+              [
+                "corner",
+                "top-right",
+                "8:21"
+              ],
+              [
+                "size",
+                "20",
+                "8:40"
+              ],
+              [
+                "color",
+                "#ffe066",
+                "8:50"
+              ]
+            ],
+            "children": [
+              {
+                "text": "Gems: 0 of 5",
+                "at": "8:66"
+              }
+            ]
+          },
+          {
+            "element": "hud",
+            "at": "9:5",
+            "attributes": [
+              [
+                "corner",
+                "bottom-left",
+                "9:10"
+              ]
+            ],
+            "children": [
+              {
+                "text": "\n      Click a block to break it\n      Right-click to place one\n    ",
+                "at": "9:31"
+              }
+            ]
+          },
+          {
+            "element": "hud",
+            "at": "13:5",
+            "attributes": [
+              [
+                "id",
+                "message",
+                "13:10"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "model",
+            "at": "14:5",
+            "attributes": [
+              [
+                "id",
+                "chest",
+                "14:12"
+              ],
+              [
+                "src",
+                "models/chest.glb",
+                "14:23"
+              ],
+              [
+                "position",
+                "0 0 -2",
+                "14:46"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

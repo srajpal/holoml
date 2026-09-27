@@ -1,0 +1,12 @@
+<holoml version="0.2">
+  <head>
+    <script src="game.ts" />
+  </head>
+  <scene>
+    <sound src="song.mid" volume="2" />
+    <hud corner="middle" size="0">Hi</hud>
+    <light id="sun" type="directional" />
+    <animate target="#sun" attribute="intensity" to="-1" duration="2s" />
+    <animate target="#sun" attribute="color" from="1 1 1" to="#fff" duration="2s" />
+  </scene>
+</holoml>

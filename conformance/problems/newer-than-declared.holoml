@@ -1,0 +1,13 @@
+<holoml version="0.1">
+  <head>
+    <script src="game.js" />
+  </head>
+  <scene id="world">
+    <sound src="pop.wav" />
+    <hud>Score</hud>
+    <viewpoint mode="walk" gravity />
+    <model id="m" src="m.glb" solid />
+    <light id="sun" type="directional" />
+    <animate target="#sun" attribute="intensity" to="0.5" duration="2s" />
+  </scene>
+</holoml>

@@ -1,0 +1,16 @@
+<holoml version="0.2">
+  <head>
+    <title>Scripts and screen text</title>
+    <script src="game.js" />
+    <script src="lib/helpers.mjs" />
+  </head>
+  <scene id="world" background="#87ceeb">
+    <hud id="score" corner="top-right" size="20" color="#ffe066">Gems: 0 of 5</hud>
+    <hud corner="bottom-left">
+      Click a block to break it
+      Right-click to place one
+    </hud>
+    <hud id="message"></hud>
+    <model id="chest" src="models/chest.glb" position="0 0 -2" />
+  </scene>
+</holoml>

@@ -1,0 +1,14 @@
+{
+  "problems": [
+    {
+      "code": "child-not-allowed",
+      "line": 4,
+      "column": 7
+    },
+    {
+      "code": "child-not-allowed",
+      "line": 7,
+      "column": 7
+    }
+  ]
+}

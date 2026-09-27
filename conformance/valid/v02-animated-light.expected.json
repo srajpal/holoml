@@ -1,0 +1,253 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [
+          [
+            "id",
+            "sky",
+            "2:10"
+          ],
+          [
+            "background",
+            "#87ceeb",
+            "2:19"
+          ]
+        ],
+        "children": [
+          {
+            "element": "light",
+            "at": "3:5",
+            "attributes": [
+              [
+                "id",
+                "sun",
+                "3:12"
+              ],
+              [
+                "type",
+                "directional",
+                "3:21"
+              ],
+              [
+                "position",
+                "10 20 0",
+                "3:40"
+              ],
+              [
+                "intensity",
+                "1.2",
+                "3:59"
+              ],
+              [
+                "color",
+                "#fff4d6",
+                "3:75"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "4:5",
+            "attributes": [
+              [
+                "id",
+                "lamp",
+                "4:12"
+              ],
+              [
+                "type",
+                "point",
+                "4:22"
+              ],
+              [
+                "position",
+                "0 2 0",
+                "4:35"
+              ],
+              [
+                "intensity",
+                "0",
+                "4:52"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "5:5",
+            "attributes": [
+              [
+                "target",
+                "#sun",
+                "5:14"
+              ],
+              [
+                "attribute",
+                "position",
+                "5:28"
+              ],
+              [
+                "from",
+                "10 20 0",
+                "5:49"
+              ],
+              [
+                "to",
+                "-10 20 0",
+                "5:64"
+              ],
+              [
+                "duration",
+                "60s",
+                "5:78"
+              ],
+              [
+                "repeat",
+                "indefinite",
+                "5:93"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "6:5",
+            "attributes": [
+              [
+                "target",
+                "#sun",
+                "6:14"
+              ],
+              [
+                "attribute",
+                "intensity",
+                "6:28"
+              ],
+              [
+                "from",
+                "1.2",
+                "6:50"
+              ],
+              [
+                "to",
+                "0.1",
+                "6:61"
+              ],
+              [
+                "duration",
+                "60s",
+                "6:70"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "7:5",
+            "attributes": [
+              [
+                "target",
+                "#sun",
+                "7:14"
+              ],
+              [
+                "attribute",
+                "color",
+                "7:28"
+              ],
+              [
+                "from",
+                "#fff4d6",
+                "7:46"
+              ],
+              [
+                "to",
+                "#ff9a5c",
+                "7:61"
+              ],
+              [
+                "duration",
+                "60s",
+                "7:74"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "8:5",
+            "attributes": [
+              [
+                "target",
+                "#lamp",
+                "8:14"
+              ],
+              [
+                "attribute",
+                "intensity",
+                "8:29"
+              ],
+              [
+                "to",
+                "1.5",
+                "8:51"
+              ],
+              [
+                "duration",
+                "2s",
+                "8:60"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "9:5",
+            "attributes": [
+              [
+                "target",
+                "#sky",
+                "9:14"
+              ],
+              [
+                "attribute",
+                "background",
+                "9:28"
+              ],
+              [
+                "from",
+                "#87ceeb",
+                "9:51"
+              ],
+              [
+                "to",
+                "#0b1030",
+                "9:66"
+              ],
+              [
+                "duration",
+                "60s",
+                "9:79"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}
