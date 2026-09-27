@@ -303,9 +303,12 @@ class Parser {
     const start = this.i;
     const end = this.s.indexOf('-->', start + 4);
     if (end < 0) throw this.error('unclosed-comment', 'A comment is never closed with "-->"', start);
-    if (this.s.slice(start + 4, end).includes('--')) throw this.error('bad-comment', 'A comment may not contain "--"', start);
-    const nul = this.s.indexOf('\0', start + 4);
-    if (nul >= 0 && nul < end) throw this.error('null-character', 'A null character is not allowed', nul);
+    // Only this comment's own text is searched (PR #6 review: searching
+    // the rest of the document made many comments quadratic).
+    const body = this.s.slice(start + 4, end);
+    if (body.includes('--')) throw this.error('bad-comment', 'A comment may not contain "--"', start);
+    const nul = body.indexOf('\0');
+    if (nul >= 0) throw this.error('null-character', 'A null character is not allowed', start + 4 + nul);
     this.i = end + 3;
   }
 

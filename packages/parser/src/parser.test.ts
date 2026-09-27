@@ -154,4 +154,24 @@ describe('O7: speed', () => {
     console.log(`O7: ${(text.length / 1e6).toFixed(2)} MB read in ${median.toFixed(1)} ms (median of five)`);
     expect(median, `median of five: ${median.toFixed(1)} ms`).toBeLessThan(100);
   });
+
+  it('reads 200,000 short comments (1.6 MB) in under 100 ms: time grows with the size, not its square (PR #6 review)', () => {
+    const time = (n: number) => {
+      const text = '<holoml version="0.1"><scene>' + '<!--x-->'.repeat(n) + '</scene></holoml>';
+      parse(text); // warm-up
+      const runs: number[] = [];
+      for (let k = 0; k < 5; k++) {
+        const start = performance.now();
+        parse(text);
+        runs.push(performance.now() - start);
+      }
+      return runs.sort((a, b) => a - b)[2]!;
+    };
+    const small = time(50_000);
+    const large = time(200_000);
+    console.log(`O7: 200,000 comments read in ${large.toFixed(1)} ms; 50,000 in ${small.toFixed(1)} ms`);
+    expect(large).toBeLessThan(100);
+    // Four times the input may take somewhat more than four times as long, never sixteen.
+    expect(large).toBeLessThan(Math.max(small * 8, 20));
+  });
 });
