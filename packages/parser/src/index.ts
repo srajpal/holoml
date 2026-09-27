@@ -65,6 +65,7 @@ export const PARSE_ERROR_CODES = [
   'less-than-in-value',
   'unclosed-value',
   'null-character',
+  'too-deep',
 ] as const;
 
 export type ParseErrorCode = (typeof PARSE_ERROR_CODES)[number];
@@ -84,6 +85,9 @@ export class HoloParseError extends Error {
   }
 }
 
+/** How deep elements may be nested, the root included (issue #2): deeper documents stop with too-deep. */
+export const MAX_DEPTH = 256;
+
 const NAMED_REFERENCES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
 
 const isSpace = (c: number) => c === 0x20 || c === 0x09 || c === 0x0a || c === 0x0d;
@@ -102,6 +106,8 @@ class Parser {
   /** Offsets where each line starts, for turning offsets into lines and columns. */
   private readonly lineStarts: number[] = [0];
   private readonly s: string;
+  /** Elements open around the one being read. */
+  private depth = 0;
 
   constructor(s: string) {
     this.s = s;
@@ -133,6 +139,16 @@ class Parser {
 
   private element(): ElementNode {
     const startOffset = this.i;
+    if (this.depth >= MAX_DEPTH) throw this.error('too-deep', `Elements may be nested at most ${MAX_DEPTH} deep`, startOffset);
+    this.depth += 1;
+    try {
+      return this.elementBody(startOffset);
+    } finally {
+      this.depth -= 1;
+    }
+  }
+
+  private elementBody(startOffset: number): ElementNode {
     this.i += 1; // <
     const c = this.s.charCodeAt(this.i);
     if (c === 0x21 /* ! */ || c === 0x3f /* ? */) {
@@ -260,7 +276,8 @@ class Parser {
     let char: string | undefined;
     if (/^#[0-9]{1,7}$/.test(body)) char = codePoint(Number(body.slice(1)));
     else if (/^#x[0-9a-fA-F]{1,6}$/.test(body)) char = codePoint(parseInt(body.slice(2), 16));
-    else char = NAMED_REFERENCES[body];
+    // Own names only: inherited ones (constructor, toString) are not references (issue #1).
+    else char = Object.hasOwn(NAMED_REFERENCES, body) ? NAMED_REFERENCES[body] : undefined;
     if (char === undefined) {
       throw this.error('bad-character-reference', 'Write "&amp;" for "&", or use &lt; &gt; &quot; &apos; or a number such as &#233;', start);
     }
@@ -287,6 +304,8 @@ class Parser {
     const end = this.s.indexOf('-->', start + 4);
     if (end < 0) throw this.error('unclosed-comment', 'A comment is never closed with "-->"', start);
     if (this.s.slice(start + 4, end).includes('--')) throw this.error('bad-comment', 'A comment may not contain "--"', start);
+    const nul = this.s.indexOf('\0', start + 4);
+    if (nul >= 0 && nul < end) throw this.error('null-character', 'A null character is not allowed', nul);
     this.i = end + 3;
   }
 

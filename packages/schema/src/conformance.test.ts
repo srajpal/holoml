@@ -28,15 +28,26 @@ describe('conformance samples (O2, O3, O4)', () => {
     for (const s of all.filter((x) => x.group === 'syntax-errors')) {
       const code = s.expected?.error?.code;
       if (code && s.name.startsWith(code)) continue;
-      // Other names describe a variant of a code (bare-ampersand, unclosed-value).
-      expect(['bare-ampersand']).toContain(s.name);
+      // Other names describe a variant of a code.
+      const variants: Record<string, string> = {
+        'bare-ampersand': 'bad-character-reference',
+        'inherited-reference': 'bad-character-reference',
+        'null-in-comment': 'null-character',
+      };
+      expect(code, s.name).toBe(variants[s.name]);
     }
   });
 
   it('every problem sample gives the problem it is named after', () => {
     for (const s of all.filter((x) => x.group === 'problems')) {
       const codes = (s.expected?.problems ?? []).map((p) => p.code);
-      expect(codes, s.name).toContain(s.name === 'bad-values' ? 'bad-value' : s.name);
+      const variants: Record<string, string> = {
+        'bad-values': 'bad-value',
+        'identifier-spaces': 'bad-value',
+        overflow: 'bad-value',
+        'inherited-names': 'unknown-attribute',
+      };
+      expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }
   });
 });

@@ -1,0 +1,9 @@
+<holoml version="0.1">
+  <scene>
+    <group position="1e999 0 0" scale="1e999" rotation="0 -1e999 0" />
+    <light type="ambient" intensity="1e999" />
+    <label size="1e-999">Too small to see</label>
+    <model id="car" src="car.glb" />
+    <animate target="#car" attribute="rotation" to="0 360 0" duration="1e999s" repeat="99999999999999999999" />
+  </scene>
+</holoml>

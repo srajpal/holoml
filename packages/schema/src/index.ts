@@ -48,6 +48,11 @@ const MODEL_FILE = /\.(gltf|glb)$/i;
 /** Schemes a link or model may use; anything else (javascript:, data:, file:) is refused. */
 const SAFE_SCHEMES = new Set(['http', 'https']);
 
+/** A dictionary's own entry, never an inherited one such as "constructor" (issue #1). */
+function own<T>(dictionary: Readonly<Record<string, T>>, key: string): T | undefined {
+  return Object.hasOwn(dictionary, key) ? dictionary[key] : undefined;
+}
+
 /** Which element kinds each animated attribute applies to. */
 const ANIMATABLE: Record<string, readonly string[]> = {
   position: ['model', 'group', 'label'],
@@ -71,7 +76,7 @@ export function check(doc: HoloDocument): Problem[] {
   const animations: ElementNode[] = [];
 
   const visit = (el: ElementNode, insideLink: boolean) => {
-    const rule = ELEMENTS[el.name];
+    const rule = own(ELEMENTS, el.name);
     if (!rule) {
       report('unknown-element', `<${el.name}> is not a HoloML 0.1 element`, el.start);
       return;
@@ -102,7 +107,7 @@ export function check(doc: HoloDocument): Problem[] {
         continue;
       }
       const allowed = rule.children !== 'none' && rule.children.includes(child.name);
-      if (!allowed && ELEMENTS[child.name]) {
+      if (!allowed && own(ELEMENTS, child.name)) {
         report('child-not-allowed', `<${child.name}> cannot be inside <${el.name}>`, child.start);
         continue;
       }
@@ -137,7 +142,7 @@ export function check(doc: HoloDocument): Problem[] {
       report('unknown-target', `No element has the id "${target.value.slice(1)}"`, target.start);
       continue;
     }
-    const kinds = which ? ANIMATABLE[which] : undefined;
+    const kinds = which ? own(ANIMATABLE, which) : undefined;
     if (kinds && !kinds.includes(el.name)) {
       report('bad-target', `The ${which} of a <${el.name}> cannot be animated`, target.start);
     }
@@ -163,6 +168,10 @@ function firstVisible(text: string, start: Position): Position {
   return { line, column, offset };
 }
 
+function finite(p: string): boolean {
+  return Number.isFinite(Number(p));
+}
+
 function attr(el: ElementNode, name: string): Attribute | undefined {
   return el.attributes.find((a) => a.name === name);
 }
@@ -170,7 +179,7 @@ function attr(el: ElementNode, name: string): Attribute | undefined {
 function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: string, at: Position) => void): void {
   const rule = ELEMENTS[el.name]!;
   for (const a of el.attributes) {
-    const r = rule.attributes[a.name];
+    const r = own(rule.attributes, a.name);
     if (!r) {
       report('unknown-attribute', `<${el.name}> has no attribute "${a.name}"`, a.start);
       continue;
@@ -186,7 +195,7 @@ function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: s
   const type = el.name === 'light' ? attr(el, 'type')?.value : undefined;
   if (type && ['ambient', 'directional', 'point', 'spot'].includes(type)) {
     for (const a of el.attributes) {
-      const types = LIGHT_ONLY[a.name];
+      const types = own(LIGHT_ONLY, a.name);
       if (types && !types.includes(type)) report('attribute-not-for-type', `A ${type} light has no "${a.name}"`, a.start);
     }
   }
@@ -203,6 +212,7 @@ function valueProblem(kind: ValueKind, value: string | null, name: string): { co
     case 'number': {
       if (!NUMBER.test(v)) return bad(`"${value}" is not a number`);
       const n = Number(v);
+      if (!Number.isFinite(n)) return bad(`"${value}" is too large a number`);
       if (kind.positive && n <= 0) return bad('must be more than 0');
       if (kind.min !== undefined && n < kind.min) return bad(`must be at least ${kind.min}`);
       if (kind.max !== undefined && n > kind.max) return bad(`must be at most ${kind.max}`);
@@ -210,30 +220,37 @@ function valueProblem(kind: ValueKind, value: string | null, name: string): { co
     }
     case 'vector3': {
       const parts = v.split(/\s+/);
-      return parts.length === 3 && parts.every((p) => NUMBER.test(p)) ? null : bad(`"${value}" is not three numbers, such as "0 1.5 -2"`);
+      if (parts.length !== 3 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not three numbers, such as "0 1.5 -2"`);
+      return parts.every(finite) ? null : bad(`"${value}" has a number too large`);
     }
     case 'scale': {
       const parts = v.split(/\s+/);
-      return (parts.length === 1 || parts.length === 3) && parts.every((p) => NUMBER.test(p))
-        ? null
-        : bad(`"${value}" is not one number or three`);
+      if ((parts.length !== 1 && parts.length !== 3) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or three`);
+      return parts.every(finite) ? null : bad(`"${value}" has a number too large`);
     }
     case 'color':
       return COLOR.test(v) ? null : bad(`"${value}" is not a colour such as "#c0182a" or "#fff"`);
     case 'duration': {
       const m = DURATION.exec(v);
-      return m && Number(m[1]) > 0 ? null : bad(`"${value}" is not a time such as "2s" or "500ms"`);
+      if (!m) return bad(`"${value}" is not a time such as "2s" or "500ms"`);
+      const n = Number(m[1]);
+      if (!Number.isFinite(n)) return bad(`"${value}" is too long a time`);
+      return n > 0 ? null : bad(`"${value}" is not a time such as "2s" or "500ms"`);
     }
+    // Written exactly: spaces around an id, a reference, a choice, or the
+    // version are a mistake, not ignored (issue #4, SPEC.md section 4).
     case 'id':
-      return ID.test(v) ? null : bad(`"${value}" must start with a letter and use only letters, digits, "-", and "_"`);
+      return ID.test(value) ? null : bad(`"${value}" must start with a letter and use only letters, digits, "-", and "_"`);
     case 'idref':
-      return v.startsWith('#') && ID.test(v.slice(1)) ? null : bad(`"${value}" must be "#" and an id, such as "#coupe"`);
+      return value.startsWith('#') && ID.test(value.slice(1)) ? null : bad(`"${value}" must be "#" and an id, such as "#coupe"`);
     case 'choice':
-      return kind.values.includes(v) ? null : bad(`must be one of ${kind.values.map((x) => `"${x}"`).join(', ')}`);
+      return kind.values.includes(value) ? null : bad(`must be one of ${kind.values.map((x) => `"${x}"`).join(', ')}`);
     case 'version':
-      return v === VERSION ? null : { code: 'unsupported-version', message: `This checker knows HoloML ${VERSION}, not "${value}"` };
+      return value === VERSION ? null : { code: 'unsupported-version', message: `This checker knows HoloML ${VERSION}, not "${value}"` };
     case 'repeat':
-      return v === 'indefinite' || (/^\d+$/.test(v) && Number(v) >= 1) ? null : bad('must be a whole number of times, or "indefinite"');
+      if (v === 'indefinite') return null;
+      if (!/^\d+$/.test(v) || Number(v) < 1) return bad('must be a whole number of times, or "indefinite"');
+      return Number.isSafeInteger(Number(v)) ? null : bad(`"${value}" is too many times`);
     case 'url': {
       if (v === '' || /\s/.test(v)) return bad('must be an address without spaces');
       const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(v)?.[1]?.toLowerCase();

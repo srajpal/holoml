@@ -75,7 +75,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-105 unit and conformance tests passed on 2026-09-26 on Windows 11. GitHub
+121 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Contributing

@@ -1,0 +1,39 @@
+{
+  "problems": [
+    {
+      "code": "bad-value",
+      "line": 3,
+      "column": 12
+    },
+    {
+      "code": "bad-value",
+      "line": 3,
+      "column": 33
+    },
+    {
+      "code": "bad-value",
+      "line": 3,
+      "column": 47
+    },
+    {
+      "code": "bad-value",
+      "line": 4,
+      "column": 27
+    },
+    {
+      "code": "bad-value",
+      "line": 5,
+      "column": 12
+    },
+    {
+      "code": "bad-value",
+      "line": 7,
+      "column": 62
+    },
+    {
+      "code": "bad-value",
+      "line": 7,
+      "column": 80
+    }
+  ]
+}

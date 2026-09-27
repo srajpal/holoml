@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { HoloParseError, parse, serialize, type ElementNode, type HoloNode } from './index.ts';
+import { HoloParseError, MAX_DEPTH, parse, serialize, type ElementNode, type HoloNode } from './index.ts';
 
 /** The error a text gives, as "code line:column". */
 function errorOf(text: string): string {
@@ -74,6 +74,38 @@ describe('parse', () => {
     } catch (e) {
       expect((e as Error).message).toBe('Expected </scene> (opened on line 2), found </holoml> (line 3, column 1)');
     }
+  });
+});
+
+describe('limits and inherited names (issues #1, #2, #5)', () => {
+  const nested = (depth: number) => '<a>'.repeat(depth) + '</a>'.repeat(depth);
+
+  it(`reads elements nested ${MAX_DEPTH} deep, and stops one deeper with too-deep at its place`, () => {
+    const doc = parse(nested(MAX_DEPTH));
+    let depth = 0;
+    for (let n: HoloNode | undefined = doc.root; n?.type === 'element'; n = n.children[0]) depth += 1;
+    expect(depth).toBe(MAX_DEPTH);
+    expect(errorOf(nested(MAX_DEPTH + 1))).toBe(`too-deep 1:${MAX_DEPTH * 3 + 1}`);
+    // Far deeper input stops the same way, instead of overflowing the stack.
+    expect(errorOf(nested(100_000))).toBe(`too-deep 1:${MAX_DEPTH * 3 + 1}`);
+  });
+
+  it('writes out a tree at the deepest allowed nesting', () => {
+    const doc = parse(nested(MAX_DEPTH));
+    expect(shape(parse(serialize(doc)).root)).toEqual(shape(doc.root));
+  });
+
+  it('knows only its own character reference names, never inherited ones', () => {
+    for (const name of ['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty']) {
+      expect(errorOf(`<a>&${name};</a>`), name).toBe('bad-character-reference 1:4');
+    }
+  });
+
+  it('rejects a null character inside a comment, before and after the root too', () => {
+    expect(errorOf('<a><!-- x\u0000 --></a>')).toBe('null-character 1:10');
+    expect(errorOf('<!--\u0000--><a />')).toBe('null-character 1:5');
+    expect(errorOf('<a /><!-- ok -->\n<!--\u0000-->')).toBe('null-character 2:5');
+    expect(errorOf('<!-- fine --><a /><!-- fine -->')).toBe('no error');
   });
 });
 

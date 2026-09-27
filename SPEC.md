@@ -78,7 +78,10 @@ what was meant.
 - Comments are written `<!-- ... -->` and must not contain `--`. They
   may appear between elements, not inside a tag.
 - Not part of HoloML: `<!doctype>`, `<?...?>`, and CDATA sections. The
-  null character is not allowed anywhere.
+  null character is not allowed anywhere, comments included.
+- Elements may be nested at most 256 deep, the root included. A reader
+  must stop a deeper document with `too-deep`, rather than fail in some
+  other way.
 - Lines may end with `\n`, `\r\n`, or `\r`. Columns count UTF-16 code
   units, as most editors do.
 
@@ -109,6 +112,7 @@ place. The codes:
 | `unsupported-markup` | `<!...>` or `<?...?>` other than a comment |
 | `less-than-in-value` | A `<` inside an attribute value |
 | `null-character` | The null character |
+| `too-deep` | An element nested more than 256 deep |
 
 ## 4. Space, units, and values
 
@@ -136,6 +140,13 @@ Kinds of value used below:
 | id reference | `#` and an id in the same document | `"#coupe"` |
 | address | a relative address, or an `http:` or `https:` address, with no spaces | `"models/coupe.glb"` |
 | flag | the attribute's name alone | `autoplay` |
+
+Numbers must be finite: one too large to represent (such as `1e999`)
+is a `bad-value`, and so is a count of repeats too large to count
+exactly. Spaces around a number, a vector, a colour, a time, or an
+address are ignored; an id, an id reference, a choice (such as a light's
+`type`), and the version are written exactly, and spaces around them
+are a `bad-value`.
 
 Relative addresses are resolved against the page's own address, as in
 HTML. Other schemes (`javascript:`, `data:`, `file:`, and so on) are not

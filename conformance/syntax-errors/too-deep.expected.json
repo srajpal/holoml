@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "too-deep",
+    "line": 1,
+    "column": 1808
+  }
+}

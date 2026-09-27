@@ -1,0 +1,9 @@
+<holoml version="0.1">
+  <scene>
+    <constructor />
+    <group constructor="x" />
+    <light type="point" constructor="1" />
+    <model id="car" src="car.glb" />
+    <animate target="#car" attribute="constructor" to="1 1 1" duration="1s" />
+  </scene>
+</holoml>
