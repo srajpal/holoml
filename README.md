@@ -62,5 +62,7 @@ discussion happens in issues once the spec outline lands.
 
 ## License
 
+Copyright 2026 The HoloML Authors (see [AUTHORS](AUTHORS)).
 Code: [Apache License 2.0](LICENSE).
 Specification text: [Creative Commons Attribution 4.0](LICENSE-SPEC).
+See [NOTICE](NOTICE).

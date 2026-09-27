@@ -45,13 +45,13 @@ The rules in the browser repo's AGENTS.md apply here in full. In short:
     Do not push unless asked. When five or more commits are waiting to
     be pushed, remind the owner.
 12. One active agent session per working tree at a time. Owner prompts
-    are logged in the browser repo's PROMPTS.md with a session tag;
-    read its last heading before appending.
+    are logged in the browser repo's PROMPTS.md; read its last heading
+    before appending.
 
 ## Prompt log
 
-Owner prompts are logged verbatim in the browser repo's PROMPTS.md, which
-is the single log for both projects. Do not keep a second log here.
+Owner prompts are logged, lightly edited, in the browser repo's
+PROMPTS.md, which is the single log for both projects. Do not keep a second log here.
 Contributors do not log prompts. Owner-only session automation lives in
 CLAUDE.local.md, which is gitignored.
 
@@ -72,7 +72,6 @@ Where tests will live (nothing exists yet):
 How to run: not checked yet.
 
 What to recheck after any change: nothing yet. This repo's first result
-(browser milestone 7 in TODO.md) is a README, a SPEC.md outline, and a
-parser package with one passing test. Browser milestone 8 (HoloML v0.1)
-adds the conformance samples and the checks that the parser round-trips
-every sample and the schema rejects every invalid one.
+(browser milestone 13 in TODO.md, HoloML v0.1) is a SPEC.md, a schema,
+a parser package, and conformance samples, with checks that the parser
+round-trips every sample and the schema rejects every invalid one.
