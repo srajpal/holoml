@@ -1,33 +1,90 @@
 <holoml version="0.1">
   <head>
-    <title>HoloML showroom (example)</title>
-    <meta name="description" content="Three cars in three colours. Orbit around them, and click one to walk around it." />
+    <title>HoloML showroom</title>
+    <meta name="description" content="Five cars in a round hall. Orbit around them, and choose one to walk around it." />
+    <meta name="author" content="The HoloML Authors" />
   </head>
-  <scene background="#0b0f1e">
-    <viewpoint position="0 2.2 11" look-at="0 0.8 0" mode="orbit" />
-    <light type="ambient" intensity="0.35" />
-    <light type="directional" position="6 10 8" look-at="0 0 0" intensity="1.1" />
-    <light type="spot" color="#ffe3b0" position="0 6 0" look-at="0 0 0" angle="35" range="14" intensity="2" />
+  <scene background="#07090f">
+    <viewpoint position="0 3 15" look-at="0 1.8 -3" mode="orbit" />
+    <light type="ambient" intensity="0.3" />
+    <light type="directional" position="6 14 12" look-at="0 0 0" intensity="0.6" />
+    <model src="models/hall.gltf" />
 
-    <!-- The middle car turns slowly on a turntable. -->
-    <group id="turntable">
-      <a href="car.holoml">
-        <model src="models/placeholder-car.gltf">
-          <material name="Paint" color="#c0182a" metalness="0.7" roughness="0.3" />
+    <label position="0 5.2 -13" size="1" color="#7fd8ff">HoloML showroom</label>
+    <label position="0 4.2 -13" size="0.4">Choose a car to walk around it</label>
+    <a href="about.holoml">
+      <label position="0 3.55 -13" size="0.34" color="#7fd8ff">About this showroom</label>
+    </a>
+
+    <!-- Quellis: a quiet four-door for long roads. -->
+    <light type="spot" position="-8.5 9 -3" look-at="-8.5 0 -3" angle="20" range="16" intensity="8" color="#fff4e0" />
+    <a href="quellis.holoml">
+      <group position="-8.5 0 -3" rotation="0 50 0">
+        <model src="models/plinth.gltf" />
+        <model src="models/quellis.glb" position="0 0.25 0" scale="1.8">
+          <material name="Paint" color="#c8243a" metalness="0.5" roughness="0.45" />
+          <material name="Glass" opacity="0.55" />
         </model>
-      </a>
-    </group>
-    <animate target="#turntable" attribute="rotation" from="0 0 0" to="0 360 0" duration="24s" repeat="indefinite" />
+      </group>
+      <label position="-8.5 3.3 -3" size="0.45">Quellis</label>
+    </a>
+    <label position="-8.5 2.85 -3" size="0.26" color="#b8c4e0">A quiet four-door for long roads</label>
 
-    <model src="models/placeholder-car.gltf" position="-5.5 0 -1.5" rotation="0 35 0">
-      <material name="Paint" color="#1f5fbf" metalness="0.6" roughness="0.35" />
-    </model>
-    <model src="models/placeholder-car.gltf" position="5.5 0 -1.5" rotation="0 -35 0">
-      <material name="Paint" color="#e8e8ec" metalness="0.3" roughness="0.5" />
-    </model>
+    <!-- Pippet: a small hatchback that parks anywhere. -->
+    <light type="spot" position="-5 9 -7.5" look-at="-5 0 -7.5" angle="20" range="16" intensity="8" color="#fff4e0" />
+    <a href="pippet.holoml">
+      <group position="-5 0 -7.5" rotation="0 25 0">
+        <model src="models/plinth.gltf" />
+        <model src="models/pippet.glb" position="0 0.25 0" scale="1.8">
+          <material name="Paint" color="#3aa56f" metalness="0.5" roughness="0.45" />
+          <material name="Glass" opacity="0.55" />
+        </model>
+      </group>
+      <label position="-5 3.7 -7.5" size="0.45">Pippet</label>
+    </a>
+    <label position="-5 3.25 -7.5" size="0.26" color="#b8c4e0">A small hatchback that parks anywhere</label>
 
-    <label position="0 2.6 0" size="0.3">Click the red car to walk around it</label>
-    <label position="-5.5 2 -1.5">Blue</label>
-    <label position="5.5 2 -1.5">White</label>
+    <!-- Veyl: a concept racer from the year 2101. -->
+    <light type="spot" position="0 9 0" look-at="0 0 0" angle="20" range="16" intensity="8" color="#fff4e0" />
+    <a href="veyl.holoml">
+      <group id="turntable" position="0 0 0" rotation="0 0 0">
+        <model src="models/plinth.gltf" />
+        <model src="models/veyl.glb" position="0 0.25 0" scale="1.8">
+          <material name="Paint" color="#3f6fd6" metalness="0.5" roughness="0.45" />
+          <material name="Glass" opacity="0.55" />
+        </model>
+      </group>
+      <label position="0 2.5 0" size="0.45">Veyl</label>
+    </a>
+    <label position="0 2.05 0" size="0.26" color="#b8c4e0">A concept racer from the year 2101</label>
+
+    <!-- Tallberg: a tall seven-seater for the mountains. -->
+    <light type="spot" position="5 9 -7.5" look-at="5 0 -7.5" angle="20" range="16" intensity="8" color="#fff4e0" />
+    <a href="tallberg.holoml">
+      <group position="5 0 -7.5" rotation="0 -25 0">
+        <model src="models/plinth.gltf" />
+        <model src="models/tallberg.glb" position="0 0.25 0" scale="1.8">
+          <material name="Paint" color="#f09a3a" metalness="0.5" roughness="0.45" />
+          <material name="Glass" opacity="0.55" />
+        </model>
+      </group>
+      <label position="5 3.7 -7.5" size="0.45">Tallberg</label>
+    </a>
+    <label position="5 3.25 -7.5" size="0.26" color="#b8c4e0">A tall seven-seater for the mountains</label>
+
+    <!-- Strafe: an open-wheel racer: one seat, no roof. -->
+    <light type="spot" position="8.5 9 -3" look-at="8.5 0 -3" angle="20" range="16" intensity="8" color="#fff4e0" />
+    <a href="strafe.holoml">
+      <group position="8.5 0 -3" rotation="0 -50 0">
+        <model src="models/plinth.gltf" />
+        <model src="models/strafe.glb" position="0 0.25 0" scale="1.8">
+          <material name="Paint" color="#e0472f" metalness="0.5" roughness="0.45" />
+          <material name="Glass" opacity="0.55" />
+        </model>
+      </group>
+      <label position="8.5 3.3 -3" size="0.45">Strafe</label>
+    </a>
+    <label position="8.5 2.85 -3" size="0.26" color="#b8c4e0">An open-wheel racer: one seat, no roof</label>
+    <animate target="#turntable" attribute="rotation" from="0 0 0" to="0 360 0" duration="30s" repeat="indefinite" />
   </scene>
 </holoml>

@@ -59,8 +59,12 @@ holoml/
     schema/          @holoml/schema: checks a tree against the spec and lists problems
   conformance/       sample documents and the result any reader must give for each
   examples/
-    showroom/        three cars to orbit around, and one to walk around
+    showroom/        a HoloML site: five cars in a hall, each to walk around
 ```
+
+The showroom is published at https://srajpal.github.io/holoml/showroom/:
+open its `index.holoml` in a browser that shows HoloML, such as
+[HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d).
 
 The packages are not published to npm yet.
 
@@ -75,7 +79,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-121 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
+139 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Built with the Buildwright approach

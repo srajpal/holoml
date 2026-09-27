@@ -1,0 +1,35 @@
+<holoml version="0.1">
+  <head>
+    <title>Strafe in flame · HoloML showroom</title>
+    <meta name="description" content="Strafe: an open-wheel racer: one seat, no roof. Walk around it." />
+    <meta name="author" content="The HoloML Authors" />
+  </head>
+  <scene background="#07090f">
+    <viewpoint position="2 1.7 9" look-at="0.6 1.1 0" mode="walk" />
+    <light type="ambient" intensity="0.35" />
+    <light type="directional" position="5 12 9" look-at="0 0 0" intensity="0.7" />
+    <light type="spot" position="0 9 0" look-at="0 0 0" angle="22" range="16" intensity="9" color="#fff4e0" />
+    <model src="models/hall.gltf" />
+
+    <model src="models/plinth.gltf" />
+    <model src="models/strafe.glb" position="0 0.25 0" scale="1.8">
+      <material name="Paint" color="#e0472f" metalness="0.5" roughness="0.45" />
+      <material name="Glass" opacity="0.55" />
+    </model>
+    <label id="name" position="0 4 0" size="0.6">Strafe</label>
+    <label position="0 3.45 0" size="0.24" color="#b8c4e0">An open-wheel racer: one seat, no roof</label>
+    <label position="0 3.1 0" size="0.2" color="#b8c4e0">1 seat · 6 gears · 310 km/h</label>
+
+    <label position="3.6 2.2 1" size="0.24">Flame, shown. Also in:</label>
+    <a href="strafe-tangerine.holoml">
+      <label position="3.6 1.75 1" size="0.26" color="#7fd8ff">Tangerine</label>
+    </a>
+    <a href="strafe-lagoon.holoml">
+      <label position="3.6 1.35 1" size="0.26" color="#7fd8ff">Lagoon</label>
+    </a>
+    <a href="index.holoml">
+      <label position="3.6 0.75 1" size="0.26" color="#7fd8ff">Back to the hall</label>
+    </a>
+    <label position="3.6 0.3 1" size="0.16" color="#b8c4e0">Walk: W, A, S, D or the arrows · drag to look</label>
+  </scene>
+</holoml>

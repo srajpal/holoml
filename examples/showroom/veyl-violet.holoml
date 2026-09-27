@@ -1,0 +1,35 @@
+<holoml version="0.1">
+  <head>
+    <title>Veyl in violet · HoloML showroom</title>
+    <meta name="description" content="Veyl: a concept racer from the year 2101. Walk around it." />
+    <meta name="author" content="The HoloML Authors" />
+  </head>
+  <scene background="#07090f">
+    <viewpoint position="2 1.7 9" look-at="0.6 1.1 0" mode="walk" />
+    <light type="ambient" intensity="0.35" />
+    <light type="directional" position="5 12 9" look-at="0 0 0" intensity="0.7" />
+    <light type="spot" position="0 9 0" look-at="0 0 0" angle="22" range="16" intensity="9" color="#fff4e0" />
+    <model src="models/hall.gltf" />
+
+    <model src="models/plinth.gltf" />
+    <model src="models/veyl.glb" position="0 0.25 0" scale="1.8">
+      <material name="Paint" color="#8b5cf6" metalness="0.5" roughness="0.45" />
+      <material name="Glass" opacity="0.55" />
+    </model>
+    <label id="name" position="0 4 0" size="0.6">Veyl</label>
+    <label position="0 3.45 0" size="0.24" color="#b8c4e0">A concept racer from the year 2101</label>
+    <label position="0 3.1 0" size="0.2" color="#b8c4e0">1 seat · electric · 0 to 100 km/h in 2.1 s</label>
+
+    <label position="3.6 2.2 1" size="0.24">Violet, shown. Also in:</label>
+    <a href="veyl.holoml">
+      <label position="3.6 1.75 1" size="0.26" color="#7fd8ff">Cobalt</label>
+    </a>
+    <a href="veyl-night.holoml">
+      <label position="3.6 1.35 1" size="0.26" color="#7fd8ff">Night</label>
+    </a>
+    <a href="index.holoml">
+      <label position="3.6 0.75 1" size="0.26" color="#7fd8ff">Back to the hall</label>
+    </a>
+    <label position="3.6 0.3 1" size="0.16" color="#b8c4e0">Walk: W, A, S, D or the arrows · drag to look</label>
+  </scene>
+</holoml>
