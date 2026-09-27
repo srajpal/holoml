@@ -1,0 +1,10 @@
+<holoml version="0.1">
+  <scene>
+    <group id=" a " />
+    <group id=" a " />
+    <group id="b" />
+    <animate target=" #missing " attribute="position" to="1 2 3" duration="1s" />
+    <animate target="#b" attribute=" position " to="1 2 3" duration="1s" />
+    <light type=" point " />
+  </scene>
+</holoml>

@@ -1,0 +1,24 @@
+{
+  "problems": [
+    {
+      "code": "unknown-element",
+      "line": 3,
+      "column": 5
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 4,
+      "column": 12
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 5,
+      "column": 25
+    },
+    {
+      "code": "bad-value",
+      "line": 7,
+      "column": 28
+    }
+  ]
+}

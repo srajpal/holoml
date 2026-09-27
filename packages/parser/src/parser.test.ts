@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { HoloParseError, parse, serialize, type ElementNode, type HoloNode } from './index.ts';
+import { HoloParseError, MAX_DEPTH, parse, serialize, type ElementNode, type HoloNode } from './index.ts';
 
 /** The error a text gives, as "code line:column". */
 function errorOf(text: string): string {
@@ -77,6 +77,38 @@ describe('parse', () => {
   });
 });
 
+describe('limits and inherited names (issues #1, #2, #5)', () => {
+  const nested = (depth: number) => '<a>'.repeat(depth) + '</a>'.repeat(depth);
+
+  it(`reads elements nested ${MAX_DEPTH} deep, and stops one deeper with too-deep at its place`, () => {
+    const doc = parse(nested(MAX_DEPTH));
+    let depth = 0;
+    for (let n: HoloNode | undefined = doc.root; n?.type === 'element'; n = n.children[0]) depth += 1;
+    expect(depth).toBe(MAX_DEPTH);
+    expect(errorOf(nested(MAX_DEPTH + 1))).toBe(`too-deep 1:${MAX_DEPTH * 3 + 1}`);
+    // Far deeper input stops the same way, instead of overflowing the stack.
+    expect(errorOf(nested(100_000))).toBe(`too-deep 1:${MAX_DEPTH * 3 + 1}`);
+  });
+
+  it('writes out a tree at the deepest allowed nesting', () => {
+    const doc = parse(nested(MAX_DEPTH));
+    expect(shape(parse(serialize(doc)).root)).toEqual(shape(doc.root));
+  });
+
+  it('knows only its own character reference names, never inherited ones', () => {
+    for (const name of ['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty']) {
+      expect(errorOf(`<a>&${name};</a>`), name).toBe('bad-character-reference 1:4');
+    }
+  });
+
+  it('rejects a null character inside a comment, before and after the root too', () => {
+    expect(errorOf('<a><!-- x\u0000 --></a>')).toBe('null-character 1:10');
+    expect(errorOf('<!--\u0000--><a />')).toBe('null-character 1:5');
+    expect(errorOf('<a /><!-- ok -->\n<!--\u0000-->')).toBe('null-character 2:5');
+    expect(errorOf('<!-- fine --><a /><!-- fine -->')).toBe('no error');
+  });
+});
+
 describe('serialize', () => {
   it('writes a tree that parses back to the same tree', () => {
     const text = '<holoml version="0.1"><scene background="#000"><model src="a &amp; b.glb" autoplay><material name="Paint" /></model><label>Say "hi" &lt;3</label></scene></holoml>';
@@ -121,5 +153,25 @@ describe('O7: speed', () => {
     const median = runs.sort((a, b) => a - b)[2]!;
     console.log(`O7: ${(text.length / 1e6).toFixed(2)} MB read in ${median.toFixed(1)} ms (median of five)`);
     expect(median, `median of five: ${median.toFixed(1)} ms`).toBeLessThan(100);
+  });
+
+  it('reads 200,000 short comments (1.6 MB) in under 100 ms: time grows with the size, not its square (PR #6 review)', () => {
+    const time = (n: number) => {
+      const text = '<holoml version="0.1"><scene>' + '<!--x-->'.repeat(n) + '</scene></holoml>';
+      parse(text); // warm-up
+      const runs: number[] = [];
+      for (let k = 0; k < 5; k++) {
+        const start = performance.now();
+        parse(text);
+        runs.push(performance.now() - start);
+      }
+      return runs.sort((a, b) => a - b)[2]!;
+    };
+    const small = time(50_000);
+    const large = time(200_000);
+    console.log(`O7: 200,000 comments read in ${large.toFixed(1)} ms; 50,000 in ${small.toFixed(1)} ms`);
+    expect(large).toBeLessThan(100);
+    // Four times the input may take somewhat more than four times as long, never sixteen.
+    expect(large).toBeLessThan(Math.max(small * 8, 20));
   });
 });
