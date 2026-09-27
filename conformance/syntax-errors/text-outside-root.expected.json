@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "text-outside-root",
+    "line": 1,
+    "column": 1
+  }
+}

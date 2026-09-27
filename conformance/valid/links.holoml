@@ -1,0 +1,14 @@
+<holoml version="0.1">
+  <scene>
+    <a href="coupe.holoml">
+      <model src="models/coupe.glb" />
+    </a>
+    <a href="https://example.com/brochure.html">
+      <group>
+        <model src="models/brochure.glb" />
+        <label position="0 1 0">The brochure</label>
+      </group>
+    </a>
+    <a href="../index.holoml#top"><label>Back</label></a>
+  </scene>
+</holoml>

@@ -1,0 +1,5 @@
+<holoml version="0.1">
+  <scene>
+    <model src="a.glb"id="a" />
+  </scene>
+</holoml>

@@ -1,0 +1,158 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "model",
+            "at": "3:5",
+            "attributes": [
+              [
+                "id",
+                "car",
+                "3:12"
+              ],
+              [
+                "src",
+                "models/car.glb",
+                "3:21"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "label",
+            "at": "4:5",
+            "attributes": [
+              [
+                "id",
+                "sign",
+                "4:12"
+              ],
+              [
+                "position",
+                "0 2 0",
+                "4:22"
+              ]
+            ],
+            "children": [
+              {
+                "text": "Sale",
+                "at": "4:39"
+              }
+            ]
+          },
+          {
+            "element": "animate",
+            "at": "5:5",
+            "attributes": [
+              [
+                "target",
+                "#car",
+                "5:14"
+              ],
+              [
+                "attribute",
+                "rotation",
+                "5:28"
+              ],
+              [
+                "from",
+                "0 0 0",
+                "5:49"
+              ],
+              [
+                "to",
+                "0 360 0",
+                "5:62"
+              ],
+              [
+                "duration",
+                "12s",
+                "5:75"
+              ],
+              [
+                "repeat",
+                "indefinite",
+                "5:90"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "6:5",
+            "attributes": [
+              [
+                "target",
+                "#car",
+                "6:14"
+              ],
+              [
+                "attribute",
+                "scale",
+                "6:28"
+              ],
+              [
+                "to",
+                "1.1 1.1 1.1",
+                "6:46"
+              ],
+              [
+                "duration",
+                "500ms",
+                "6:63"
+              ],
+              [
+                "repeat",
+                "2",
+                "6:80"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "7:5",
+            "attributes": [
+              [
+                "target",
+                "#sign",
+                "7:14"
+              ],
+              [
+                "attribute",
+                "position",
+                "7:29"
+              ],
+              [
+                "to",
+                "0 2.5 0",
+                "7:50"
+              ],
+              [
+                "duration",
+                "1.5s",
+                "7:63"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

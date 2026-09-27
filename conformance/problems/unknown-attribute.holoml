@@ -1,0 +1,5 @@
+<holoml version="0.1">
+  <scene fog="1">
+    <model src="a.glb" colour="#fff" />
+  </scene>
+</holoml>

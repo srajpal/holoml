@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "unquoted-value",
+    "line": 1,
+    "column": 17
+  }
+}

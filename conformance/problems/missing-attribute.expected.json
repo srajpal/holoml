@@ -1,0 +1,44 @@
+{
+  "problems": [
+    {
+      "code": "missing-attribute",
+      "line": 1,
+      "column": 1
+    },
+    {
+      "code": "missing-attribute",
+      "line": 3,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 4,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 5,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 6,
+      "column": 5
+    }
+  ]
+}

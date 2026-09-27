@@ -1,0 +1,5 @@
+<holoml version="0.1">
+  <scene>
+    <cube size="1" />
+  </scene>
+</holoml>

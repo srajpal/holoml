@@ -1,0 +1,16 @@
+{
+  "name": "@holoml/schema",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Checks a HoloML tree against the HoloML 0.1 specification.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@holoml/parser": "workspace:*"
+  }
+}

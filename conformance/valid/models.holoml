@@ -1,0 +1,10 @@
+<holoml version="0.1">
+  <scene>
+    <model src="models/coupe.glb" />
+    <model id="wagon" src="https://example.com/cars/wagon.gltf" position="4 0 -1.5" rotation="0 -30 0" scale="1.2" />
+    <model src="models/robot.glb?v=2" scale="1 2 1" animation="Wave" autoplay>
+      <material name="Paint" color="#c0182a" metalness="0.8" roughness="0.3" opacity="1" />
+      <material name="Glass" opacity="0.25" />
+    </model>
+  </scene>
+</holoml>

@@ -1,0 +1,7 @@
+<holoml version="0.1">
+  <scene>
+    <viewpoint />
+    <viewpoint mode="walk" />
+  </scene>
+  <scene />
+</holoml>

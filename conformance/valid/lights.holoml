@@ -1,0 +1,8 @@
+<holoml version="0.1">
+  <scene>
+    <light type="ambient" color="#ffffff" intensity="0.4" />
+    <light id="sun" type="directional" position="4 8 5" look-at="0 0 0" intensity="1.2" />
+    <light type="point" color="#ffd9a0" position="0 3 2" range="12" intensity="2" />
+    <light type="spot" position="0 5 0" look-at="0 0 0" angle="30" range="10" />
+  </scene>
+</holoml>

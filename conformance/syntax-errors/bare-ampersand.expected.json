@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "bad-character-reference",
+    "line": 3,
+    "column": 17
+  }
+}

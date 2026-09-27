@@ -1,0 +1,8 @@
+<holoml version="0.1">
+  <head>
+    <title>A showroom</title>
+    <meta name="description" content="Three cars you can walk around." />
+    <meta name="author" content="The HoloML Authors" />
+  </head>
+  <scene background="#0b0f1e" />
+</holoml>

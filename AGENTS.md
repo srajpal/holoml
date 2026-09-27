@@ -8,7 +8,8 @@ automatically.
 HoloML: an open markup language for fully 3D websites. It is designed
 alongside HyperSol HyperSpace 3D (short: HyperSpace 3D; called HyperSol
 WebSurfer 3D until 2026-09-26), the browser that renders it. The
-language keeps the name HoloML and the extension `.holo`.
+language keeps the name HoloML; its files use the extension `.holoml`
+(owner, prompt 63; `.holo` and `.hlml` were already taken).
 
 - This repo: https://github.com/srajpal/holoml
 - Browser repo: https://github.com/srajpal/hypersol-hyperspace-3d
@@ -64,14 +65,28 @@ CLAUDE.local.md, which is gitignored.
 
 ## Testing
 
-Where tests will live (nothing exists yet):
-- Parser and schema unit tests: `*.test.ts` next to the code.
-- Conformance fixtures: conformance/ (sample .holo files with expected
-  node trees), usable by any renderer.
+Where tests live:
+- Unit tests next to the code: `*.test.ts` in packages/parser/src and
+  packages/schema/src.
+- Conformance samples: conformance/valid, conformance/syntax-errors, and
+  conformance/problems, each `.holoml` with a `.expected.json`
+  (SPEC.md section 8), usable by any renderer.
+- Examples: examples/, checked by a unit test.
 
-How to run: not checked yet.
+How to run (from the repository root; recorded 2026-09-26 on Windows 11
+after they ran; on Windows and Linux in GitHub Actions,
+.github/workflows/ci.yml):
+- Toolchain: Node 22.13 or newer; pnpm 12.4.1, pinned in package.json.
+- Install: `pnpm install --frozen-lockfile`
+- Unit and conformance tests: `pnpm test` (Vitest; 105 tests passed on
+  2026-09-26)
+- Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
+- After adding or changing a sample: `pnpm conformance:update` writes
+  its `.expected.json`; read every changed file before committing, since
+  the expected results are the specification's.
 
-What to recheck after any change: nothing yet. This repo's first result
-(browser milestone 13 in TODO.md, HoloML v0.1) is a SPEC.md, a schema,
-a parser package, and conformance samples, with checks that the parser
-round-trips every sample and the schema rejects every invalid one.
+What to recheck after any change: all of the above (browser milestone
+13 checks O1 to O8 in the browser repository's TODO.md). The tests hold
+SPEC.md and the code together: every error and problem code, element,
+and attribute in the code must be in SPEC.md with an example, and every
+element and attribute must appear in a valid sample.

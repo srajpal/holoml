@@ -1,0 +1,9 @@
+<holoml version="0.1">
+  <scene>
+    <model id="car" src="models/car.glb" />
+    <label id="sign" position="0 2 0">Sale</label>
+    <animate target="#car" attribute="rotation" from="0 0 0" to="0 360 0" duration="12s" repeat="indefinite" />
+    <animate target="#car" attribute="scale" to="1.1 1.1 1.1" duration="500ms" repeat="2" />
+    <animate target="#sign" attribute="position" to="0 2.5 0" duration="1.5s" />
+  </scene>
+</holoml>

@@ -1,0 +1,33 @@
+<holoml version="0.1">
+  <head>
+    <title>HoloML showroom (example)</title>
+    <meta name="description" content="Three cars in three colours. Orbit around them, and click one to walk around it." />
+  </head>
+  <scene background="#0b0f1e">
+    <viewpoint position="0 2.2 11" look-at="0 0.8 0" mode="orbit" />
+    <light type="ambient" intensity="0.35" />
+    <light type="directional" position="6 10 8" look-at="0 0 0" intensity="1.1" />
+    <light type="spot" color="#ffe3b0" position="0 6 0" look-at="0 0 0" angle="35" range="14" intensity="2" />
+
+    <!-- The middle car turns slowly on a turntable. -->
+    <group id="turntable">
+      <a href="car.holoml">
+        <model src="models/placeholder-car.gltf">
+          <material name="Paint" color="#c0182a" metalness="0.7" roughness="0.3" />
+        </model>
+      </a>
+    </group>
+    <animate target="#turntable" attribute="rotation" from="0 0 0" to="0 360 0" duration="24s" repeat="indefinite" />
+
+    <model src="models/placeholder-car.gltf" position="-5.5 0 -1.5" rotation="0 35 0">
+      <material name="Paint" color="#1f5fbf" metalness="0.6" roughness="0.35" />
+    </model>
+    <model src="models/placeholder-car.gltf" position="5.5 0 -1.5" rotation="0 -35 0">
+      <material name="Paint" color="#e8e8ec" metalness="0.3" roughness="0.5" />
+    </model>
+
+    <label position="0 2.6 0" size="0.3">Click the red car to walk around it</label>
+    <label position="-5.5 2 -1.5">Blue</label>
+    <label position="5.5 2 -1.5">White</label>
+  </scene>
+</holoml>

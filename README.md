@@ -7,12 +7,13 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: planning.** HoloML is the markup language of
+**Status: version 0.1, written down.** [SPEC.md](SPEC.md) describes
+the language; this repository has a parser, a checker, conformance
+samples, and a small example. HoloML is the markup language of
 [HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
 (short: HyperSpace 3D), the open-source 3D browser that is being built
-alongside it and will be its first renderer. No parser code exists yet.
-(The browser was called HyperSol WebSurfer 3D until 2026-09-26; the
-language keeps its name, HoloML, and its file extension, `.holo`.)
+alongside it; showing HoloML pages in that browser comes next. Files use
+the extension `.holoml`.
 
 ## Why a new language
 
@@ -25,40 +26,62 @@ can render without a game engine.
 The name is the spirit: a markup language for things you look into, not
 at. See the story in the browser repository's README.
 
-## First version scope
+## A page
 
-Version 1 of the language will cover:
+```
+<holoml version="0.1">
+  <scene background="#0b0f1e">
+    <viewpoint position="0 1.6 6" look-at="0 0.8 0" mode="orbit" />
+    <light type="directional" position="4 8 5" intensity="1.2" />
+    <a href="coupe.holoml">
+      <model src="models/coupe.glb" rotation="0 30 0">
+        <material name="Paint" color="#c0182a" />
+      </model>
+    </a>
+    <label position="0 2.1 0">The coupe: click to walk around it</label>
+  </scene>
+</holoml>
+```
 
-- Loading a 3D model file and placing it in a scene
-- A viewer position, with walk and orbit movement
-- Text labels and links, including links to other HoloML and HTML pages
-- Lights, materials, and simple animation
+Version 0.1 covers 3D models (glTF 2.0), groups, where the viewer starts
+(orbit or walk), lights, labels, links, changing a model's materials,
+and simple animation. The syntax is strict: a mistake stops with its
+line and column. Later versions: scripting and interactivity
+(configurators), sound, physics, and spaces shared by several people.
 
-Later: scripting and interactivity (configurators), physics, audio,
-multi-user spaces.
-
-## Planned layout
+## What is here
 
 ```
 holoml/
-  SPEC.md            the language, written like a small HTML spec
+  SPEC.md            the language, version 0.1
   packages/
-    parser/          @holoml/parser: text to a node tree, zero dependencies
-    schema/          @holoml/schema: element and attribute rules
+    parser/          @holoml/parser: text to a tree, with line and column; no dependencies
+    schema/          @holoml/schema: checks a tree against the spec and lists problems
+  conformance/       sample documents and the result any reader must give for each
   examples/
-    showroom/        a car showroom demo
-  conformance/       sample files and expected trees for any renderer
+    showroom/        three cars to orbit around, and one to walk around
 ```
+
+The packages are not published to npm yet.
 
 ## Testing
 
-Not checked yet. No tests exist. Commands will appear here once they
-have actually run.
+From the repository root (Node 22.13 or newer, pnpm 12.4.1):
+
+```
+pnpm install --frozen-lockfile
+pnpm test
+pnpm lint
+pnpm typecheck
+```
+
+105 unit and conformance tests passed on 2026-09-26 on Windows 11. GitHub
+Actions runs them on Windows and Linux for every push.
 
 ## Contributing
 
-Rules for agents and contributors are in [AGENTS.md](AGENTS.md). Design
-discussion happens in issues once the spec outline lands.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Ideas for the language start as
+issues. Rules for AI agents are in [AGENTS.md](AGENTS.md).
 
 ## License
 

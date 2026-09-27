@@ -1,0 +1,19 @@
+{
+  "problems": [
+    {
+      "code": "attribute-not-for-type",
+      "line": 3,
+      "column": 27
+    },
+    {
+      "code": "attribute-not-for-type",
+      "line": 4,
+      "column": 25
+    },
+    {
+      "code": "attribute-not-for-type",
+      "line": 4,
+      "column": 36
+    }
+  ]
+}

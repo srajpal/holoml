@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "stray-end-tag",
+    "line": 1,
+    "column": 1
+  }
+}

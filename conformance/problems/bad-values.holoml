@@ -1,0 +1,14 @@
+<holoml version="0.1">
+  <scene background="red">
+    <model src="a.glb" position="1 2" rotation="0 x 0" scale="1 2" autoplay="yes" id="9lives" />
+    <model src="car.obj" />
+    <light type="sun" intensity="-1" />
+    <viewpoint mode="fly" />
+    <label size="0">x</label>
+    <meta />
+    <model src="b.glb">
+      <material name="" metalness="1.5" color="#12345" />
+    </model>
+    <animate target="car" attribute="colour" to="1 1" duration="10" repeat="0" />
+  </scene>
+</holoml>

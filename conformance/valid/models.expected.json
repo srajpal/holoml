@@ -1,0 +1,144 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "model",
+            "at": "3:5",
+            "attributes": [
+              [
+                "src",
+                "models/coupe.glb",
+                "3:12"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "model",
+            "at": "4:5",
+            "attributes": [
+              [
+                "id",
+                "wagon",
+                "4:12"
+              ],
+              [
+                "src",
+                "https://example.com/cars/wagon.gltf",
+                "4:23"
+              ],
+              [
+                "position",
+                "4 0 -1.5",
+                "4:65"
+              ],
+              [
+                "rotation",
+                "0 -30 0",
+                "4:85"
+              ],
+              [
+                "scale",
+                "1.2",
+                "4:104"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "model",
+            "at": "5:5",
+            "attributes": [
+              [
+                "src",
+                "models/robot.glb?v=2",
+                "5:12"
+              ],
+              [
+                "scale",
+                "1 2 1",
+                "5:39"
+              ],
+              [
+                "animation",
+                "Wave",
+                "5:53"
+              ],
+              [
+                "autoplay",
+                null,
+                "5:70"
+              ]
+            ],
+            "children": [
+              {
+                "element": "material",
+                "at": "6:7",
+                "attributes": [
+                  [
+                    "name",
+                    "Paint",
+                    "6:17"
+                  ],
+                  [
+                    "color",
+                    "#c0182a",
+                    "6:30"
+                  ],
+                  [
+                    "metalness",
+                    "0.8",
+                    "6:46"
+                  ],
+                  [
+                    "roughness",
+                    "0.3",
+                    "6:62"
+                  ],
+                  [
+                    "opacity",
+                    "1",
+                    "6:78"
+                  ]
+                ],
+                "children": []
+              },
+              {
+                "element": "material",
+                "at": "7:7",
+                "attributes": [
+                  [
+                    "name",
+                    "Glass",
+                    "7:17"
+                  ],
+                  [
+                    "opacity",
+                    "0.25",
+                    "7:30"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

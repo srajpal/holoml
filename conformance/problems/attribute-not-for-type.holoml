@@ -1,0 +1,6 @@
+<holoml version="0.1">
+  <scene>
+    <light type="ambient" position="0 1 0" />
+    <light type="point" angle="30" look-at="0 0 0" />
+  </scene>
+</holoml>

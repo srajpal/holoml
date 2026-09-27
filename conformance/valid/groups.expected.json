@@ -1,0 +1,166 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "group",
+            "at": "3:5",
+            "attributes": [
+              [
+                "id",
+                "stand",
+                "3:12"
+              ],
+              [
+                "position",
+                "0 0.5 0",
+                "3:23"
+              ],
+              [
+                "rotation",
+                "0 45 0",
+                "3:42"
+              ],
+              [
+                "scale",
+                "0.5",
+                "3:60"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "4:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/stand.glb",
+                    "4:14"
+                  ]
+                ],
+                "children": []
+              },
+              {
+                "element": "group",
+                "at": "5:7",
+                "attributes": [
+                  [
+                    "position",
+                    "0 1 0",
+                    "5:14"
+                  ]
+                ],
+                "children": [
+                  {
+                    "element": "label",
+                    "at": "6:9",
+                    "attributes": [],
+                    "children": [
+                      {
+                        "text": "On top",
+                        "at": "6:16"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "element": "light",
+                "at": "8:7",
+                "attributes": [
+                  [
+                    "type",
+                    "point",
+                    "8:14"
+                  ],
+                  [
+                    "position",
+                    "0 3 0",
+                    "8:27"
+                  ]
+                ],
+                "children": []
+              },
+              {
+                "element": "a",
+                "at": "9:7",
+                "attributes": [
+                  [
+                    "href",
+                    "stand.holoml",
+                    "9:10"
+                  ]
+                ],
+                "children": [
+                  {
+                    "element": "label",
+                    "at": "9:30",
+                    "attributes": [
+                      [
+                        "position",
+                        "0 2 0",
+                        "9:37"
+                      ]
+                    ],
+                    "children": [
+                      {
+                        "text": "About the stand",
+                        "at": "9:54"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "element": "animate",
+                "at": "10:7",
+                "attributes": [
+                  [
+                    "target",
+                    "#stand",
+                    "10:16"
+                  ],
+                  [
+                    "attribute",
+                    "rotation",
+                    "10:32"
+                  ],
+                  [
+                    "to",
+                    "0 405 0",
+                    "10:53"
+                  ],
+                  [
+                    "duration",
+                    "30s",
+                    "10:66"
+                  ],
+                  [
+                    "repeat",
+                    "indefinite",
+                    "10:81"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

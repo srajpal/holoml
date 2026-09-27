@@ -1,0 +1,52 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "2:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "2:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "4:3",
+        "attributes": [
+          [
+            "background",
+            "#000",
+            "4:10"
+          ]
+        ],
+        "children": [
+          {
+            "element": "model",
+            "at": "5:5",
+            "attributes": [
+              [
+                "src",
+                "a.glb",
+                "5:12"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "label",
+            "at": "6:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Tab\tand text",
+                "at": "6:12"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

@@ -1,0 +1,25 @@
+{
+  "name": "holoml",
+  "private": true,
+  "version": "0.1.0",
+  "description": "HoloML: an open markup language for fully 3D websites.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@12.4.1",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc -p packages/parser --noEmit && tsc -p packages/schema --noEmit",
+    "conformance:update": "node --experimental-strip-types packages/schema/src/update-conformance.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "eslint": "^10.11.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^5.0.1"
+  }
+}

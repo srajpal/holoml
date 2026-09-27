@@ -1,0 +1,9 @@
+<holoml version="0.1">
+  <scene>
+    <label id="price" position="1 2 0" size="0.2" color="#fff">From $32,000 &amp; up</label>
+    <label position="-1 2 0">
+      Whitespace   collapses,
+      as in HTML: &lt;tags&gt; &quot;quotes&quot; &apos;apostrophes&apos; &#233; &#x2013;
+    </label>
+  </scene>
+</holoml>

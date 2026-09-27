@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "bad-comment",
+    "line": 2,
+    "column": 3
+  }
+}

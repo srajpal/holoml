@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "less-than-in-value",
+    "line": 3,
+    "column": 15
+  }
+}

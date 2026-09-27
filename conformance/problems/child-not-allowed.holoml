@@ -1,0 +1,10 @@
+<holoml version="0.1">
+  <scene>
+    <model src="a.glb">
+      <label>Inside a model</label>
+    </model>
+    <group>
+      <viewpoint />
+    </group>
+  </scene>
+</holoml>

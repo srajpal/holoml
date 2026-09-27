@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "duplicate-attribute",
+    "line": 2,
+    "column": 28
+  }
+}

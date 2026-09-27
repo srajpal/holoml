@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "mismatched-end-tag",
+    "line": 3,
+    "column": 3
+  }
+}

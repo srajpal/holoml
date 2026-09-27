@@ -1,0 +1,9 @@
+﻿<!-- A comment before the root -->
+<holoml version='0.1'>
+  <!-- A comment inside -->
+  <scene background='#000'>
+    <model src="a.glb"/>
+    <label>Tab	and text</label >
+  </scene>
+</holoml>
+<!-- A comment after the root -->

@@ -1,0 +1,4 @@
+# HoloML documents are tested byte for byte, line ends included
+# (conformance/valid/syntax-forms.holoml uses Windows line ends on
+# purpose), so Git must never convert them.
+*.holoml -text

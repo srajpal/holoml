@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+
+# Packages allowed to run install scripts: esbuild checks its platform
+# binary (used by Vitest). Nothing here runs at HoloML's run time.
+allowBuilds:
+  esbuild: true

@@ -1,0 +1,9 @@
+<holoml version="0.1">
+  <scene>
+    <a href="one.holoml">
+      <group>
+        <a href="two.holoml"><label>x</label></a>
+      </group>
+    </a>
+  </scene>
+</holoml>

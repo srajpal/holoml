@@ -1,0 +1,5 @@
+<holoml version="0.1">
+  <scene>
+    <animate target="#nothing" attribute="rotation" to="0 90 0" duration="1s" />
+  </scene>
+</holoml>

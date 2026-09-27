@@ -1,0 +1,14 @@
+{
+  "problems": [
+    {
+      "code": "too-many",
+      "line": 4,
+      "column": 5
+    },
+    {
+      "code": "too-many",
+      "line": 6,
+      "column": 3
+    }
+  ]
+}

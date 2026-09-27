@@ -1,0 +1,13 @@
+<holoml version="0.1">
+  <scene>
+    <group id="stand" position="0 0.5 0" rotation="0 45 0" scale="0.5">
+      <model src="models/stand.glb" />
+      <group position="0 1 0">
+        <label>On top</label>
+      </group>
+      <light type="point" position="0 3 0" />
+      <a href="stand.holoml"><label position="0 2 0">About the stand</label></a>
+      <animate target="#stand" attribute="rotation" to="0 405 0" duration="30s" repeat="indefinite" />
+    </group>
+  </scene>
+</holoml>

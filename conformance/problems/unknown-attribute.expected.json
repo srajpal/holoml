@@ -1,0 +1,14 @@
+{
+  "problems": [
+    {
+      "code": "unknown-attribute",
+      "line": 2,
+      "column": 10
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 3,
+      "column": 24
+    }
+  ]
+}

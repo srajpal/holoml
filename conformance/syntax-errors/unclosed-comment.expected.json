@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "unclosed-comment",
+    "line": 2,
+    "column": 3
+  }
+}

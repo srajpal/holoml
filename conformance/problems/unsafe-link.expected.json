@@ -1,0 +1,14 @@
+{
+  "problems": [
+    {
+      "code": "unsafe-link",
+      "line": 3,
+      "column": 8
+    },
+    {
+      "code": "unsafe-link",
+      "line": 4,
+      "column": 12
+    }
+  ]
+}

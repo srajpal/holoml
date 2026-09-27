@@ -1,0 +1,6 @@
+<holoml version="0.1">
+  <scene>
+    <a href="javascript:alert(1)"><label>x</label></a>
+    <model src="file:///C:/car.glb" />
+  </scene>
+</holoml>

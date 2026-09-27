@@ -1,0 +1,141 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "light",
+            "at": "3:5",
+            "attributes": [
+              [
+                "type",
+                "ambient",
+                "3:12"
+              ],
+              [
+                "color",
+                "#ffffff",
+                "3:27"
+              ],
+              [
+                "intensity",
+                "0.4",
+                "3:43"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "4:5",
+            "attributes": [
+              [
+                "id",
+                "sun",
+                "4:12"
+              ],
+              [
+                "type",
+                "directional",
+                "4:21"
+              ],
+              [
+                "position",
+                "4 8 5",
+                "4:40"
+              ],
+              [
+                "look-at",
+                "0 0 0",
+                "4:57"
+              ],
+              [
+                "intensity",
+                "1.2",
+                "4:73"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "5:5",
+            "attributes": [
+              [
+                "type",
+                "point",
+                "5:12"
+              ],
+              [
+                "color",
+                "#ffd9a0",
+                "5:25"
+              ],
+              [
+                "position",
+                "0 3 2",
+                "5:41"
+              ],
+              [
+                "range",
+                "12",
+                "5:58"
+              ],
+              [
+                "intensity",
+                "2",
+                "5:69"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "6:5",
+            "attributes": [
+              [
+                "type",
+                "spot",
+                "6:12"
+              ],
+              [
+                "position",
+                "0 5 0",
+                "6:24"
+              ],
+              [
+                "look-at",
+                "0 0 0",
+                "6:41"
+              ],
+              [
+                "angle",
+                "30",
+                "6:57"
+              ],
+              [
+                "range",
+                "10",
+                "6:68"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

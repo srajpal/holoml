@@ -1,0 +1,6 @@
+<holoml version="0.1">
+  <scene>
+    <label id="sign">Sale</label>
+    <animate target="#sign" attribute="rotation" to="0 90 0" duration="1s" />
+  </scene>
+</holoml>

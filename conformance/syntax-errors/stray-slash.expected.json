@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "stray-slash",
+    "line": 2,
+    "column": 10
+  }
+}

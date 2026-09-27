@@ -1,0 +1,6 @@
+<holoml version="0.1">
+  <scene>
+    <model id="car" src="a.glb" />
+    <model id="car" src="b.glb" />
+  </scene>
+</holoml>
