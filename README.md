@@ -7,13 +7,15 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: version 0.1, written down.** [SPEC.md](SPEC.md) describes
-the language; this repository has a parser, a checker, conformance
-samples, and a small example. HoloML is the markup language of
+**Status: version 0.1, written down; version 0.2, a draft.**
+[SPEC.md](SPEC.md) describes the language; this repository has a
+parser, a checker, conformance samples, and example sites. HoloML is the
+markup language of
 [HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
-(short: HyperSpace 3D), the open-source 3D browser that is being built
-alongside it; showing HoloML pages in that browser comes next. Files use
-the extension `.holoml`.
+(short: HyperSpace 3D), the open-source 3D browser built alongside it,
+which shows HoloML pages. Version 0.2 grows with the browser's example
+sites: so far scripts, sound, text on the screen, walls and gravity, and
+the animation of lights. Files use the extension `.holoml`.
 
 ## Why a new language
 
@@ -45,7 +47,10 @@ at. See the story in the browser repository's README.
 
 Version 0.1 covers 3D models (glTF 2.0), groups, where the viewer starts
 (orbit or walk), lights, labels, links, changing a model's materials,
-and simple animation. The syntax is strict: a mistake stops with its
+and simple animation. Version 0.2 (a draft) adds scripts with a small
+scene API, sound, text on the screen, walls and gravity for walking, a
+crosshair, and the animation of lights and the background; a page says
+`version="0.2"` to use them. The syntax is strict: a mistake stops with its
 line and column. Later versions: scripting and interactivity
 (configurators), sound, physics, and spaces shared by several people.
 
@@ -59,12 +64,16 @@ holoml/
     schema/          @holoml/schema: checks a tree against the spec and lists problems
   conformance/       sample documents and the result any reader must give for each
   examples/
-    showroom/        a HoloML site: five cars in a hall, each to walk around
+    showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
+    blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night
 ```
 
-The showroom is published at https://srajpal.github.io/holoml/showroom/:
-open its `index.holoml` in a browser that shows HoloML, such as
-[HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d).
+The examples are published with GitHub Pages:
+https://srajpal.github.io/holoml/showroom/ and
+https://srajpal.github.io/holoml/blockworld/. Open an example's
+`index.holoml` in a browser that shows HoloML, such as
+[HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
+where they are also listed under "HoloML examples".
 
 The packages are not published to npm yet.
 
@@ -79,7 +88,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-139 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
+165 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Built with the Buildwright approach

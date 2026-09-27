@@ -1,0 +1,52 @@
+<holoml version="0.2">
+  <head>
+    <title>Blockworld</title>
+    <meta name="description" content="A small island of blocks: break them, build with them, and find the five gems hidden in the stone. A HoloML 0.2 game." />
+    <meta name="author" content="The HoloML Authors" />
+    <script src="game.js" />
+  </head>
+  <scene id="sky" background="#87ceeb">
+    <!-- The island is made by game.js; the walker falls onto it. -->
+    <viewpoint position="0.5 16 3.5" look-at="0.5 15 -8" mode="walk" gravity jump crosshair />
+
+    <light id="daylight" type="ambient" intensity="0.55" />
+    <light id="sun" type="directional" position="30 60 20" look-at="0 0 0" intensity="1" color="#fff4d6" />
+    <!-- Torches share these eight lights: the script moves one to each torch placed. -->
+    <light id="torch-1" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-2" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-3" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-4" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-5" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-6" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-7" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+    <light id="torch-8" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
+
+    <model id="chest" src="models/chest.gltf" position="0 -50 0" solid />
+
+    <sound id="step-1" src="sounds/step-1.ogg" volume="0.35" />
+    <sound id="step-2" src="sounds/step-2.ogg" volume="0.35" />
+    <sound id="break" src="sounds/break.ogg" volume="0.7" />
+    <sound id="place" src="sounds/place.ogg" volume="0.7" />
+    <sound id="gem" src="sounds/gem.ogg" volume="0.8" />
+    <sound id="deposit" src="sounds/chest.ogg" volume="0.8" />
+    <sound id="won" src="sounds/won.ogg" />
+    <sound id="birds" src="sounds/birds.wav" loop autoplay volume="0.45" />
+    <sound id="crickets" src="sounds/crickets.wav" loop autoplay volume="0" />
+
+    <hud id="hand" corner="top-left">
+      Placing: Grass
+      1 Grass · 2 Dirt · 3 Stone · 4 Planks · 5 Torch
+    </hud>
+    <hud id="score" corner="top-right">
+      Gems carried: 0
+      In the chest: 0 of 5
+    </hud>
+    <hud id="clock" corner="top-right" size="15">Day 1, 09:00</hud>
+    <hud corner="bottom-left" size="14">
+      Walk: W, A, S, D or the arrows · Space jumps · Shift runs · drag to look
+      Break a block: click it, or E · Place one: right-click, or Q
+      Find the five gems in the stone and bring them to the chest
+    </hud>
+    <hud id="message" corner="bottom-right" size="20"></hud>
+  </scene>
+</holoml>

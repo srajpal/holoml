@@ -671,6 +671,7 @@ nothing. After a thing is removed, setting its members does nothing.
 | `intensity` | light | How bright; can be set |
 | `material(name, change)` | model | Changes one of the model's materials; `change` may have `color`, `metalness`, `roughness`, and `opacity`, as `material` has |
 | `play()`, `stop()`, `playing` | sound | Plays from the start; stops; whether it plays. Before sounds may play (section 5, `sound`), `play()` does nothing |
+| `volume` | sound | How loud, from 0 to 1; can be set, also while it plays |
 | `remove()` | all | As `holoml.remove(thing)` |
 
 ### Events

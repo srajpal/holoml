@@ -70,6 +70,31 @@ describe('examples', () => {
     expect(triangles).toBeLessThan(200_000);
   });
 
+  it('Blockworld names only files that exist, and stays small', () => {
+    const dir = join(EXAMPLES, 'blockworld');
+    const page = readFileSync(join(dir, 'index.holoml'), 'utf8');
+    const game = readFileSync(join(dir, 'game.js'), 'utf8');
+    const named = [
+      ...[...page.matchAll(/src="([^"]+)"/g)].map((m) => m[1]!),
+      // The blocks the script adds: models/<kind>.gltf for each kind it knows.
+      ...[...game.matchAll(/^ {2}(\w+): \{ name:/gm)].map((m) => `models/${m[1]}.gltf`),
+    ];
+    expect(named).toContain('game.js');
+    expect(named).toContain('models/grass.gltf');
+    let bytes = 0;
+    for (const src of named) {
+      bytes += statSync(join(dir, src)).size;
+    }
+    expect(bytes).toBeLessThan(2 * 1024 * 1024);
+  });
+
+  it('Blockworld credits its textures and sounds', () => {
+    const credits = readFileSync(join(EXAMPLES, 'blockworld/models/CREDITS.md'), 'utf8');
+    for (const pack of ['Voxel Pack', 'Impact Sounds', 'Interface Sounds', 'Music Jingles']) expect(credits).toContain(pack);
+    expect(credits).toMatch(/CC0/);
+    expect(credits).toMatch(/birds\.wav and crickets\.wav: made for this game/);
+  });
+
   it('the showroom credits its models, and the about page says where they come from', () => {
     const credits = readFileSync(join(EXAMPLES, 'showroom/models/CREDITS.md'), 'utf8');
     expect(credits).toMatch(/Kenney/);
