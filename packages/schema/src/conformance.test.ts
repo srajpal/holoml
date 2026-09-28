@@ -52,6 +52,8 @@ describe('conformance samples (O2, O3, O4)', () => {
         'animated-light-targets': 'bad-target',
         'inline-script': 'text-not-allowed',
         'hud-in-group': 'child-not-allowed',
+        // HoloML 0.2 (draft), browser milestone 18.
+        'bad-slider': 'bad-value',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }

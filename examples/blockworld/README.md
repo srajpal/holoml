@@ -9,6 +9,9 @@ lasts four minutes; at night, torches give light.
   runs; drag to look around. In HyperSpace 3D the left and right arrows
   turn, and Page Up and Page Down look up and down, so the game can be
   played from the keyboard alone.
+- The Speed slider (top left) makes walking and turning faster or
+  slower, from half to twice the game's pace; Tab reaches it, and the
+  arrow keys move it while it has the keyboard.
 - Click a block to break it, right-click to place one; from the
   keyboard, E breaks and Q places the block under the crosshair. Keys 1
   to 5 choose what to place.
@@ -28,6 +31,9 @@ Published at https://srajpal.github.io/holoml/blockworld/ (open
   clicks and keys, and moves the sun, the light, and the sky every frame.
 - Walls and gravity: blocks are `solid`, and the viewpoint has
   `gravity`, `jump`, and a `crosshair`.
+- Speeds: the viewpoint's `speed` (4.3 metres a second) and `turn-speed`
+  (120 degrees a second), and a `slider` whose `change` event sets
+  `holoml.viewer.speed` and `turnSpeed` (the "Speed" part of `game.js`).
 - Sounds start after the first click or key, as HoloML requires.
 - Only blocks that can be seen are added (about 1,200 at the start), and
   blocks behind a broken one appear as it goes.

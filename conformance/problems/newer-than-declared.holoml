@@ -5,7 +5,8 @@
   <scene id="world">
     <sound src="pop.wav" />
     <hud>Score</hud>
-    <viewpoint mode="walk" gravity />
+    <viewpoint mode="walk" gravity speed="3" />
+    <slider>Speed</slider>
     <model id="m" src="m.glb" solid />
     <light id="sun" type="directional" />
     <animate target="#sun" attribute="intensity" to="0.5" duration="2s" />

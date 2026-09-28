@@ -1,0 +1,12 @@
+<holoml version="0.2">
+  <scene>
+    <viewpoint mode="walk" speed="0.1" turn-speed="1000" />
+    <slider min="2" max="1">Upside down</slider>
+    <slider min="0" max="10" value="12">Too far</slider>
+    <slider step="0">Never moves</slider>
+    <slider></slider>
+    <group>
+      <slider>In a group</slider>
+    </group>
+  </scene>
+</holoml>

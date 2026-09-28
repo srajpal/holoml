@@ -1,0 +1,139 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Walking speed and a slider",
+                "at": "3:12"
+              }
+            ]
+          },
+          {
+            "element": "script",
+            "at": "4:5",
+            "attributes": [
+              [
+                "src",
+                "pace.js",
+                "4:13"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "6:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "viewpoint",
+            "at": "7:5",
+            "attributes": [
+              [
+                "position",
+                "0 1.6 6",
+                "7:16"
+              ],
+              [
+                "mode",
+                "walk",
+                "7:35"
+              ],
+              [
+                "speed",
+                "4.3",
+                "7:47"
+              ],
+              [
+                "turn-speed",
+                "120",
+                "7:59"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "slider",
+            "at": "8:5",
+            "attributes": [
+              [
+                "id",
+                "pace",
+                "8:13"
+              ],
+              [
+                "corner",
+                "top-left",
+                "8:23"
+              ],
+              [
+                "min",
+                "0.5",
+                "8:41"
+              ],
+              [
+                "max",
+                "2",
+                "8:51"
+              ],
+              [
+                "step",
+                "0.25",
+                "8:59"
+              ],
+              [
+                "value",
+                "1",
+                "8:71"
+              ]
+            ],
+            "children": [
+              {
+                "text": "Speed",
+                "at": "8:81"
+              }
+            ]
+          },
+          {
+            "element": "slider",
+            "at": "9:5",
+            "attributes": [
+              [
+                "id",
+                "volume",
+                "9:13"
+              ]
+            ],
+            "children": [
+              {
+                "text": "Volume",
+                "at": "9:25"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

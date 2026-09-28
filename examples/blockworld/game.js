@@ -3,10 +3,11 @@
 // text on the screen; this script makes the island from a seed and plays
 // the game through the scene API, `holoml` (SPEC.md section 10).
 //
-// Walk, jump, and look around as HoloML's walk mode lets you. Click a
-// block to break it, right-click to place one (or E and Q for the block
-// under the crosshair), and keys 1 to 5 choose what to place. Five gems
-// are hidden in the stone: bring them to the chest.
+// Walk, jump, and look around as HoloML's walk mode lets you; the Speed
+// slider makes walking and turning faster or slower. Click a block to
+// break it, right-click to place one (or E and Q for the block under the
+// crosshair), and keys 1 to 5 choose what to place. Five gems are hidden
+// in the stone: bring them to the chest.
 //
 // The address can say ?seed=12 for another island, and ?hour=21 to start
 // in the evening.
@@ -315,6 +316,23 @@ holoml.on('key', (e) => {
     showHand();
   } else if (e.key === 'e' || e.key === 'E') breakAt(holoml.aim());
   else if (e.key === 'q' || e.key === 'Q') placeAt(holoml.aim());
+});
+
+// ---- Speed: the slider sets how fast the viewer walks and turns --------------------
+//
+// The viewpoint starts the viewer at 4.3 metres a second and 120 degrees a
+// second (speed and turn-speed in index.holoml). The slider "pace" goes from
+// 0.5 to 2 times that; moving it sends a "change" event, and the new speeds
+// go to holoml.viewer. Its label shows the choice.
+
+const WALK = 4.3; // metres a second at 1×
+const TURN = 120; // degrees a second at 1×
+const pace = holoml.find('pace');
+holoml.on('change', (e) => {
+  if (e.thing !== pace) return;
+  holoml.viewer.speed = WALK * e.value;
+  holoml.viewer.turnSpeed = TURN * e.value;
+  pace.text = `Speed ${e.value}×`;
 });
 
 // ---- Time: a day of four minutes; the sun, the sky, and the sounds follow -------

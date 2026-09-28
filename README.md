@@ -48,9 +48,9 @@ at. See the story in the browser repository's README.
 Version 0.1 covers 3D models (glTF 2.0), groups, where the viewer starts
 (orbit or walk), lights, labels, links, changing a model's materials,
 and simple animation. Version 0.2 (a draft) adds scripts with a small
-scene API, sound, text on the screen, walls and gravity for walking, a
-crosshair, and the animation of lights and the background; a page says
-`version="0.2"` to use them. The syntax is strict: a mistake stops with its
+scene API, sound, text and sliders on the screen, walls and gravity for
+walking, walking and turning speeds, a crosshair, and the animation of
+lights and the background; a page says `version="0.2"` to use them. The syntax is strict: a mistake stops with its
 line and column. Later versions: scripting and interactivity
 (configurators), sound, physics, and spaces shared by several people.
 
@@ -65,7 +65,7 @@ holoml/
   conformance/       sample documents and the result any reader must give for each
   examples/
     showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
-    blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night
+    blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night, a speed slider
 ```
 
 The examples are published with GitHub Pages:
@@ -88,7 +88,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-165 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
+170 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Built with the Buildwright approach

@@ -235,6 +235,26 @@ function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: s
   for (const [name, r] of Object.entries(rule.attributes)) {
     if (r.required && atLeast(ctx.version, r.since) && !attr(el, name)) report('missing-attribute', `<${el.name}> needs the attribute "${name}"`, el.start);
   }
+  // A slider's range: max above min, and its value between them (each
+  // attribute that is not a number is already reported).
+  if (el.name === 'slider') {
+    const n = (name: string, fallback: number) => {
+      const a = attr(el, name);
+      if (!a) return { at: el.start, value: fallback, ok: true };
+      const v = a.value?.trim() ?? '';
+      return { at: a.start, value: Number(v), ok: NUMBER.test(v) && Number.isFinite(Number(v)) };
+    };
+    const min = n('min', 0);
+    const max = n('max', 1);
+    if (min.ok && max.ok && max.value <= min.value) {
+      report('bad-value', `"max": must be more than "min" (${min.value})`, max.at);
+    } else if (min.ok && max.ok) {
+      const value = attr(el, 'value') ? n('value', min.value) : null;
+      if (value?.ok && (value.value < min.value || value.value > max.value)) {
+        report('bad-value', `"value": must be from "min" to "max" (${min.value} to ${max.value})`, value.at);
+      }
+    }
+  }
   // Some light attributes belong to some types only; an unknown type is
   // already reported as a bad value.
   const type = el.name === 'light' ? attr(el, 'type')?.value : undefined;
