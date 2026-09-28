@@ -1,0 +1,64 @@
+{
+  "problems": [
+    {
+      "code": "bad-value",
+      "line": 2,
+      "column": 10
+    },
+    {
+      "code": "attribute-not-for-type",
+      "line": 3,
+      "column": 37
+    },
+    {
+      "code": "bad-value",
+      "line": 5,
+      "column": 31
+    },
+    {
+      "code": "bad-value",
+      "line": 5,
+      "column": 56
+    },
+    {
+      "code": "bad-target",
+      "line": 7,
+      "column": 13
+    },
+    {
+      "code": "missing-attribute",
+      "line": 10,
+      "column": 5
+    },
+    {
+      "code": "bad-value",
+      "line": 10,
+      "column": 28
+    },
+    {
+      "code": "bad-value",
+      "line": 12,
+      "column": 15
+    },
+    {
+      "code": "empty-text",
+      "line": 13,
+      "column": 7
+    },
+    {
+      "code": "unknown-target",
+      "line": 15,
+      "column": 13
+    },
+    {
+      "code": "missing-child",
+      "line": 18,
+      "column": 5
+    },
+    {
+      "code": "child-not-allowed",
+      "line": 19,
+      "column": 5
+    }
+  ]
+}

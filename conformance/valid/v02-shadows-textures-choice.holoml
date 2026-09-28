@@ -1,0 +1,27 @@
+<holoml version="0.2">
+  <head>
+    <title>Shadows, textures, a choice, and surroundings</title>
+  </head>
+  <scene environment="light/studio.hdr">
+    <viewpoint position="0 1.4 4" look-at="0 0.5 0" />
+    <light type="directional" position="3 6 4" look-at="0 0 0" shadows />
+    <light type="spot" position="0 4 0" look-at="0 0 0" angle="40" shadows />
+    <light type="point" position="-2 2 1" range="8" shadows />
+    <group shadows>
+      <model src="models/floor.glb">
+        <material name="Boards" map="textures/oak.jpg" normal-map="textures/oak-normal.jpg" roughness-map="textures/oak-rough.jpg" repeat="4" />
+      </model>
+    </group>
+    <model id="sofa" src="models/sofa.glb" shadows>
+      <material name="Fabric" map="textures/linen.jpg" repeat="3 2" roughness="0.9" />
+    </model>
+    <choice id="fabric" corner="bottom-left" label="Fabric" target="#sofa" material="Fabric" value="linen">
+      <option value="linen" map="textures/linen.jpg" normal-map="textures/linen-normal.jpg" roughness-map="textures/linen-rough.jpg" repeat="3 2">Linen</option>
+      <option value="velvet" color="#3b5d7a" roughness="0.6" metalness="0" opacity="1">Velvet</option>
+    </choice>
+    <choice id="light" corner="top-left" label="Light">
+      <option>Day</option>
+      <option>Evening</option>
+    </choice>
+  </scene>
+</holoml>

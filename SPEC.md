@@ -150,6 +150,7 @@ Kinds of value used below:
 | id reference | `#` and an id in the same document | `"#coupe"` |
 | address | a relative address, or an `http:` or `https:` address, with no spaces | `"models/coupe.glb"`, `"game.js"` |
 | flag | the attribute's name alone | `autoplay` |
+| tiling | (0.2) one number more than 0 (the same both ways) or two | `"3"`, `"3 2"` |
 
 Numbers must be finite: one too large to represent (such as `1e999`)
 is a `bad-value`, and so is a count of repeats too large to count
@@ -234,24 +235,29 @@ the scene, and only from the page's own site.
 ### `scene`
 
 Everything that is shown. Holds `group`, `model`, `light`, `label`, `a`,
-`animate`, and (0.2) `sound`, `hud`, and `slider`, in any order and
-number, and at most one `viewpoint`.
+`animate`, and (0.2) `sound`, `hud`, `slider`, and `choice`, in any order
+and number, and at most one `viewpoint`.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
 | `id` | id | none | (0.2) A name, so that `animate` or a script can change the background |
 | `background` | colour | the renderer's | The colour behind everything |
+| `environment` | address | none | (0.2) A panorama of the surroundings (an HDR, PNG, or JPEG picture, from the page's own site) that lights the scene: shiny and soft materials alike take their light and reflections from it. Without it, the renderer's own soft light. Its brightness follows the ambient lights (see `light`) |
 
 ```
 <scene background="#0b0f1e">
   <model src="models/coupe.glb" />
+</scene>
+<scene background="#f4efe6" environment="light/studio.hdr">
+  <model src="models/sofa.glb" />
 </scene>
 ```
 
 ### `group`
 
 Places several things together, so they move, turn, and scale as one.
-Holds the same elements as `scene`, except `viewpoint` and `hud`.
+Holds the same elements as `scene`, except `viewpoint`, `hud`, `slider`,
+and `choice`.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
@@ -260,6 +266,7 @@ Holds the same elements as `scene`, except `viewpoint` and `hud`.
 | `rotation` | vector | `"0 0 0"` | How it is turned |
 | `scale` | scale | `"1"` | How much bigger or smaller |
 | `solid` | flag | off | (0.2) The walker cannot pass through any model in it (see "Walls and gravity") |
+| `shadows` | flag | off | (0.2) Every model in it casts and receives shadows (see "Shadows") |
 
 ```
 <group id="stand" position="0 0.5 0" rotation="0 45 0">
@@ -282,6 +289,7 @@ A 3D model from a glTF 2.0 file. Holds any number of `material`.
 | `animation` | text | none | The name of one of the model's own glTF animations |
 | `autoplay` | flag | off | Play that animation, repeating, from when the scene is shown |
 | `solid` | flag | off | (0.2) The walker cannot pass through it (see "Walls and gravity") |
+| `shadows` | flag | off | (0.2) It casts and receives shadows (see "Shadows") |
 
 With `animation` and no `autoplay`, the model is shown in the first
 frame of that animation (a pose). A renderer that cannot load the file
@@ -304,13 +312,23 @@ nothing.
 | `metalness` | number from 0 to 1 | 0 is not metal, 1 is metal |
 | `roughness` | number from 0 to 1 | 0 is mirror-smooth, 1 is fully rough |
 | `opacity` | number from 0 to 1 | 0 is invisible, 1 is solid |
+| `map` | address | (0.2) A colour picture (PNG, JPEG, or WebP), such as a fabric's weave |
+| `normal-map` | address | (0.2) A picture of fine bumps (a tangent-space normal map, as glTF's) |
+| `roughness-map` | address | (0.2) A picture of how rough each point is (its green channel, as glTF's) |
+| `repeat` | tiling | (0.2) How many times the pictures tile across the model's own texture coordinates, such as `"3 2"`; default `"1"` |
 
-A name that matches no material in the model changes nothing.
+A name that matches no material in the model changes nothing. (0.2)
+Pictures come from the page's own site, like models, and count toward
+the renderer's limits; `color` multiplies the colour picture. A picture
+given here takes the place of the model's own.
 
 ```
 <model src="models/coupe.glb">
   <material name="Paint" color="#c0182a" metalness="0.8" roughness="0.3" />
   <material name="Glass" opacity="0.25" />
+</model>
+<model src="models/sofa.glb">
+  <material name="Fabric" map="textures/linen.jpg" normal-map="textures/linen-normal.jpg" repeat="4 3" />
 </model>
 ```
 
@@ -384,6 +402,7 @@ it softly so that models are still visible.
 | `look-at` | vector | `"0 0 0"` | Where it points (`directional` and `spot` only) |
 | `range` | number, 0 or more | `0` | How far it reaches, in metres; 0 is no limit (`point` and `spot` only) |
 | `angle` | number from 0 to 90 | `30` | The angle from the centre of the beam to its edge, in degrees (`spot` only) |
+| `shadows` | flag | off | (0.2) It casts shadows (`directional`, `point`, and `spot` only; see "Shadows") |
 
 - `ambient` light lights everything evenly, from everywhere.
 - `directional` light comes from far away in one direction, like the
@@ -392,10 +411,35 @@ it softly so that models are still visible.
   `"0 3 0"`), like a bulb.
 - `spot` light shines a cone from `position` (default `"0 3 0"`) toward
   `look-at`.
+- (0.2) The light from the surroundings (the scene's `environment`, or
+  the renderer's own soft light without it) dims with the page's
+  ambient lights: when their intensities add up to less than 0.6, it is
+  that much dimmer (at 0.3, half as bright), so a page makes evening or
+  night by dimming its ambient lights. Without ambient lights it is at
+  full.
 
 ```
 <light type="ambient" intensity="0.4" />
 <light type="spot" position="0 5 0" look-at="0 0 0" angle="30" range="10" />
+```
+
+### Shadows
+
+(0.2) A light marked `shadows` casts shadows from the models marked
+`shadows` (on the model, or on a group around it) onto the models
+marked `shadows`: a marked model both casts and receives them. A
+renderer chooses how soft and how detailed shadows are, and may leave
+them out when it must (for example on a machine that draws in software,
+or at its limits), saying so where the page's author can see it (such
+as the console). Nothing else depends on them: a page means the same
+without its shadows.
+
+```
+<light type="directional" position="3 6 4" look-at="0 0 0" shadows />
+<group shadows>
+  <model src="models/floor.glb" />
+  <model src="models/sofa.glb" />
+</group>
 ```
 
 ### `label`
@@ -539,6 +583,59 @@ text, in page order.
 <slider id="pace" corner="top-left" min="0.5" max="2" step="0.25" value="1">Speed</slider>
 ```
 
+### `choice`
+
+(0.2) A choice in place: options on the screen, fixed to a corner like
+`hud` and `slider`, that change one of a model's materials, or, without
+`target` and `material`, a choice for the page's scripts. Holds one or
+more `option`. Only directly in `scene`. Picking an option changes the
+material at once, as a `material` element would, without a new page or
+a script; a material name the model does not have changes nothing (a
+renderer may say so, as for `material`). At the start, the option `value` names (by default the first)
+is chosen and applied. A renderer lets the mouse, touch, the keyboard
+(as a group of radio buttons), and screen readers pick an option, shows
+the choice in any text-only view of the page, and tells the page's
+scripts (the `change` event, section 10).
+
+| Attribute | Value | Default | Meaning |
+|---|---|---|---|
+| `id` | id | none | A name, for scripts |
+| `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-left` | Where on the screen |
+| `label` | text | none | Its name on the screen, such as "Fabric" |
+| `target` | id reference | none | The `model` whose material it changes (with `material`) |
+| `material` | text | none | The name of that material in the model's glTF file (with `target`) |
+| `value` | text | the first option's | The value of the option chosen at the start |
+
+```
+<choice id="fabric" corner="bottom-left" label="Fabric" target="#sofa" material="Fabric" value="linen">
+  <option value="linen" map="textures/linen.jpg" repeat="4 3">Linen</option>
+  <option value="velvet" color="#3b5d7a" roughness="0.6">Velvet</option>
+</choice>
+```
+
+### `option`
+
+(0.2) One option of a `choice`. Holds text: its label, which may not be
+empty. Only directly in `choice`. Its other attributes are the
+material's look when it is chosen, as in `material`: each option starts
+from the material's own look and changes only what it gives.
+
+| Attribute | Value | Default | Meaning |
+|---|---|---|---|
+| `value` | text | its label | Its value, for the choice's `value` and for scripts; unique in its choice |
+| `color` | colour | the material's | Its base colour |
+| `metalness` | number from 0 to 1 | the material's | 0 is not metal, 1 is metal |
+| `roughness` | number from 0 to 1 | the material's | 0 is mirror-smooth, 1 is fully rough |
+| `opacity` | number from 0 to 1 | the material's | 0 is invisible, 1 is solid |
+| `map` | address | the material's | A colour picture |
+| `normal-map` | address | the material's | A picture of fine bumps |
+| `roughness-map` | address | the material's | A picture of how rough each point is |
+| `repeat` | tiling | `"1"` | How many times the pictures tile |
+
+```
+<option value="leather" map="textures/leather.jpg" roughness-map="textures/leather-rough.jpg" repeat="2">Brown leather</option>
+```
+
 ## 6. Checking
 
 A document that follows the syntax may still break the rules above. A
@@ -585,7 +682,9 @@ with nothing more than a web page may do, and so that a script that
 never stops cannot stop the renderer itself (the viewer can still leave
 or close the page). No sound plays before the viewer's first click,
 tap, or key on the page. Elements a script adds, and sound files, count
-toward the renderer's limits like the page's own.
+toward the renderer's limits like the page's own; so do a material's
+pictures and the surroundings (`environment`), which also come from the
+page's own site only.
 
 A renderer may set limits on what one page can use, so that a heavy or
 hostile page cannot exhaust the viewer's memory or freeze the renderer:
@@ -632,13 +731,14 @@ a reader that knows only 0.1 refuses a 0.2 page with
 - 0.1 (2026-09-26): models, groups, lights, labels, links, materials,
   animation of position, rotation, and scale, orbit and walk.
 - 0.2 (draft, from 2026-09-27): scripts and the scene API (section 10),
-  `sound`, `hud`, `slider`, walls and gravity (`solid`, `gravity`,
-  `jump`), a crosshair, walking and turning speeds (`speed`,
-  `turn-speed`), and the animation of a light's position, brightness,
+  `sound`, `hud`, `slider`, `choice`, walls and gravity (`solid`,
+  `gravity`, `jump`), a crosshair, walking and turning speeds (`speed`,
+  `turn-speed`), shadows, textured materials (`map`, `normal-map`,
+  `roughness-map`, `repeat`), light from the surroundings
+  (`environment`), and the animation of a light's position, brightness,
   and colour, and of the background. Everything in 0.1 means the same in a
-  0.2 page. Still to come in 0.2, as the example sites need them:
-  changing a material in place without a new page, shadows, text of
-  more than one line in the scene, movement along paths, sounds that
+  0.2 page. Still to come in 0.2, as the example sites need them: text
+  of more than one line in the scene, movement along paths, sounds that
   come from a place, and a sky.
 
 Ideas for later versions: physics, named colours, styles shared between
@@ -693,19 +793,21 @@ nothing. After a thing is removed, setting its members does nothing.
 | Member | Kinds | What it is |
 |---|---|---|
 | `id` | all | Its id, or `null` |
-| `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"sound"`, `"hud"`, or `"slider"` |
+| `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"sound"`, `"hud"`, `"slider"`, or `"choice"` |
 | `parent` | all | The group thing it is in, or `null` |
 | `position` | model, group, label, light | Where it is; can be set |
 | `rotation`, `scale` | model, group | How it is turned, and how big; can be set |
 | `visible` | model, group, label | Whether it is shown; can be set |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
-| `text` | label, hud, slider | Its words (for a `hud`, lines separated by `"\n"`; for a `slider`, its label); can be set |
+| `text` | label, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `slider` or a `choice`, its label); can be set |
 | `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
 | `intensity` | light | How bright; can be set |
 | `material(name, change)` | model | Changes one of the model's materials; `change` may have `color`, `metalness`, `roughness`, and `opacity`, as `material` has |
 | `play()`, `stop()`, `playing` | sound | Plays from the start; stops; whether it plays. Before sounds may play (section 5, `sound`), `play()` does nothing |
 | `volume` | sound | How loud, from 0 to 1; can be set, also while it plays |
 | `value` | slider | The number chosen; can be set (from `min` to `max`, kept to its steps), which moves the slider without a `change` event |
+| `value` | choice | The chosen option's value; can be set to another option's value, which picks it (and changes the material) without a `change` event; any other value is an error |
+| `options` | choice | Its options' values, in order |
 | `min`, `max`, `step` | slider | Its range and steps, as the page says |
 | `remove()` | all | As `holoml.remove(thing)` |
 
@@ -716,7 +818,7 @@ nothing. After a thing is removed, setting its members does nothing.
 | `click` | The viewer clicks or taps a point of the scene (not a drag), with any button | `thing` (the innermost element with a place that was hit, or `null`), `point` and `normal` (where it was hit, and which way the face hit is facing, or `null`), and `button` (`"left"`, `"right"`, or `"middle"`). A right-click goes to the page instead of opening the renderer's menu while a script listens for clicks. A click on a link still follows it |
 | `key` | A key goes down or up while the page has the keyboard | `key` (the key, as a web page's `KeyboardEvent.key`: `"e"`, `"1"`, `" "`) and `down` (`true` or `false`). The renderer's own keys (walking, turning) still work |
 | `frame` | Before each frame is drawn | `time` (milliseconds since the scene was shown) and `dt` (milliseconds since the last frame). While a script listens for frames, the renderer keeps drawing |
-| `change` | The viewer moves a slider | `thing` (the slider) and `value` (its new value) |
+| `change` | The viewer moves a slider, or picks an option of a choice | `thing` (the slider or the choice) and `value` (a slider's number, or the chosen option's value) |
 
 The keyboard can do whatever the mouse does: with a crosshair, a script
 uses `holoml.aim()` to act on what is in the middle of the view when a

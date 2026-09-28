@@ -1,0 +1,21 @@
+<holoml version="0.2">
+  <scene environment="light/studio.exr">
+    <light id="lamp" type="ambient" shadows />
+    <model id="sofa" src="models/sofa.glb">
+      <material name="Fabric" map="textures/linen.gif" repeat="0 2" />
+    </model>
+    <choice target="#lamp" material="Glass">
+      <option>Clear</option>
+    </choice>
+    <choice target="#sofa" value="silk">
+      <option value="linen">Linen</option>
+      <option value="linen">Linen again</option>
+      <option></option>
+    </choice>
+    <choice target="#nothing" material="Fabric">
+      <option>One</option>
+    </choice>
+    <choice label="Empty"></choice>
+    <option>Alone</option>
+  </scene>
+</holoml>

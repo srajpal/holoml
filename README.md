@@ -14,8 +14,10 @@ markup language of
 [HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
 (short: HyperSpace 3D), the open-source 3D browser built alongside it,
 which shows HoloML pages. Version 0.2 grows with the browser's example
-sites: so far scripts, sound, text on the screen, walls and gravity, and
-the animation of lights. Files use the extension `.holoml`.
+sites: so far scripts, sound, text on the screen, walls and gravity, the
+animation of lights, shadows, textured materials, choices that change a
+material in place, and light from the surroundings. Files use the
+extension `.holoml`.
 
 ## Why a new language
 
@@ -48,9 +50,11 @@ at. See the story in the browser repository's README.
 Version 0.1 covers 3D models (glTF 2.0), groups, where the viewer starts
 (orbit or walk), lights, labels, links, changing a model's materials,
 and simple animation. Version 0.2 (a draft) adds scripts with a small
-scene API, sound, text and sliders on the screen, walls and gravity for
-walking, walking and turning speeds, a crosshair, and the animation of
-lights and the background; a page says `version="0.2"` to use them. The syntax is strict: a mistake stops with its
+scene API, sound, text, sliders, and choices on the screen, walls and
+gravity for walking, walking and turning speeds, a crosshair, shadows,
+textured materials, light from a panorama of the surroundings, and the
+animation of lights and the background; a page says `version="0.2"` to
+use them. The syntax is strict: a mistake stops with its
 line and column. Later versions: scripting and interactivity
 (configurators), sound, physics, and spaces shared by several people.
 
@@ -66,11 +70,13 @@ holoml/
   examples/
     showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
     blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night, a speed slider
+    sofa-studio/     a HoloML 0.2 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
 ```
 
 The examples are published with GitHub Pages:
-https://srajpal.github.io/holoml/showroom/ and
-https://srajpal.github.io/holoml/blockworld/. Open an example's
+https://srajpal.github.io/holoml/showroom/,
+https://srajpal.github.io/holoml/blockworld/, and
+https://srajpal.github.io/holoml/sofa-studio/. Open an example's
 `index.holoml` in a browser that shows HoloML, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
 where they are also listed under "HoloML examples".
@@ -88,7 +94,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-170 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
+182 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Built with the Buildwright approach
