@@ -59,6 +59,8 @@ const ID = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const MODEL_FILE = /\.(gltf|glb)$/i;
 const SCRIPT_FILE = /\.(js|mjs)$/i;
 const SOUND_FILE = /\.(ogg|mp3|wav)$/i;
+const PICTURE_FILE = /\.(png|jpe?g|webp)$/i;
+const ENVIRONMENT_FILE = /\.(hdr|png|jpe?g)$/i;
 /** Schemes a link or model may use; anything else (javascript:, data:, file:) is refused. */
 const SAFE_SCHEMES = new Set(['http', 'https']);
 
@@ -89,6 +91,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
 
   const ids = new Map<string, ElementNode>();
   const animations: ElementNode[] = [];
+  const choices: ElementNode[] = [];
 
   const visit = (el: ElementNode, insideLink: boolean) => {
     const rule = own(ELEMENTS, el.name);
@@ -103,6 +106,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       else ids.set(id.value, el);
     }
     if (el.name === 'animate') animations.push(el);
+    if (el.name === 'choice') choices.push(el);
     if (el.name === 'a' && insideLink) report('nested-link', 'A link cannot be inside another link', el.start);
 
     // Children.
@@ -173,7 +177,33 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       report('bad-target', 'An ambient light has no position to animate', target.start);
     }
   }
-  return problems;
+  // Choices (0.2): what they change, and their options' values.
+  for (const choice of choices) {
+    const target = attr(choice, 'target');
+    const material = attr(choice, 'material');
+    if (target && !material) report('missing-attribute', '<choice> with a "target" needs the attribute "material"', choice.start);
+    if (material && !target) report('missing-attribute', '<choice> with a "material" needs the attribute "target"', choice.start);
+    if (target?.value?.startsWith('#')) {
+      const el = ids.get(target.value.slice(1));
+      if (!el) report('unknown-target', `No element has the id "${target.value.slice(1)}"`, target.start);
+      else if (el.name !== 'model') report('bad-target', `A <choice> changes a <model>'s material, not a <${el.name}>`, target.start);
+    }
+    const values = new Set<string>();
+    for (const option of choice.children) {
+      if (option.type !== 'element' || option.name !== 'option') continue;
+      const given = attr(option, 'value');
+      const text = option.children.map((c) => (c.type === 'text' ? c.value : '')).join('').replace(/\s+/g, ' ').trim();
+      const value = given?.value ?? text;
+      if (values.has(value)) report('bad-value', `Two options of this <choice> have the value "${value}"`, given?.start ?? option.start);
+      values.add(value);
+    }
+    const chosen = attr(choice, 'value');
+    if (chosen?.value !== undefined && chosen.value !== null && values.size > 0 && !values.has(chosen.value)) {
+      report('bad-value', `"value": "${chosen.value}" is not one of its options' values`, chosen.start);
+    }
+  }
+  // In document order (SPEC.md section 8): the checks above that need every id come after the walk.
+  return problems.sort((a, b) => a.line - b.line || a.column - b.column);
 }
 
 interface Context {
@@ -320,6 +350,11 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
         : { code: 'unsupported-version', message: `This checker knows HoloML ${ctx.known.join(' and ')}, not "${value}"` };
     case 'animation-value':
       return null; // chosen by what is animated, in checkAttributes()
+    case 'tiling': {
+      const parts = v.split(/\s+/);
+      if ((parts.length !== 1 && parts.length !== 2) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or two, such as "3" or "3 2"`);
+      return parts.every((p) => Number(p) > 0 && finite(p)) ? null : bad('must be more than 0');
+    }
     case 'repeat':
       if (v === 'indefinite') return null;
       if (!/^\d+$/.test(v) || Number(v) < 1) return bad('must be a whole number of times, or "indefinite"');
@@ -334,6 +369,8 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
       if (kind.for === 'model' && !MODEL_FILE.test(path)) return bad('a model must be a glTF file (.gltf or .glb)');
       if (kind.for === 'script' && !SCRIPT_FILE.test(path)) return bad('a script must be a JavaScript file (.js or .mjs)');
       if (kind.for === 'sound' && !SOUND_FILE.test(path)) return bad('a sound must be an Ogg, MP3, or WAV file (.ogg, .mp3, or .wav)');
+      if (kind.for === 'picture' && !PICTURE_FILE.test(path)) return bad('a picture must be a PNG, JPEG, or WebP file (.png, .jpg, .jpeg, or .webp)');
+      if (kind.for === 'environment' && !ENVIRONMENT_FILE.test(path)) return bad('the surroundings must be an HDR, PNG, or JPEG picture (.hdr, .png, .jpg, or .jpeg)');
       return null;
     }
   }

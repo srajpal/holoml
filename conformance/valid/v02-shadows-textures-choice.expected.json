@@ -1,0 +1,415 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Shadows, textures, a choice, and surroundings",
+                "at": "3:12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "5:3",
+        "attributes": [
+          [
+            "environment",
+            "light/studio.hdr",
+            "5:10"
+          ]
+        ],
+        "children": [
+          {
+            "element": "viewpoint",
+            "at": "6:5",
+            "attributes": [
+              [
+                "position",
+                "0 1.4 4",
+                "6:16"
+              ],
+              [
+                "look-at",
+                "0 0.5 0",
+                "6:35"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "7:5",
+            "attributes": [
+              [
+                "type",
+                "directional",
+                "7:12"
+              ],
+              [
+                "position",
+                "3 6 4",
+                "7:31"
+              ],
+              [
+                "look-at",
+                "0 0 0",
+                "7:48"
+              ],
+              [
+                "shadows",
+                null,
+                "7:64"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "8:5",
+            "attributes": [
+              [
+                "type",
+                "spot",
+                "8:12"
+              ],
+              [
+                "position",
+                "0 4 0",
+                "8:24"
+              ],
+              [
+                "look-at",
+                "0 0 0",
+                "8:41"
+              ],
+              [
+                "angle",
+                "40",
+                "8:57"
+              ],
+              [
+                "shadows",
+                null,
+                "8:68"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "9:5",
+            "attributes": [
+              [
+                "type",
+                "point",
+                "9:12"
+              ],
+              [
+                "position",
+                "-2 2 1",
+                "9:25"
+              ],
+              [
+                "range",
+                "8",
+                "9:43"
+              ],
+              [
+                "shadows",
+                null,
+                "9:53"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "group",
+            "at": "10:5",
+            "attributes": [
+              [
+                "shadows",
+                null,
+                "10:12"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "11:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/floor.glb",
+                    "11:14"
+                  ]
+                ],
+                "children": [
+                  {
+                    "element": "material",
+                    "at": "12:9",
+                    "attributes": [
+                      [
+                        "name",
+                        "Boards",
+                        "12:19"
+                      ],
+                      [
+                        "map",
+                        "textures/oak.jpg",
+                        "12:33"
+                      ],
+                      [
+                        "normal-map",
+                        "textures/oak-normal.jpg",
+                        "12:56"
+                      ],
+                      [
+                        "roughness-map",
+                        "textures/oak-rough.jpg",
+                        "12:93"
+                      ],
+                      [
+                        "repeat",
+                        "4",
+                        "12:132"
+                      ]
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "element": "model",
+            "at": "15:5",
+            "attributes": [
+              [
+                "id",
+                "sofa",
+                "15:12"
+              ],
+              [
+                "src",
+                "models/sofa.glb",
+                "15:22"
+              ],
+              [
+                "shadows",
+                null,
+                "15:44"
+              ]
+            ],
+            "children": [
+              {
+                "element": "material",
+                "at": "16:7",
+                "attributes": [
+                  [
+                    "name",
+                    "Fabric",
+                    "16:17"
+                  ],
+                  [
+                    "map",
+                    "textures/linen.jpg",
+                    "16:31"
+                  ],
+                  [
+                    "repeat",
+                    "3 2",
+                    "16:56"
+                  ],
+                  [
+                    "roughness",
+                    "0.9",
+                    "16:69"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "element": "choice",
+            "at": "18:5",
+            "attributes": [
+              [
+                "id",
+                "fabric",
+                "18:13"
+              ],
+              [
+                "corner",
+                "bottom-left",
+                "18:25"
+              ],
+              [
+                "label",
+                "Fabric",
+                "18:46"
+              ],
+              [
+                "target",
+                "#sofa",
+                "18:61"
+              ],
+              [
+                "material",
+                "Fabric",
+                "18:76"
+              ],
+              [
+                "value",
+                "linen",
+                "18:94"
+              ]
+            ],
+            "children": [
+              {
+                "element": "option",
+                "at": "19:7",
+                "attributes": [
+                  [
+                    "value",
+                    "linen",
+                    "19:15"
+                  ],
+                  [
+                    "map",
+                    "textures/linen.jpg",
+                    "19:29"
+                  ],
+                  [
+                    "normal-map",
+                    "textures/linen-normal.jpg",
+                    "19:54"
+                  ],
+                  [
+                    "roughness-map",
+                    "textures/linen-rough.jpg",
+                    "19:93"
+                  ],
+                  [
+                    "repeat",
+                    "3 2",
+                    "19:134"
+                  ]
+                ],
+                "children": [
+                  {
+                    "text": "Linen",
+                    "at": "19:147"
+                  }
+                ]
+              },
+              {
+                "element": "option",
+                "at": "20:7",
+                "attributes": [
+                  [
+                    "value",
+                    "velvet",
+                    "20:15"
+                  ],
+                  [
+                    "color",
+                    "#3b5d7a",
+                    "20:30"
+                  ],
+                  [
+                    "roughness",
+                    "0.6",
+                    "20:46"
+                  ],
+                  [
+                    "metalness",
+                    "0",
+                    "20:62"
+                  ],
+                  [
+                    "opacity",
+                    "1",
+                    "20:76"
+                  ]
+                ],
+                "children": [
+                  {
+                    "text": "Velvet",
+                    "at": "20:88"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "element": "choice",
+            "at": "22:5",
+            "attributes": [
+              [
+                "id",
+                "light",
+                "22:13"
+              ],
+              [
+                "corner",
+                "top-left",
+                "22:24"
+              ],
+              [
+                "label",
+                "Light",
+                "22:42"
+              ]
+            ],
+            "children": [
+              {
+                "element": "option",
+                "at": "23:7",
+                "attributes": [],
+                "children": [
+                  {
+                    "text": "Day",
+                    "at": "23:15"
+                  }
+                ]
+              },
+              {
+                "element": "option",
+                "at": "24:7",
+                "attributes": [],
+                "children": [
+                  {
+                    "text": "Evening",
+                    "at": "24:15"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

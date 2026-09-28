@@ -18,7 +18,9 @@ export type ValueKind =
   | { kind: 'scale' }
   | { kind: 'color' }
   | { kind: 'duration' }
-  | { kind: 'url'; for: 'model' | 'link' | 'script' | 'sound' }
+  | { kind: 'url'; for: 'model' | 'link' | 'script' | 'sound' | 'picture' | 'environment' }
+  /** One number more than 0 (the same both ways) or two: how many times a picture tiles. */
+  | { kind: 'tiling' }
   | { kind: 'id' }
   /** "#" and the id of an element in the same document. */
   | { kind: 'idref' }
@@ -65,6 +67,18 @@ const place = {
   scale: { value: { kind: 'scale' } },
 } as const satisfies Record<string, AttributeRule>;
 
+/** A material's look: what `material` and `option` may set. The pictures and tiling are 0.2. */
+const LOOK = {
+  color: { value: { kind: 'color' } },
+  metalness: { value: { kind: 'number', min: 0, max: 1 } },
+  roughness: { value: { kind: 'number', min: 0, max: 1 } },
+  opacity: { value: { kind: 'number', min: 0, max: 1 } },
+  map: { value: { kind: 'url', for: 'picture' }, since: '0.2' },
+  'normal-map': { value: { kind: 'url', for: 'picture' }, since: '0.2' },
+  'roughness-map': { value: { kind: 'url', for: 'picture' }, since: '0.2' },
+  repeat: { value: { kind: 'tiling' }, since: '0.2' },
+} as const satisfies Record<string, AttributeRule>;
+
 /** What may stand in a scene or a group. */
 const SCENE_CONTENT = ['group', 'model', 'light', 'label', 'a', 'animate', 'sound'] as const;
 
@@ -94,16 +108,17 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     attributes: { src: { value: { kind: 'url', for: 'script' }, required: true } },
   },
   scene: {
-    children: [...SCENE_CONTENT, 'viewpoint', 'hud', 'slider'],
+    children: [...SCENE_CONTENT, 'viewpoint', 'hud', 'slider', 'choice'],
     once: ['viewpoint'],
     attributes: {
       id: { value: { kind: 'id' }, since: '0.2' },
       background: { value: { kind: 'color' } },
+      environment: { value: { kind: 'url', for: 'environment' }, since: '0.2' },
     },
   },
   group: {
     children: SCENE_CONTENT,
-    attributes: { ...place, solid: { value: { kind: 'flag' }, since: '0.2' } },
+    attributes: { ...place, solid: { value: { kind: 'flag' }, since: '0.2' }, shadows: { value: { kind: 'flag' }, since: '0.2' } },
   },
   model: {
     children: ['material'],
@@ -113,16 +128,14 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       animation: { value: { kind: 'text' } },
       autoplay: { value: { kind: 'flag' } },
       solid: { value: { kind: 'flag' }, since: '0.2' },
+      shadows: { value: { kind: 'flag' }, since: '0.2' },
     },
   },
   material: {
     children: 'none',
     attributes: {
       name: { value: { kind: 'text' }, required: true },
-      color: { value: { kind: 'color' } },
-      metalness: { value: { kind: 'number', min: 0, max: 1 } },
-      roughness: { value: { kind: 'number', min: 0, max: 1 } },
-      opacity: { value: { kind: 'number', min: 0, max: 1 } },
+      ...LOOK,
     },
   },
   viewpoint: {
@@ -149,6 +162,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       'look-at': { value: { kind: 'vector3' } },
       range: { value: { kind: 'number', min: 0 } },
       angle: { value: { kind: 'number', min: 0, max: 90 } },
+      shadows: { value: { kind: 'flag' }, since: '0.2' },
     },
   },
   label: {
@@ -219,6 +233,34 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       value: { value: { kind: 'number' } },
     },
   },
+  /**
+   * A choice in place (issue #9): options on the screen that change a
+   * model's material, or, without a target, a choice for scripts
+   * (checked in index.ts: target and material together, a model target,
+   * option values unique, value one of them).
+   */
+  choice: {
+    since: '0.2',
+    children: ['option'],
+    needs: ['option'],
+    attributes: {
+      id: { value: { kind: 'id' } },
+      corner: { value: { kind: 'choice', values: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] } },
+      label: { value: { kind: 'text' } },
+      target: { value: { kind: 'idref' } },
+      material: { value: { kind: 'text' } },
+      value: { value: { kind: 'text' } },
+    },
+  },
+  /** One option of a choice: its label, its value, and the material's new look. */
+  option: {
+    since: '0.2',
+    children: 'text',
+    attributes: {
+      value: { value: { kind: 'text' } },
+      ...LOOK,
+    },
+  },
 };
 
 /** Light attributes that only some light types use. */
@@ -227,6 +269,7 @@ export const LIGHT_ONLY: Readonly<Record<string, readonly string[]>> = {
   'look-at': ['directional', 'spot'],
   range: ['point', 'spot'],
   angle: ['spot'],
+  shadows: ['directional', 'point', 'spot'],
 };
 
 /** Which elements each animated attribute applies to, and since which version. */
