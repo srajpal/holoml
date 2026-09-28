@@ -1,6 +1,7 @@
 # Publishes examples/ with GitHub Pages, so the showroom is at
 # https://srajpal.github.io/holoml/showroom/ (browser milestone 16, owner
-# prompt 81, Q1 a) and Blockworld at .../blockworld/ (milestone 17).
+# prompt 81, Q1 a), Blockworld at .../blockworld/ (milestone 17), and the
+# sofa studio at .../sofa-studio/ (milestone 18).
 # Static files only; nothing is built.
 name: Pages
 

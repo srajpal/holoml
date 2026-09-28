@@ -1,0 +1,64 @@
+<holoml version="0.2">
+  <head>
+    <title>Sofa studio</title>
+    <meta name="description" content="A sofa in a sunlit room: choose its fabric and its wood in place, see the price follow, and switch to evening light. A HoloML 0.2 shop page." />
+    <meta name="author" content="The HoloML Authors" />
+    <script src="studio.js" />
+  </head>
+  <!-- Lit by a photo studio's panorama (light/studio.hdr) and the window's
+       sun; the room, the rug, and the furniture cast and receive shadows. -->
+  <scene id="room" background="#e9e4dc" environment="light/studio.hdr">
+    <viewpoint position="1.25 1.15 2.2" look-at="0 0.45 -0.35" />
+
+    <light id="fill" type="ambient" intensity="0.3" />
+    <light id="window" type="directional" position="-3.4 3.3 1.6" look-at="0 0.3 -0.2" intensity="2" color="#fff3e2" shadows />
+    <!-- The table lamp: off by day; in the evening (studio.js) a warm pool of light, and a glow around it. -->
+    <light id="lamp-light" type="spot" position="1.13 0.86 -0.45" look-at="0.75 0 0.1" angle="55" range="4" intensity="0" color="#ffc47a" shadows />
+    <light id="lamp-glow" type="point" position="1.13 0.86 -0.45" range="1.6" intensity="0" color="#ffb45e" />
+
+    <group shadows>
+      <model src="models/room.gltf">
+        <material name="Wall" color="#d6cdc0" />
+      </model>
+      <model src="models/rug.gltf" position="0 0 0.45" />
+      <!-- The sofa: its "Fabric" and "Wood" materials are what the choices change. -->
+      <model id="sofa" src="models/sofa.gltf" position="0 0 -0.42" />
+      <model src="models/coffee-table.gltf" position="-0.3 0 0.95" rotation="0 90 0" />
+      <model src="models/vase.gltf" position="-0.62 0.39 0.93" />
+      <model src="models/side-table.gltf" position="1.2 0 -0.45" />
+      <model src="models/lamp.gltf" position="1.2 0.548 -0.5" rotation="0 -30 0" />
+      <model src="models/plant.gltf" position="-1.4 0 -0.45" />
+    </group>
+
+    <a href="cart.html">
+      <label position="0 1.45 -0.35" size="0.12" color="#1d6fa5">Add to cart</label>
+    </a>
+    <a href="about.holoml">
+      <label position="-1.6 1.75 -0.35" size="0.07" color="#5b6472">About this studio</label>
+    </a>
+
+    <hud id="price" corner="top-right" size="20" color="#1d2330">
+      Linden two-seat sofa
+      Stone weave · Walnut
+      $1,290
+    </hud>
+
+    <choice id="fabric" corner="bottom-left" label="Fabric" target="#sofa" material="Fabric" value="stone">
+      <option value="stone">Stone weave</option>
+      <option value="linen" map="textures/linen-color.jpg" normal-map="textures/linen-normal.jpg" roughness-map="textures/linen-rough.jpg" repeat="3">Blue linen</option>
+      <option value="velvet" map="textures/velvet-color.jpg" normal-map="textures/velvet-normal.jpg" roughness-map="textures/velvet-rough.jpg" repeat="3">Red velvet</option>
+      <option value="check" map="textures/boucle-color.jpg" normal-map="textures/boucle-normal.jpg" roughness-map="textures/boucle-rough.jpg" repeat="4">Wool check</option>
+      <option value="leather" map="textures/leather-color.jpg" normal-map="textures/leather-normal.jpg" roughness-map="textures/leather-rough.jpg" repeat="2">Brown leather</option>
+    </choice>
+    <choice id="wood" corner="bottom-left" label="Wood" target="#sofa" material="Wood" value="walnut">
+      <option value="walnut">Walnut</option>
+      <option value="oak" map="textures/sofa-wood-oak.jpg">Oak</option>
+      <option value="ebony" map="textures/sofa-wood-ebony.jpg">Ebony</option>
+    </choice>
+    <!-- A choice for the script alone: it changes the lights (studio.js). -->
+    <choice id="time" corner="top-left" label="Light" value="day">
+      <option value="day">Day</option>
+      <option value="evening">Evening</option>
+    </choice>
+  </scene>
+</holoml>

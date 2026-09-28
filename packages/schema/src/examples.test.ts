@@ -7,6 +7,7 @@ import { check } from './index.ts';
 
 interface GltfJson {
   materials?: { name: string }[];
+  buffers?: { uri?: string }[];
   images?: { uri?: string }[];
   meshes?: { primitives: { indices?: number; attributes: Record<string, number> }[] }[];
   accessors: { count: number }[];
@@ -28,7 +29,7 @@ describe('examples', () => {
   });
 
   for (const file of files) {
-    it(`${file.slice(EXAMPLES.length).replace(/\\/g, '/')} is valid HoloML 0.1`, () => {
+    it(`${file.slice(EXAMPLES.length).replace(/\\/g, '/')} is valid HoloML`, () => {
       expect(check(parse(readFileSync(file, 'utf8')))).toEqual([]);
     });
   }
@@ -93,6 +94,47 @@ describe('examples', () => {
     for (const pack of ['Voxel Pack', 'Impact Sounds', 'Interface Sounds', 'Music Jingles']) expect(credits).toContain(pack);
     expect(credits).toMatch(/CC0/);
     expect(credits).toMatch(/birds\.wav and crickets\.wav: made for this game/);
+  });
+
+  it('the sofa studio names only files that exist, and stays within 15 MB and 200,000 triangles', () => {
+    const dir = join(EXAMPLES, 'sofa-studio');
+    const page = readFileSync(join(dir, 'index.holoml'), 'utf8');
+    // Models, the script, the options' pictures, and the panorama; each file counted once.
+    const named = new Set([...page.matchAll(/(?:src|map|normal-map|roughness-map|environment)="([^"]+)"/g)].map((m) => m[1]!));
+    expect(named).toContain('studio.js');
+    expect(named).toContain('models/sofa.gltf');
+    expect(named).toContain('light/studio.hdr');
+    const files = new Set<string>();
+    let triangles = 0;
+    for (const src of named) {
+      const path = join(dir, src);
+      files.add(path);
+      if (!src.endsWith('.gltf')) continue;
+      const g = gltfJson(path);
+      for (const b of g.buffers ?? []) if (b.uri && !b.uri.startsWith('data:')) files.add(join(dirname(path), b.uri));
+      for (const image of g.images ?? []) if (image.uri && !image.uri.startsWith('data:')) files.add(join(dirname(path), image.uri));
+      for (const mesh of g.meshes ?? []) for (const p of mesh.primitives) triangles += g.accessors[p.indices ?? p.attributes['POSITION']!]!.count / 3;
+    }
+    let bytes = 0;
+    for (const path of files) bytes += statSync(path).size;
+    expect(bytes).toBeLessThan(15 * 1024 * 1024);
+    expect(triangles).toBeLessThan(200_000);
+  });
+
+  it("the sofa studio's choices change materials the sofa has", () => {
+    const page = readFileSync(join(EXAMPLES, 'sofa-studio/index.holoml'), 'utf8');
+    const materials = (gltfJson(join(EXAMPLES, 'sofa-studio/models/sofa.gltf')).materials ?? []).map((m) => m.name);
+    const targets = [...page.matchAll(/<choice [^>]*target="#sofa" material="([^"]+)"/g)].map((m) => m[1]!);
+    expect(targets).toEqual(['Fabric', 'Wood']);
+    for (const name of targets) expect(materials).toContain(name);
+  });
+
+  it('the sofa studio credits Poly Haven, and its about page says where things come from', () => {
+    const credits = readFileSync(join(EXAMPLES, 'sofa-studio/models/CREDITS.md'), 'utf8');
+    expect(credits).toMatch(/Poly Haven/);
+    expect(credits).toMatch(/CC0/);
+    for (const asset of ['Sofa 01', 'Rough Linen', 'Velour Velvet', 'Wool Boucle', 'Brown Leather', 'Brown Photostudio 02']) expect(credits).toContain(asset);
+    expect(readFileSync(join(EXAMPLES, 'sofa-studio/about.holoml'), 'utf8')).toMatch(/Poly Haven \(polyhaven\.com, CC0\)/);
   });
 
   it('the showroom credits its models, and the about page says where they come from', () => {
