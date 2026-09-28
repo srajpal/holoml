@@ -579,7 +579,9 @@ it runs each time the viewer clicks its trigger (its `trigger`, or an
 `animate`'s own target). With `toggle`, an animation runs forward on
 one click and back on the next, from wherever it is; without it, each
 click runs it again from `from`. A trigger may start several actions
-at once, such as a door's swing and its creak. A renderer shows that a
+at once, such as a door's swing and its creak. A click on something a
+trigger holds (a model in a group) is a click on the trigger; where one
+trigger holds another, the innermost runs. A renderer shows that a
 trigger can be clicked (the pointer, a highlight), makes each trigger's
 actions a control that the keyboard and screen readers reach (named by
 its actions' `label`), and, when the viewer asked for reduced motion,
