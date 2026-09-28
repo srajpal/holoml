@@ -18,8 +18,8 @@ const WOODS = {
   ebony: { name: 'Ebony', price: 120 },
 };
 const LIGHTS = {
-  day: { fill: 0.3, sun: 2, sunColor: '#fff3e2', lamp: 0, glow: 0, background: '#e9e4dc' },
-  evening: { fill: 0.07, sun: 0.2, sunColor: '#ff9f6b', lamp: 2.2, glow: 0.35, background: '#262a36' },
+  day: { fill: 0.3, sun: 2, sunColor: '#fff3e2', lamp: 0, glow: 0, background: '#e9e4dc', cart: '#1d6fa5', about: '#5b6472' },
+  evening: { fill: 0.07, sun: 0.2, sunColor: '#ff9f6b', lamp: 2.2, glow: 0.35, background: '#262a36', cart: '#8fd0ff', about: '#d9d2c5' },
 };
 const KEY = 'sofa-studio';
 
@@ -41,7 +41,7 @@ function showPrice() {
   }
 }
 
-/** Day or evening: the fill and the window's sun dim, the lamp comes on, and the room behind goes dark. */
+/** Day or evening: the fill and the window's sun dim, the lamp comes on, the room behind goes dark, and the links grow lighter. */
 function showLight(which) {
   const l = LIGHTS[which];
   holoml.find('fill').intensity = l.fill;
@@ -51,6 +51,8 @@ function showLight(which) {
   holoml.find('lamp-glow').intensity = l.glow;
   holoml.background = l.background;
   price.color = which === 'evening' ? '#f2efe8' : '#1d2330';
+  holoml.find('cart-label').color = l.cart;
+  holoml.find('about-label').color = l.about;
 }
 
 holoml.on('change', (e) => {
