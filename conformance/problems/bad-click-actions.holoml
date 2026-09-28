@@ -1,0 +1,23 @@
+<holoml version="0.2">
+  <scene sky="light/harbour.gif">
+    <viewpoint position="0 1.6 4" />
+    <viewpoint id="kitchen" position="3 1.6 1" />
+    <light id="lamp" type="point" position="0 2 0" />
+    <model id="door" src="models/door.glb" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" toggle />
+    <animate target="#lamp" attribute="intensity" to="1" duration="1s" begin="click" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" trigger="#lamp" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" trigger="#nothing" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" toggle repeat="2" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="soon" />
+    <sound src="sounds/door.ogg" begin="click" />
+    <sound src="sounds/door.ogg" begin="click" trigger="#door" autoplay />
+    <sound src="sounds/door.ogg" trigger="#door" />
+    <panel width="0" />
+    <group>
+      <plan src="plans/loft.png" area="-6 -4 6 4" />
+    </group>
+    <plan src="plans/loft.png" area="6 -4 -6 4" />
+    <plan src="plans/loft.png" area="-6 -4 6 4" />
+  </scene>
+</holoml>
