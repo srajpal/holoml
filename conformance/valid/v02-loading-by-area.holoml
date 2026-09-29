@@ -1,0 +1,15 @@
+<holoml version="0.2">
+  <scene>
+    <viewpoint position="0 1.6 8" mode="walk" />
+    <group id="left-wall" position="-4 0 0" load="near" near="6">
+      <model src="models/shoe.glb" stand-in="models/shoe-far.glb" position="0 1 0" />
+      <model src="models/shoe-beach.glb" position="0 1.4 0" />
+    </group>
+    <group position="4 0 0" load="near">
+      <model src="models/shoe.glb" />
+    </group>
+    <group load="page">
+      <model src="models/counter.glb" stand-in="models/counter-far.glb" />
+    </group>
+  </scene>
+</holoml>

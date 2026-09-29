@@ -166,6 +166,64 @@ describe('examples', () => {
     expect(readFileSync(join(EXAMPLES, 'harbour-loft/about.holoml'), 'utf8')).toMatch(/Poly Haven \(polyhaven\.com, CC0\)/);
   });
 
+  /** A .glb file's triangles (each mesh once, as the store's models have one each). */
+  const trianglesOf = (file: string) => {
+    const g = gltfJson(file);
+    let n = 0;
+    for (const mesh of g.meshes ?? []) for (const p of mesh.primitives) n += g.accessors[p.indices ?? p.attributes['POSITION']!]!.count / 3;
+    return n;
+  };
+
+  it("the sneaker store's pages name only files that exist, and the store stays within the page limits with every shelf in", () => {
+    const dir = join(EXAMPLES, 'sneaker-store');
+    for (const name of ['index.holoml', 'shoe.holoml', 'about.holoml']) {
+      const page = readFileSync(join(dir, name), 'utf8');
+      for (const [, src] of page.matchAll(/(?:src|stand-in|map)="([^"]+)"/g)) expect(statSync(join(dir, src!)).size, `${src} in ${name}`).toBeGreaterThan(0);
+    }
+    const store = readFileSync(join(dir, 'index.holoml'), 'utf8');
+    const models = [...store.matchAll(/<model [^>]*src="([^"]+)"/g)].map((m) => m[1]!);
+    const standIns = [...store.matchAll(/stand-in="([^"]+)"/g)].map((m) => m[1]!);
+    // Drawn as the viewer could at most have it: every shoe in, and every stand-in (a stand-in counts while the page shows it).
+    const triangles = [...models, ...standIns].reduce((sum, src) => sum + trianglesOf(join(dir, src)), 0);
+    expect(triangles).toBeLessThan(2_000_000);
+    // Each file once: the page's own, every colourway's model and stand-in, and the script and its module.
+    let bytes = 0;
+    for (const src of new Set([...models, ...standIns, 'store.js', 'colourways.js'])) bytes += statSync(join(dir, src)).size;
+    expect(bytes).toBeLessThan(12 * 1024 * 1024);
+  });
+
+  it("the sneaker store's shelves load by area: ten groups, and every shoe in them with a lighter stand-in", () => {
+    const dir = join(EXAMPLES, 'sneaker-store');
+    const store = readFileSync(join(dir, 'index.holoml'), 'utf8');
+    const groups = [...store.matchAll(/<group load="near" near="([\d.]+)"[^>]*>([\s\S]*?)<\/group>/g)];
+    expect(groups).toHaveLength(10);
+    for (const [, near, body] of groups) {
+      expect(Number(near)).toBeGreaterThan(0);
+      const shoes = [...body!.matchAll(/<model [^>]*src="([^"]+)" stand-in="([^"]+)"/g)];
+      expect(shoes).toHaveLength(6);
+      for (const [, src, standIn] of shoes) expect(trianglesOf(join(dir, standIn!))).toBeLessThan(trianglesOf(join(dir, src!)) / 5);
+    }
+  });
+
+  it("the sneaker store's colour choice changes the shoe's material, and offers every colourway", () => {
+    const dir = join(EXAMPLES, 'sneaker-store');
+    const page = readFileSync(join(dir, 'shoe.holoml'), 'utf8');
+    expect(page).toMatch(/<choice id="colour" [^>]*target="#shoe" material="Shoe"/);
+    expect((gltfJson(join(dir, 'models/shoe.glb')).materials ?? []).map((m) => m.name)).toContain('Shoe');
+    const options = [...page.matchAll(/<option value="(\w+)"/g)].map((m) => m[1]!);
+    for (const id of ['midnight', 'beach', 'street', 'forest', 'sunset', 'lemon', 'violet', 'sky', 'cloud', 'ember']) {
+      expect(options).toContain(id);
+      expect(statSync(join(dir, `models/shoe-${id}.glb`)).size).toBeGreaterThan(0);
+    }
+  });
+
+  it('the sneaker store credits the shoe (Shopify, CC BY 4.0), on its about page and in its credits', () => {
+    const dir = join(EXAMPLES, 'sneaker-store');
+    const credits = readFileSync(join(dir, 'models/CREDITS.md'), 'utf8');
+    for (const words of ['Materials Variants Shoe', '© 2021 Shopify, Inc.', 'CC BY 4.0', 'Khronos glTF', 'painted out']) expect(credits).toContain(words);
+    for (const page of ['about.holoml', 'index.html']) expect(readFileSync(join(dir, page), 'utf8')).toMatch(/Materials Variants Shoe" © 2021 Shopify, Inc\., from the Khronos glTF Sample Assets/);
+  });
+
   it('the showroom credits its models, and the about page says where they come from', () => {
     const credits = readFileSync(join(EXAMPLES, 'showroom/models/CREDITS.md'), 'utf8');
     expect(credits).toMatch(/Kenney/);

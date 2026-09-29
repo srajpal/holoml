@@ -4,3 +4,9 @@ Copyright 2026 The HoloML Authors (see AUTHORS)
 The code is licensed under the Apache License, Version 2.0 (see LICENSE).
 The specification text is licensed under the Creative Commons
 Attribution 4.0 International License (see LICENSE-SPEC).
+
+The examples use models, pictures, and sounds from other people, each
+credited in its example's models/CREDITS.md. All are CC0 (no
+conditions) except the sneaker store's shoe, "Materials Variants Shoe"
+© 2021 Shopify, Inc., from the Khronos glTF Sample Assets, under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0).

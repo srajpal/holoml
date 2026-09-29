@@ -1,0 +1,16 @@
+<holoml version="0.2">
+  <scene>
+    <group near="6">
+      <model src="models/shoe.glb" />
+    </group>
+    <group load="far">
+      <model src="models/shoe.glb" />
+    </group>
+    <group load="near" near="0">
+      <model src="models/shoe.glb" />
+    </group>
+    <group load="page" near="4">
+      <model src="models/shoe.glb" stand-in="" />
+    </group>
+  </scene>
+</holoml>
