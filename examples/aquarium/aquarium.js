@@ -312,7 +312,8 @@ function clicked(e) {
   let best = null;
   let nearest = Infinity;
   for (const f of fish) {
-    const to = sub(f.p, eye);
+    // Where the fish is now (a script, or reduced motion, may have put it there).
+    const to = sub(f.thing.position, eye);
     const along = to[0] * ray[0] + to[1] * ray[1] + to[2] * ray[2];
     if (along < reach - 0.5) continue;
     const off = length(sub(to, scale(ray, along)));
