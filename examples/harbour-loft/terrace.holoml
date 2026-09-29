@@ -41,7 +41,7 @@
 
     <!-- The way back: the stair house's door, down to the flat's terrace door. -->
     <a href="index.holoml#terrace-door">
-      <model src="models/door.glb" position="-4.1 0 -0.98">
+      <model id="flat-door" src="models/door.glb" position="-4.1 0 -0.98">
         <material name="DoorPaint" color="#2f3d36" />
       </model>
       <panel position="-2.55 1.6 -0.985" width="0.9" size="0.05" color="#f7f4ee" background="#2f3d36">Back down to the flat</panel>
