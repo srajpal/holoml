@@ -1,4 +1,6 @@
-# The aquarium's fish
+# What the aquarium is made of
+
+## The fish
 
 Each fish was fitted for the tank by tools/prepare.mjs: its materials
 made drawable by three.js, turned, sized, and centred, its pictures made
@@ -16,3 +18,18 @@ whose records give their authors and licences.
 - tuna.glb, Tuna: "Tuna Fish" by GoldenZtuff, https://sketchfab.com/3d-models/c5fad940863f47f784d792ca95e16b42, CC BY 4.0.
 - clownfish.glb, Clownfish: "Clownfish" by zixisun02, https://sketchfab.com/3d-models/47ba2679d91a4f14b3fc0bf8e3805af5, CC BY 4.0.
 - butterflyfish.glb, Copperband butterflyfish: "Copperband Butterflyfish" by Dsanchez13, https://sketchfab.com/3d-models/f96d04dc6ccb4fe4861622ea24fae361, CC BY 4.0.
+
+## From Poly Haven (CC0)
+
+The boulder and the log made lighter (fewer triangles); every picture at 1k:
+
+- Boulder 01 by Rico Cilliers, https://polyhaven.com/a/boulder_01 (boulder.glb).
+- Dead Tree Trunk 02 by Jenelle van Heerden and Rico Cilliers, https://polyhaven.com/a/dead_tree_trunk_02 (log.glb).
+- Lambis Shell by Kuutti Siitonen, https://polyhaven.com/a/lambis_shell (shell.glb).
+- Aerial Beach 01 by Rob Tuytel, https://polyhaven.com/a/aerial_beach_01 (the sand).
+
+## Made here
+
+The tank, the tunnel, the gallery, the plants and their sway, the
+bubbles, the food, the air stones, and the sounds (water, bubbles, the
+food's plop, and the fish buttons' blip) are made by tools/prepare.mjs.
