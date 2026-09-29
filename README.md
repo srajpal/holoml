@@ -16,8 +16,9 @@ markup language of
 which shows HoloML pages. Version 0.2 grows with the browser's example
 sites: so far scripts, sound, text on the screen, walls and gravity, the
 animation of lights, shadows, textured materials, choices that change a
-material in place, and light from the surroundings. Files use the
-extension `.holoml`.
+material in place, light from the surroundings, text of more than one
+line on a board, doors and lamps that work with a click, places to go
+to, a sky, and a floor plan. Files use the extension `.holoml`.
 
 ## Why a new language
 
@@ -73,12 +74,14 @@ holoml/
     showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
     blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night, a speed slider
     sofa-studio/     a HoloML 0.2 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
+    harbour-loft/    a HoloML 0.2 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
 ```
 
 The examples are published with GitHub Pages:
 https://srajpal.github.io/holoml/showroom/,
-https://srajpal.github.io/holoml/blockworld/, and
-https://srajpal.github.io/holoml/sofa-studio/. Open an example's
+https://srajpal.github.io/holoml/blockworld/,
+https://srajpal.github.io/holoml/sofa-studio/, and
+https://srajpal.github.io/holoml/harbour-loft/. Open an example's
 `index.holoml` in a browser that shows HoloML, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
 where they are also listed under "HoloML examples".
