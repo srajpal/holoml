@@ -9,12 +9,16 @@
 //   length, and centred on its middle, by a new root node;
 // - its swimming clip is kept as "Swim" (moving on the spot: the skeleton's
 //   root does not travel) and its other clips are dropped;
-// - a turtle's skeleton gets a swim: its flippers beat like wings.
+// - a turtle's skeleton gets a swim: its flippers beat like wings;
+// - a file more detailed than the tank needs is made lighter, to at most
+//   `triangles` for the whole fish (shapes.mjs thinTo), keeping each
+//   vertex's joints and weights.
 //
 // The binary chunk is packed again with only what is kept, and pictures
 // come from the caller (resized there).
 
 import { GlbWriter, axisAngle, invert, multiply, nodeMatrix, quatMultiply, readAccessor, transformDirection, transformPoint } from './glb.mjs';
+import { budgetShares, thinTo } from './shapes.mjs';
 
 const TURN = {
   '+z': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
@@ -131,7 +135,28 @@ const TURTLE_STROKE = [
  * caller adds the pictures with images()). `pictures(index)` gives the
  * new bytes and type of each of the file's images.
  */
-export function fitFish(name, g, bin, { forward, length, clip, turtle = false, beat = 2.6 }, pictures) {
+/** A primitive's triangles. */
+function trianglesOf(g, p) {
+  return (p.indices !== undefined ? g.accessors[p.indices].count : g.accessors[p.attributes.POSITION].count) / 3;
+}
+
+/** A primitive as a mesh for thinTo: its positions, normals, picture coordinates, and indices, with its joints and weights kept. */
+function primitiveMesh(g, bin, p) {
+  const read = (k) => (p.attributes[k] !== undefined ? readAccessor(g, bin, p.attributes[k]) : null);
+  const positions = Float32Array.from(read('POSITION'));
+  const normals = read('NORMAL');
+  const uvs = read('TEXCOORD_0');
+  const extra = {};
+  for (const k of ['JOINTS_0', 'WEIGHTS_0']) {
+    const data = read(k);
+    if (data) extra[k] = { data, size: 4 };
+  }
+  const count = positions.length / 3;
+  const indices = p.indices !== undefined ? Uint32Array.from(readAccessor(g, bin, p.indices)) : Uint32Array.from({ length: count }, (_, i) => i);
+  return { positions, normals: normals ? Float32Array.from(normals) : null, uvs: uvs ? Float32Array.from(uvs) : null, indices, extra, material: p.material };
+}
+
+export function fitFish(name, g, bin, { forward, length, clip, turtle = false, beat = 2.6, triangles }, pictures) {
   const world = worldMatrices(g);
   const turn = TURN[forward];
   const box = poseBox(g, bin, clip);
@@ -175,8 +200,24 @@ export function fitFish(name, g, bin, { forward, length, clip, turtle = false, b
     moved.set(index, next);
     return next;
   };
+  // The whole fish's triangles, shared among its big parts when it is made lighter (small ones are kept).
+  const parts = json.meshes.flatMap((m) => m.primitives);
+  const shares = triangles ? budgetShares(parts.map((p) => trianglesOf(g, p)), triangles) : parts.map(() => Infinity);
   for (const m of json.meshes) {
     for (const p of m.primitives) {
+      const share = shares[parts.indexOf(p)];
+      if (trianglesOf(g, p) > share && !p.targets) {
+        const thin = thinTo(primitiveMesh(g, bin, p), share);
+        const attributes = {
+          POSITION: w.accessor(thin.positions, 'VEC3', { bounds: true, target: 34962 }),
+          NORMAL: w.accessor(thin.normals, 'VEC3', { target: 34962 }),
+        };
+        if (thin.uvs) attributes.TEXCOORD_0 = w.accessor(thin.uvs, 'VEC2', { target: 34962 });
+        for (const [k, { data }] of Object.entries(thin.extra ?? {})) attributes[k] = w.accessor(data, 'VEC4', { target: 34962 });
+        p.attributes = attributes;
+        p.indices = w.accessor(thin.indices, 'SCALAR', { target: 34963 });
+        continue;
+      }
       p.attributes = Object.fromEntries(Object.entries(p.attributes).map(([k, v]) => [k, copy(v, { bounds: k === 'POSITION', target: 34962 })]));
       if (p.indices !== undefined) p.indices = copy(p.indices, { target: 34963 });
       if (p.targets) p.targets = p.targets.map((t) => Object.fromEntries(Object.entries(t).map(([k, v]) => [k, copy(v, { bounds: k === 'POSITION' })])));

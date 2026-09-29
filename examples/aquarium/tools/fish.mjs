@@ -24,6 +24,8 @@ const sketchfab = (uid) => `https://sketchfab.com/3d-models/${uid}`;
  * forward  which way its head faces in the file (+x, -x, +z, -z)
  * clip     its own swimming clip, kept as "Swim" (others are dropped); without one, rig.mjs makes "Swim"
  * rig      how rig.mjs makes its swim, when it has no clip (riggedFish's options: beat, sway, bend)
+ * triangles  at most this many for the whole fish: a more detailed file is made lighter (shapes.mjs thinTo); the
+ *          tank has many fish, and drawn in software (a computer without a graphics card) each triangle counts
  * credit   for the about page and models/CREDITS.md
  */
 export const FISH = [
@@ -35,6 +37,7 @@ export const FISH = [
     length: 3.2,
     forward: '+z',
     clip: 'swimming',
+    triangles: 12000,
     credit: {
       title: 'shark.glb',
       author: 'the Babylon.js authors',
@@ -51,6 +54,7 @@ export const FISH = [
     forward: '+z',
     clip: null,
     turtle: true,
+    triangles: 14000,
     credit: { title: 'Model 53A - Flatback sea turtle', author: 'DigitalLife3D', source: sketchfab('442372b7f02b4730882d41d959726156'), licence: 'CC BY 4.0' },
   },
   {
@@ -71,6 +75,7 @@ export const FISH = [
     length: 0.35,
     forward: '-x',
     clip: null,
+    triangles: 4000,
     credit: { title: 'Mackerel', author: 'Amy Scott-Murray', source: sketchfab('4e73d0ba00744cd7af781ff44637b0a7'), licence: 'CC BY 4.0' },
   },
   {

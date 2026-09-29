@@ -4,10 +4,12 @@
 
 Each fish was fitted for the tank by tools/prepare.mjs: its materials
 made drawable by three.js, turned, sized, and centred, its pictures made
-smaller, and, where its file had no swim, given a skeleton and one (made
-here). The Sketchfab models come from Objaverse, the Allen Institute for
-AI's copy of Sketchfab's free models (huggingface.co/datasets/allenai/objaverse),
-whose records give their authors and licences.
+smaller, where its file had no swim, given a skeleton and one (made
+here), and the great white shark, the turtle, and the mackerel made
+lighter (fewer triangles). The Sketchfab models come from Objaverse, the
+Allen Institute for AI's copy of Sketchfab's free models
+(huggingface.co/datasets/allenai/objaverse), whose records give their
+authors and licences.
 
 - shark.glb, Great white shark: "shark.glb" by the Babylon.js authors, https://github.com/BabylonJS/Assets/blob/master/meshes/shark.glb, CC BY 4.0.
 - turtle.glb, Flatback sea turtle: "Model 53A - Flatback sea turtle" by DigitalLife3D, https://sketchfab.com/3d-models/442372b7f02b4730882d41d959726156, CC BY 4.0.
@@ -21,7 +23,7 @@ whose records give their authors and licences.
 
 ## From Poly Haven (CC0)
 
-The boulder and the log made lighter (fewer triangles); every picture at 1k:
+The boulder, the log, and the shell made lighter (fewer triangles); every picture at 1k:
 
 - Boulder 01 by Rico Cilliers, https://polyhaven.com/a/boulder_01 (boulder.glb).
 - Dead Tree Trunk 02 by Jenelle van Heerden and Rico Cilliers, https://polyhaven.com/a/dead_tree_trunk_02 (log.glb).

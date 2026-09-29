@@ -213,54 +213,145 @@ export function merge(parts) {
 }
 
 /**
- * A thinner copy of a detailed mesh: vertices within the same `cell`
- * (metres) and the same part of the picture are joined into one, and
- * triangles that vanish are dropped; normals are made again.
+ * A thinner copy of a detailed mesh. Its vertices within the same `cell`
+ * (in the mesh's own units) are joined into one place, whatever part of
+ * the picture they belong to, so the surface stays closed where the
+ * picture's parts meet; each place keeps one vertex for each part of the
+ * picture there (a part: vertices joined by triangles), with that part's
+ * picture coordinates and normals averaged, so nothing is drawn from
+ * between two parts. Triangles that vanish are dropped. A mesh may lack
+ * normals or a picture's coordinates (null), and may carry more per-vertex
+ * values in `extra` ({ name: { data, size } }, such as a skeleton's joints
+ * and weights): each vertex keeps its first one's.
  */
-export function thinner(mesh, cell, uvCells = 48) {
-  const { positions: p, uvs } = mesh;
-  const clusters = new Map();
-  const map = new Uint32Array(p.length / 3);
-  for (let i = 0; i < p.length / 3; i++) {
-    const key = `${Math.floor(p[i * 3] / cell)},${Math.floor(p[i * 3 + 1] / cell)},${Math.floor(p[i * 3 + 2] / cell)},${Math.floor(uvs[i * 2] * uvCells)},${Math.floor(uvs[i * 2 + 1] * uvCells)}`;
-    let c = clusters.get(key);
-    if (!c) {
-      c = { index: clusters.size, p: [0, 0, 0], uv: [0, 0], n: 0 };
-      clusters.set(key, c);
+export function thinner(mesh, cell) {
+  const { positions: p, normals: n, uvs, extra } = mesh;
+  const count = p.length / 3;
+  // The picture's parts: vertices joined by triangles.
+  const parent = Int32Array.from({ length: count }, (_, i) => i);
+  const find = (i) => {
+    while (parent[i] !== i) {
+      parent[i] = parent[parent[i]];
+      i = parent[i];
     }
-    c.p = [c.p[0] + p[i * 3], c.p[1] + p[i * 3 + 1], c.p[2] + p[i * 3 + 2]];
-    c.uv = [c.uv[0] + uvs[i * 2], c.uv[1] + uvs[i * 2 + 1]];
-    c.n++;
-    map[i] = c.index;
+    return i;
+  };
+  const join = (a, b) => {
+    const [ra, rb] = [find(a), find(b)];
+    if (ra !== rb) parent[rb] = ra;
+  };
+  for (let i = 0; i < mesh.indices.length; i += 3) {
+    join(mesh.indices[i], mesh.indices[i + 1]);
+    join(mesh.indices[i], mesh.indices[i + 2]);
   }
-  const list = [...clusters.values()];
-  const positions = new Float32Array(list.length * 3);
-  const uv = new Float32Array(list.length * 2);
-  for (const c of list) {
-    positions.set(c.p.map((v) => v / c.n), c.index * 3);
-    uv.set([c.uv[0] / c.n, c.uv[1] / c.n], c.index * 2);
+  // Places, and each place's vertex for each part.
+  const places = new Map();
+  const place = [];
+  const vertices = new Map();
+  const vertex = [];
+  const vertexOf = new Uint32Array(count);
+  for (let i = 0; i < count; i++) {
+    const key = `${Math.floor(p[i * 3] / cell)},${Math.floor(p[i * 3 + 1] / cell)},${Math.floor(p[i * 3 + 2] / cell)}`;
+    let at = places.get(key);
+    if (at === undefined) {
+      at = place.length;
+      places.set(key, at);
+      place.push({ sum: [0, 0, 0], n: 0 });
+    }
+    const pl = place[at];
+    for (let k = 0; k < 3; k++) pl.sum[k] += p[i * 3 + k];
+    pl.n++;
+    const vkey = `${at},${find(i)}`;
+    let v = vertices.get(vkey);
+    if (v === undefined) {
+      v = vertex.length;
+      vertices.set(vkey, v);
+      vertex.push({ place: at, uv: [0, 0], normal: [0, 0, 0], n: 0, first: i });
+    }
+    const vx = vertex[v];
+    if (uvs) [vx.uv[0], vx.uv[1]] = [vx.uv[0] + uvs[i * 2], vx.uv[1] + uvs[i * 2 + 1]];
+    if (n) for (let k = 0; k < 3; k++) vx.normal[k] += n[i * 3 + k];
+    vx.n++;
+    vertexOf[i] = v;
   }
+  // Triangles whose corners fall in fewer than three places vanish; each is kept once.
   const seen = new Set();
   const indices = [];
   for (let i = 0; i < mesh.indices.length; i += 3) {
-    const [a, b, c] = [map[mesh.indices[i]], map[mesh.indices[i + 1]], map[mesh.indices[i + 2]]];
-    if (a === b || b === c || a === c) continue;
+    const [a, b, c] = [vertexOf[mesh.indices[i]], vertexOf[mesh.indices[i + 1]], vertexOf[mesh.indices[i + 2]]];
+    const [pa, pb, pc] = [vertex[a].place, vertex[b].place, vertex[c].place];
+    if (pa === pb || pb === pc || pa === pc) continue;
     const key = [a, b, c].sort((x, y) => x - y).join(',');
     if (seen.has(key)) continue;
     seen.add(key);
     indices.push(a, b, c);
   }
-  const normals = new Float32Array(positions.length);
-  for (let i = 0; i < indices.length; i += 3) {
-    const [a, b, c] = [indices[i], indices[i + 1], indices[i + 2]].map((v) => [positions[v * 3], positions[v * 3 + 1], positions[v * 3 + 2]]);
-    const n = cross(sub(b, a), sub(c, a));
-    for (const v of [indices[i], indices[i + 1], indices[i + 2]]) for (let k = 0; k < 3; k++) normals[v * 3 + k] += n[k];
+  const positions = new Float32Array(vertex.length * 3);
+  const normals = new Float32Array(vertex.length * 3);
+  const uv = uvs ? new Float32Array(vertex.length * 2) : null;
+  const kept = extra ? Object.fromEntries(Object.entries(extra).map(([name, { data, size }]) => [name, { data: new data.constructor(vertex.length * size), size }])) : undefined;
+  vertex.forEach((v, i) => {
+    const pl = place[v.place];
+    positions.set(pl.sum.map((s) => s / pl.n), i * 3);
+    if (uv) uv.set([v.uv[0] / v.n, v.uv[1] / v.n], i * 2);
+    if (n) normals.set(v.normal, i * 3);
+    for (const [name, { data, size }] of Object.entries(extra ?? {})) kept[name].data.set(data.subarray(v.first * size, (v.first + 1) * size), i * size);
+  });
+  // Without normals of its own, the mesh's are made from its faces.
+  if (!n) {
+    for (let i = 0; i < indices.length; i += 3) {
+      const [a, b, c] = [indices[i], indices[i + 1], indices[i + 2]].map((v) => [positions[v * 3], positions[v * 3 + 1], positions[v * 3 + 2]]);
+      const f = cross(sub(b, a), sub(c, a));
+      for (const v of [indices[i], indices[i + 1], indices[i + 2]]) for (let k = 0; k < 3; k++) normals[v * 3 + k] += f[k];
+    }
   }
   for (let v = 0; v < normals.length; v += 3) {
     const l = Math.hypot(normals[v], normals[v + 1], normals[v + 2]) || 1;
     for (let k = 0; k < 3; k++) normals[v + k] /= l;
   }
-  return { positions, normals, uvs: uv, indices: positions.length / 3 > 65535 ? Uint32Array.from(indices) : Uint16Array.from(indices), material: mesh.material };
+  return {
+    positions,
+    normals,
+    uvs: uv,
+    indices: positions.length / 3 > 65535 ? Uint32Array.from(indices) : Uint16Array.from(indices),
+    material: mesh.material,
+    ...(kept ? { extra: kept } : {}),
+  };
+}
+
+/**
+ * How a budget of triangles is shared among a model's parts (their
+ * triangles in `counts`): parts of at most `small` triangles, such as eyes
+ * and claws, are kept as they are, and the others share what is left by
+ * their size.
+ */
+export function budgetShares(counts, budget, small = 2000) {
+  const kept = counts.filter((n) => n <= small).reduce((a, n) => a + n, 0);
+  const big = counts.filter((n) => n > small).reduce((a, n) => a + n, 0);
+  return counts.map((n) => (n <= small ? Infinity : Math.floor(((budget - kept) * n) / big)));
+}
+
+/**
+ * The most detailed thinner copy of a mesh with at most `triangles`
+ * triangles (the mesh itself if it has no more): the cell is found by
+ * halving the range between a 5000th and a quarter of the mesh's size.
+ */
+export function thinTo(mesh, triangles) {
+  if (mesh.indices.length / 3 <= triangles) return mesh;
+  const p = mesh.positions;
+  const min = [Infinity, Infinity, Infinity];
+  const max = [-Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < p.length; i++) [min[i % 3], max[i % 3]] = [Math.min(min[i % 3], p[i]), Math.max(max[i % 3], p[i])];
+  const size = Math.hypot(max[0] - min[0], max[1] - min[1], max[2] - min[2]);
+  let [lo, hi] = [size / 5000, size / 4];
+  let best = thinner(mesh, hi);
+  for (let step = 0; step < 24; step++) {
+    const cell = Math.sqrt(lo * hi);
+    const out = thinner(mesh, cell);
+    if (out.indices.length / 3 <= triangles) [hi, best] = [cell, out];
+    else lo = cell;
+  }
+  return best;
 }
 
 /**

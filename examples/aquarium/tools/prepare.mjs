@@ -7,7 +7,8 @@
 //   three.js can draw, its head to +z, its length in metres, its own swim
 //   kept as "Swim"), or, for a fish whose file has no swim, given a
 //   skeleton and one (rig.mjs); its pictures at most 1,024 pixels a side
-//   (512 for small fish);
+//   (512 for small fish); a file more detailed than the tank needs made
+//   lighter, to the triangles fish.mjs gives it;
 // - the tank (its walls and its water's surface), the sand, the tunnel,
 //   its ledges, the gallery, the walls' pieces, the rocks, the log, the
 //   shell (the Poly Haven models made lighter), plants that sway,
@@ -30,7 +31,7 @@ import { FISH } from './fish.mjs';
 import { fitFish, fitMaterials } from './fit.mjs';
 import { multiply, nodeMatrix, readAccessor, readGlb, readImage, transformDirection, transformPoint } from './glb.mjs';
 import { placedFish, riggedFish } from './rig.mjs';
-import { arch, archRing, box, ellipsoid, ground, material, modelBytes, plantBytes, quad, swayingPlant, thinner } from './shapes.mjs';
+import { arch, archRing, box, budgetShares, ellipsoid, ground, material, modelBytes, plantBytes, quad, swayingPlant, thinTo } from './shapes.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
@@ -80,7 +81,12 @@ function fish() {
     if (f.clip || f.turtle) {
       out = fitFish(f.id, g, bin, f, pictures);
     } else {
-      const prims = placedFish(g, bin, f);
+      let prims = placedFish(g, bin, f);
+      if (f.triangles) {
+        // Made lighter: the whole fish's triangles shared among its big parts (small ones are kept).
+        const shares = budgetShares(prims.map((p) => p.indices.length / 3), f.triangles);
+        prims = prims.map((p, i) => (p.indices.length / 3 > shares[i] ? thinTo(p, shares[i]) : p));
+      }
       out = riggedFish(f.id, prims, { materials: fitMaterials(g), length: f.length, ...(f.rig ?? {}) });
       if (g.images) {
         out.json.images = g.images.map((_, i) => {
@@ -138,15 +144,16 @@ function polyHaven(id) {
 }
 
 function decor() {
+  // At most this many triangles each: the tank has 16 boulders, and their relief is in their pictures.
   const lighter = [
-    ['boulder_01', 'boulder.glb', 0.045],
-    ['dead_tree_trunk_02', 'log.glb', 0.04],
-    ['lambis_shell', 'shell.glb', 0],
+    ['boulder_01', 'boulder.glb', 5000],
+    ['dead_tree_trunk_02', 'log.glb', 6000],
+    ['lambis_shell', 'shell.glb', 3000],
   ];
-  for (const [id, file, cell] of lighter) {
+  for (const [id, file, triangles] of lighter) {
     const { mesh, textures } = polyHaven(id);
-    const part = cell ? thinner(mesh, cell) : mesh;
-    console.log(`${file}: ${mesh.indices.length / 3} triangles${cell ? `, ${part.indices.length / 3} made lighter` : ''}`);
+    const part = thinTo(mesh, triangles);
+    console.log(`${file}: ${mesh.indices.length / 3} triangles, ${part.indices.length / 3} made lighter`);
     write(file, modelBytes(id, [part], { [id]: material(id, { rough: 1, map: 0, normalMap: 1, roughnessMap: 2 }) }, { textures }));
   }
 }
@@ -466,16 +473,18 @@ function credits() {
     '',
     'Each fish was fitted for the tank by tools/prepare.mjs: its materials',
     'made drawable by three.js, turned, sized, and centred, its pictures made',
-    'smaller, and, where its file had no swim, given a skeleton and one (made',
-    'here). The Sketchfab models come from Objaverse, the Allen Institute for',
-    "AI's copy of Sketchfab's free models (huggingface.co/datasets/allenai/objaverse),",
-    'whose records give their authors and licences.',
+    'smaller, where its file had no swim, given a skeleton and one (made',
+    'here), and the great white shark, the turtle, and the mackerel made',
+    'lighter (fewer triangles). The Sketchfab models come from Objaverse, the',
+    "Allen Institute for AI's copy of Sketchfab's free models",
+    '(huggingface.co/datasets/allenai/objaverse), whose records give their',
+    'authors and licences.',
     '',
     ...FISH.map((f) => `- ${f.id}.glb, ${f.name}: "${f.credit.title}" by ${f.credit.author}, ${f.credit.source}, ${f.credit.licence}.`),
     '',
     '## From Poly Haven (CC0)',
     '',
-    'The boulder and the log made lighter (fewer triangles); every picture at 1k:',
+    'The boulder, the log, and the shell made lighter (fewer triangles); every picture at 1k:',
     '',
     ...ph.map((a) => `- ${a.name} by ${a.authors.join(' and ')}, ${a.page} (${a.kind === 'texture' ? 'the sand' : a.id === 'boulder_01' ? 'boulder.glb' : a.id === 'lambis_shell' ? 'shell.glb' : 'log.glb'}).`),
     '',
