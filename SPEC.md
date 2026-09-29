@@ -954,7 +954,7 @@ nothing. After a thing is removed, setting its members does nothing.
 | `scale` | model, group | How big; can be set |
 | `visible` | model, group, label, panel | Whether it is shown; can be set |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
-| `loaded` | model, group | (Read only) Whether its file has loaded (a model), or all its models have (a group); a group that loads by area is not loaded while it is let go |
+| `loaded` | model, group | (Read only) Whether its file has loaded (a model); whether every model in it that is near enough to load has loaded or been left out (a group). A group that loads by area, or is in one, is not loaded while it is let go |
 | `text` | label, panel, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set |
 | `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
 | `intensity` | light | How bright; can be set |
@@ -975,7 +975,7 @@ nothing. After a thing is removed, setting its members does nothing.
 | `key` | A key goes down or up while the page has the keyboard | `key` (the key, as a web page's `KeyboardEvent.key`: `"e"`, `"1"`, `" "`) and `down` (`true` or `false`). The renderer's own keys (walking, turning) still work |
 | `frame` | Before each frame is drawn | `time` (milliseconds since the scene was shown) and `dt` (milliseconds since the last frame). While a script listens for frames, the renderer keeps drawing |
 | `change` | The viewer moves a slider, or picks an option of a choice | `thing` (the slider or the choice) and `value` (a slider's number, or the chosen option's value) |
-| `load` | A group that loads by area (`load="near"`) has loaded its models, or let them go | `thing` (the group) and `loaded` (`true` when its models are in, `false` when they were let go) |
+| `load` | A group that loads by area (`load="near"`) has loaded its models (its `loaded` became `true`), or let them go | `thing` (the group) and `loaded` (`true` when its models are in, `false` when they were let go). A model a script adds to a group already in does not make it tell again |
 
 The keyboard can do whatever the mouse does: with a crosshair, a script
 uses `holoml.aim()` to act on what is in the middle of the view when a
