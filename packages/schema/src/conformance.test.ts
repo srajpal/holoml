@@ -57,6 +57,8 @@ describe('conformance samples (O2, O3, O4)', () => {
         'bad-choice': 'bad-target',
         // HoloML 0.2 (draft), browser milestone 19.
         'bad-click-actions': 'missing-attribute',
+        // HoloML 0.2 (draft), browser milestone 20.
+        'bad-loading-by-area': 'missing-attribute',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }

@@ -1,0 +1,167 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "scene",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "viewpoint",
+            "at": "3:5",
+            "attributes": [
+              [
+                "position",
+                "0 1.6 8",
+                "3:16"
+              ],
+              [
+                "mode",
+                "walk",
+                "3:35"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "group",
+            "at": "4:5",
+            "attributes": [
+              [
+                "id",
+                "left-wall",
+                "4:12"
+              ],
+              [
+                "position",
+                "-4 0 0",
+                "4:27"
+              ],
+              [
+                "load",
+                "near",
+                "4:45"
+              ],
+              [
+                "near",
+                "6",
+                "4:57"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "5:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/shoe.glb",
+                    "5:14"
+                  ],
+                  [
+                    "stand-in",
+                    "models/shoe-far.glb",
+                    "5:36"
+                  ],
+                  [
+                    "position",
+                    "0 1 0",
+                    "5:67"
+                  ]
+                ],
+                "children": []
+              },
+              {
+                "element": "model",
+                "at": "6:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/shoe-beach.glb",
+                    "6:14"
+                  ],
+                  [
+                    "position",
+                    "0 1.4 0",
+                    "6:42"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "element": "group",
+            "at": "8:5",
+            "attributes": [
+              [
+                "position",
+                "4 0 0",
+                "8:12"
+              ],
+              [
+                "load",
+                "near",
+                "8:29"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "9:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/shoe.glb",
+                    "9:14"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "element": "group",
+            "at": "11:5",
+            "attributes": [
+              [
+                "load",
+                "page",
+                "11:12"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "12:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/counter.glb",
+                    "12:14"
+                  ],
+                  [
+                    "stand-in",
+                    "models/counter-far.glb",
+                    "12:39"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

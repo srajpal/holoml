@@ -273,6 +273,8 @@ Holds the same elements as `scene`, except `viewpoint`, `hud`, `slider`,
 | `scale` | scale | `"1"` | How much bigger or smaller |
 | `solid` | flag | off | (0.2) The walker cannot pass through any model in it (see "Walls and gravity") |
 | `shadows` | flag | off | (0.2) Every model in it casts and receives shadows (see "Shadows") |
+| `load` | `page` or `near` | `page` | (0.2) When its models load: with the page, or only while the viewer is near (see "Loading by area") |
+| `near` | number, more than 0 | `10` | (0.2) With `load="near"`: how near, in metres, the viewer comes for its models to load |
 
 ```
 <group id="stand" position="0 0.5 0" rotation="0 45 0">
@@ -296,6 +298,7 @@ A 3D model from a glTF 2.0 file. Holds any number of `material`.
 | `autoplay` | flag | off | Play that animation, repeating, from when the scene is shown |
 | `solid` | flag | off | (0.2) The walker cannot pass through it (see "Walls and gravity") |
 | `shadows` | flag | off | (0.2) It casts and receives shadows (see "Shadows") |
+| `stand-in` | address | none | (0.2) A lighter model shown in its place until it has loaded, and again once it is let go (see "Loading by area") |
 
 With `animation` and no `autoplay`, the model is shown in the first
 frame of that animation (a pose). A renderer that cannot load the file
@@ -460,6 +463,41 @@ without its shadows.
 <group shadows>
   <model src="models/floor.glb" />
   <model src="models/sofa.glb" />
+</group>
+```
+
+### Loading by area
+
+(0.2) A large scene can load its models where the viewer goes. A
+`group` with `load="near"` loads its models, and their pictures, only
+while the viewer's eyes are within `near` metres (10 by default) of the
+group's place (its position in the scene), and lets them go when the
+viewer is farther than half as much again (15 metres by default), so
+that walking along the edge does not load them and let them go again
+and again. A group within reach of where the viewer starts loads with
+the page, and the page is ready (section 10, `holoml.ready`) once those
+have loaded; one farther away loads when the viewer comes near. A model
+in several such groups loads while the viewer is near every one of
+them.
+
+A group's models count toward a renderer's limits (section 7) only
+while they are loaded: a renderer releases them when it lets them go,
+and may wait to load a group that would pass a limit until others are
+let go. A script can tell whether a group's models are in (`loaded`)
+and hear them come and go (the `load` event, section 10).
+
+A model's `stand-in` is a lighter model from the page's own site, such
+as a copy with fewer triangles and smaller pictures: it is shown in the
+model's place, turned and sized as the model, until the model has
+loaded, and again once the model is let go. It loads with its page and
+counts toward the limits like any model. While it stands in, it is
+solid and casts shadows if the model is, and a click on it is a click
+on the model; the model's own `material` changes apply to the model
+only.
+
+```
+<group load="near" near="6" position="-4 0 0">
+  <model src="models/shoe.glb" stand-in="models/shoe-far.glb" position="0 1 0" />
 </group>
 ```
 
@@ -771,7 +809,7 @@ page) as a `bad-value`. The problem codes:
 | `missing-child` | `holoml` without a `scene` |
 | `wrong-order` | `head` after `scene` |
 | `unknown-attribute` | An attribute the element does not have |
-| `missing-attribute` | A required attribute is missing, or (0.2) one that another needs: a choice's `target` and `material` go together, a click action's `trigger`, `toggle`, and `label` need `begin="click"`, an animation that begins on a click needs a `trigger` when its target cannot be clicked, and a sound always does, and each of several viewpoints needs an `id` |
+| `missing-attribute` | A required attribute is missing, or (0.2) one that another needs: a choice's `target` and `material` go together, a click action's `trigger`, `toggle`, and `label` need `begin="click"`, an animation that begins on a click needs a `trigger` when its target cannot be clicked, and a sound always does, each of several viewpoints needs an `id`, and a group's `near` needs `load="near"` |
 | `bad-value` | A value of the wrong kind, or out of range |
 | `attribute-not-for-type` | A light attribute its type does not use |
 | `duplicate-id` | Two elements with the same id |
@@ -851,10 +889,11 @@ a reader that knows only 0.1 refuses a 0.2 page with
   (`environment`), the animation of a light's position, brightness,
   and colour, and of the background, text of more than one line
   (`panel`), click actions (`begin`, `trigger`, `toggle`), places
-  (several viewpoints, and `#name` in an address), a `sky`, and a floor
-  plan (`plan`). Everything in 0.1 means the same in a 0.2 page. Still
-  to come in 0.2, as the example sites need them: movement along paths,
-  sounds that come from a place, and loading by area.
+  (several viewpoints, and `#name` in an address), a `sky`, a floor
+  plan (`plan`), and loading by area (`load`, `near`, and stand-ins).
+  Everything in 0.1 means the same in a 0.2 page. Still to come in 0.2,
+  as the example sites need them: movement along paths, and sounds that
+  come from a place.
 
 Ideas for later versions: physics, named colours, styles shared between
 elements, and spaces shared by several people.
@@ -915,6 +954,7 @@ nothing. After a thing is removed, setting its members does nothing.
 | `scale` | model, group | How big; can be set |
 | `visible` | model, group, label, panel | Whether it is shown; can be set |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
+| `loaded` | model, group | (Read only) Whether its file has loaded (a model), or all its models have (a group); a group that loads by area is not loaded while it is let go |
 | `text` | label, panel, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set |
 | `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
 | `intensity` | light | How bright; can be set |
@@ -935,6 +975,7 @@ nothing. After a thing is removed, setting its members does nothing.
 | `key` | A key goes down or up while the page has the keyboard | `key` (the key, as a web page's `KeyboardEvent.key`: `"e"`, `"1"`, `" "`) and `down` (`true` or `false`). The renderer's own keys (walking, turning) still work |
 | `frame` | Before each frame is drawn | `time` (milliseconds since the scene was shown) and `dt` (milliseconds since the last frame). While a script listens for frames, the renderer keeps drawing |
 | `change` | The viewer moves a slider, or picks an option of a choice | `thing` (the slider or the choice) and `value` (a slider's number, or the chosen option's value) |
+| `load` | A group that loads by area (`load="near"`) has loaded its models, or let them go | `thing` (the group) and `loaded` (`true` when its models are in, `false` when they were let go) |
 
 The keyboard can do whatever the mouse does: with a crosshair, a script
 uses `holoml.aim()` to act on what is in the middle of the view when a

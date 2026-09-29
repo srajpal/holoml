@@ -15,5 +15,8 @@
     <animate target="#m" attribute="rotation" to="0 90 0" duration="1s" begin="click" />
     <panel>A board of text</panel>
     <plan src="plan.png" area="-1 -1 1 1" />
+    <group load="near" near="5">
+      <model src="m.glb" stand-in="s.glb" />
+    </group>
   </scene>
 </holoml>

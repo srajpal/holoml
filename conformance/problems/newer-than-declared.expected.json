@@ -79,6 +79,21 @@
       "code": "unknown-element",
       "line": 17,
       "column": 5
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 18,
+      "column": 12
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 18,
+      "column": 24
+    },
+    {
+      "code": "unknown-attribute",
+      "line": 19,
+      "column": 26
     }
   ]
 }
