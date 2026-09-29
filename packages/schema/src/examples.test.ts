@@ -137,6 +137,35 @@ describe('examples', () => {
     expect(readFileSync(join(EXAMPLES, 'sofa-studio/about.holoml'), 'utf8')).toMatch(/Poly Haven \(polyhaven\.com, CC0\)/);
   });
 
+  it("Harbour Loft's pages name only files that exist, and the flat stays within 25 MB and 400,000 triangles", () => {
+    const dir = join(EXAMPLES, 'harbour-loft');
+    for (const name of ['index.holoml', 'terrace.holoml', 'about.holoml']) {
+      const page = readFileSync(join(dir, name), 'utf8');
+      // Models (one .glb each, their pictures inside), the script, the sounds, the sky, its light, and the plan.
+      const named = [...page.matchAll(/(?:src|sky|environment)="([^"]+)"/g)].map((m) => m[1]!);
+      let bytes = 0;
+      let triangles = 0;
+      for (const src of new Set(named)) bytes += statSync(join(dir, src)).size;
+      // Triangles as drawn: a model used many times (the walls, the chairs) counts each time.
+      for (const src of named.filter((s) => s.endsWith('.glb'))) {
+        const g = gltfJson(join(dir, src));
+        for (const mesh of g.meshes ?? []) for (const p of mesh.primitives) triangles += g.accessors[p.indices ?? p.attributes['POSITION']!]!.count / 3;
+      }
+      if (name !== 'index.holoml') continue;
+      for (const file of ['loft.js', 'light/sky.jpg', 'light/harbour.hdr', 'plans/loft.png', 'sounds/door.wav', 'sounds/switch.wav', 'models/wall.glb']) expect(named).toContain(file);
+      expect(bytes).toBeLessThan(25 * 1024 * 1024);
+      expect(triangles).toBeLessThan(400_000);
+    }
+  });
+
+  it('Harbour Loft credits Poly Haven, and its about page says where things come from', () => {
+    const credits = readFileSync(join(EXAMPLES, 'harbour-loft/models/CREDITS.md'), 'utf8');
+    expect(credits).toMatch(/Poly Haven/);
+    expect(credits).toMatch(/CC0/);
+    for (const asset of ['Sofa 02', 'Herringbone Parquet', 'Brick Wall 001', "Simon's Town Harbour"]) expect(credits).toContain(asset);
+    expect(readFileSync(join(EXAMPLES, 'harbour-loft/about.holoml'), 'utf8')).toMatch(/Poly Haven \(polyhaven\.com, CC0\)/);
+  });
+
   it('the showroom credits its models, and the about page says where they come from', () => {
     const credits = readFileSync(join(EXAMPLES, 'showroom/models/CREDITS.md'), 'utf8');
     expect(credits).toMatch(/Kenney/);

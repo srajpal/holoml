@@ -1,0 +1,507 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Panels, click actions, places, a sky, and a floor plan",
+                "at": "3:12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "5:3",
+        "attributes": [
+          [
+            "id",
+            "loft",
+            "5:10"
+          ],
+          [
+            "background",
+            "#10141f",
+            "5:20"
+          ],
+          [
+            "sky",
+            "light/harbour.jpg",
+            "5:41"
+          ],
+          [
+            "environment",
+            "light/harbour.hdr",
+            "5:65"
+          ]
+        ],
+        "children": [
+          {
+            "element": "viewpoint",
+            "at": "6:5",
+            "attributes": [
+              [
+                "id",
+                "hall",
+                "6:16"
+              ],
+              [
+                "label",
+                "Hall",
+                "6:26"
+              ],
+              [
+                "position",
+                "0 1.6 4",
+                "6:39"
+              ],
+              [
+                "look-at",
+                "0 1.5 0",
+                "6:58"
+              ],
+              [
+                "mode",
+                "walk",
+                "6:76"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "viewpoint",
+            "at": "7:5",
+            "attributes": [
+              [
+                "id",
+                "kitchen",
+                "7:16"
+              ],
+              [
+                "label",
+                "Kitchen",
+                "7:29"
+              ],
+              [
+                "position",
+                "3 1.6 1",
+                "7:45"
+              ],
+              [
+                "look-at",
+                "3 1.5 -2",
+                "7:64"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "8:5",
+            "attributes": [
+              [
+                "id",
+                "lamp",
+                "8:12"
+              ],
+              [
+                "type",
+                "point",
+                "8:22"
+              ],
+              [
+                "position",
+                "0 2.4 0",
+                "8:35"
+              ],
+              [
+                "range",
+                "6",
+                "8:54"
+              ],
+              [
+                "intensity",
+                "0",
+                "8:64"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "group",
+            "at": "9:5",
+            "attributes": [
+              [
+                "id",
+                "hinge",
+                "9:12"
+              ],
+              [
+                "position",
+                "1 0 0",
+                "9:23"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "10:7",
+                "attributes": [
+                  [
+                    "id",
+                    "door",
+                    "10:14"
+                  ],
+                  [
+                    "src",
+                    "models/door.glb",
+                    "10:24"
+                  ],
+                  [
+                    "position",
+                    "0.45 0 0",
+                    "10:46"
+                  ],
+                  [
+                    "solid",
+                    null,
+                    "10:66"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "element": "model",
+            "at": "12:5",
+            "attributes": [
+              [
+                "id",
+                "switch",
+                "12:12"
+              ],
+              [
+                "src",
+                "models/switch.glb",
+                "12:24"
+              ],
+              [
+                "position",
+                "-1 1.2 0",
+                "12:48"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "13:5",
+            "attributes": [
+              [
+                "target",
+                "#hinge",
+                "13:14"
+              ],
+              [
+                "attribute",
+                "rotation",
+                "13:30"
+              ],
+              [
+                "to",
+                "0 90 0",
+                "13:51"
+              ],
+              [
+                "duration",
+                "0.8s",
+                "13:63"
+              ],
+              [
+                "begin",
+                "click",
+                "13:79"
+              ],
+              [
+                "trigger",
+                "#door",
+                "13:93"
+              ],
+              [
+                "toggle",
+                null,
+                "13:109"
+              ],
+              [
+                "label",
+                "Bedroom door",
+                "13:116"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "14:5",
+            "attributes": [
+              [
+                "target",
+                "#lamp",
+                "14:14"
+              ],
+              [
+                "attribute",
+                "intensity",
+                "14:29"
+              ],
+              [
+                "from",
+                "0",
+                "14:51"
+              ],
+              [
+                "to",
+                "1.2",
+                "14:60"
+              ],
+              [
+                "duration",
+                "0.2s",
+                "14:69"
+              ],
+              [
+                "begin",
+                "click",
+                "14:85"
+              ],
+              [
+                "trigger",
+                "#switch",
+                "14:99"
+              ],
+              [
+                "toggle",
+                null,
+                "14:117"
+              ],
+              [
+                "repeat",
+                "1",
+                "14:124"
+              ],
+              [
+                "label",
+                "Hall light",
+                "14:135"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "15:5",
+            "attributes": [
+              [
+                "target",
+                "#switch",
+                "15:14"
+              ],
+              [
+                "attribute",
+                "scale",
+                "15:31"
+              ],
+              [
+                "to",
+                "1 1 1",
+                "15:49"
+              ],
+              [
+                "duration",
+                "1s",
+                "15:60"
+              ],
+              [
+                "begin",
+                "load",
+                "15:74"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "sound",
+            "at": "16:5",
+            "attributes": [
+              [
+                "src",
+                "sounds/door.ogg",
+                "16:12"
+              ],
+              [
+                "begin",
+                "click",
+                "16:34"
+              ],
+              [
+                "trigger",
+                "#door",
+                "16:48"
+              ],
+              [
+                "label",
+                "The door's creak",
+                "16:64"
+              ],
+              [
+                "volume",
+                "0.6",
+                "16:89"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "panel",
+            "at": "17:5",
+            "attributes": [
+              [
+                "id",
+                "about-kitchen",
+                "17:12"
+              ],
+              [
+                "position",
+                "3 1.5 -2.9",
+                "17:31"
+              ],
+              [
+                "rotation",
+                "0 0 0",
+                "17:53"
+              ],
+              [
+                "width",
+                "1.2",
+                "17:70"
+              ],
+              [
+                "size",
+                "0.06",
+                "17:82"
+              ],
+              [
+                "color",
+                "#1d2330",
+                "17:94"
+              ],
+              [
+                "background",
+                "#f5f2eb",
+                "17:110"
+              ]
+            ],
+            "children": [
+              {
+                "text": "\n      Kitchen, 14 m²\n\n      Oak worktops, a gas hob, and a window onto the harbour.\n    ",
+                "at": "17:131"
+              }
+            ]
+          },
+          {
+            "element": "a",
+            "at": "22:5",
+            "attributes": [
+              [
+                "href",
+                "terrace.holoml#door",
+                "22:8"
+              ]
+            ],
+            "children": [
+              {
+                "element": "panel",
+                "at": "23:7",
+                "attributes": [
+                  [
+                    "position",
+                    "0 2 -3",
+                    "23:14"
+                  ],
+                  [
+                    "width",
+                    "0.8",
+                    "23:32"
+                  ]
+                ],
+                "children": [
+                  {
+                    "text": "Up to the roof terrace",
+                    "at": "23:44"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "element": "plan",
+            "at": "25:5",
+            "attributes": [
+              [
+                "id",
+                "map",
+                "25:11"
+              ],
+              [
+                "src",
+                "plans/loft.png",
+                "25:20"
+              ],
+              [
+                "area",
+                "-6 -4 6 4",
+                "25:41"
+              ],
+              [
+                "corner",
+                "top-right",
+                "25:58"
+              ],
+              [
+                "width",
+                "220",
+                "25:77"
+              ],
+              [
+                "label",
+                "Floor plan",
+                "25:89"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

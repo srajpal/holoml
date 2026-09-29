@@ -2,7 +2,7 @@
   <head>
     <script src="game.js" />
   </head>
-  <scene id="world">
+  <scene id="world" sky="sky.jpg">
     <sound src="pop.wav" />
     <hud>Score</hud>
     <viewpoint mode="walk" gravity speed="3" />
@@ -12,5 +12,8 @@
     <model id="m" src="m.glb" solid />
     <light id="sun" type="directional" />
     <animate target="#sun" attribute="intensity" to="0.5" duration="2s" />
+    <animate target="#m" attribute="rotation" to="0 90 0" duration="1s" begin="click" />
+    <panel>A board of text</panel>
+    <plan src="plan.png" area="-1 -1 1 1" />
   </scene>
 </holoml>

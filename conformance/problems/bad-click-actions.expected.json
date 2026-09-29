@@ -1,0 +1,84 @@
+{
+  "problems": [
+    {
+      "code": "bad-value",
+      "line": 2,
+      "column": 10
+    },
+    {
+      "code": "missing-attribute",
+      "line": 3,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 7,
+      "column": 76
+    },
+    {
+      "code": "missing-attribute",
+      "line": 8,
+      "column": 5
+    },
+    {
+      "code": "bad-target",
+      "line": 9,
+      "column": 90
+    },
+    {
+      "code": "unknown-target",
+      "line": 10,
+      "column": 90
+    },
+    {
+      "code": "bad-value",
+      "line": 11,
+      "column": 97
+    },
+    {
+      "code": "bad-value",
+      "line": 12,
+      "column": 76
+    },
+    {
+      "code": "missing-attribute",
+      "line": 13,
+      "column": 5
+    },
+    {
+      "code": "bad-value",
+      "line": 14,
+      "column": 64
+    },
+    {
+      "code": "missing-attribute",
+      "line": 15,
+      "column": 34
+    },
+    {
+      "code": "empty-text",
+      "line": 16,
+      "column": 5
+    },
+    {
+      "code": "bad-value",
+      "line": 16,
+      "column": 12
+    },
+    {
+      "code": "child-not-allowed",
+      "line": 18,
+      "column": 7
+    },
+    {
+      "code": "bad-value",
+      "line": 20,
+      "column": 32
+    },
+    {
+      "code": "too-many",
+      "line": 21,
+      "column": 5
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+<holoml version="0.2">
+  <head>
+    <title>Panels, click actions, places, a sky, and a floor plan</title>
+  </head>
+  <scene id="loft" background="#10141f" sky="light/harbour.jpg" environment="light/harbour.hdr">
+    <viewpoint id="hall" label="Hall" position="0 1.6 4" look-at="0 1.5 0" mode="walk" />
+    <viewpoint id="kitchen" label="Kitchen" position="3 1.6 1" look-at="3 1.5 -2" />
+    <light id="lamp" type="point" position="0 2.4 0" range="6" intensity="0" />
+    <group id="hinge" position="1 0 0">
+      <model id="door" src="models/door.glb" position="0.45 0 0" solid />
+    </group>
+    <model id="switch" src="models/switch.glb" position="-1 1.2 0" />
+    <animate target="#hinge" attribute="rotation" to="0 90 0" duration="0.8s" begin="click" trigger="#door" toggle label="Bedroom door" />
+    <animate target="#lamp" attribute="intensity" from="0" to="1.2" duration="0.2s" begin="click" trigger="#switch" toggle repeat="1" label="Hall light" />
+    <animate target="#switch" attribute="scale" to="1 1 1" duration="1s" begin="load" />
+    <sound src="sounds/door.ogg" begin="click" trigger="#door" label="The door's creak" volume="0.6" />
+    <panel id="about-kitchen" position="3 1.5 -2.9" rotation="0 0 0" width="1.2" size="0.06" color="#1d2330" background="#f5f2eb">
+      Kitchen, 14 m²
+
+      Oak worktops, a gas hob, and a window onto the harbour.
+    </panel>
+    <a href="terrace.holoml#door">
+      <panel position="0 2 -3" width="0.8">Up to the roof terrace</panel>
+    </a>
+    <plan id="map" src="plans/loft.png" area="-6 -4 6 4" corner="top-right" width="220" label="Floor plan" />
+  </scene>
+</holoml>

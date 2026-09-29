@@ -21,6 +21,8 @@ export type ValueKind =
   | { kind: 'url'; for: 'model' | 'link' | 'script' | 'sound' | 'picture' | 'environment' }
   /** One number more than 0 (the same both ways) or two: how many times a picture tiles. */
   | { kind: 'tiling' }
+  /** Four numbers, "x0 z0 x1 z1", with x1 above x0 and z1 above z0: a rectangle of the ground. */
+  | { kind: 'area' }
   | { kind: 'id' }
   /** "#" and the id of an element in the same document. */
   | { kind: 'idref' }
@@ -46,6 +48,8 @@ export interface ElementRule {
   attributes: Readonly<Record<string, AttributeRule>>;
   /** Children that may appear at most once. */
   once?: readonly string[];
+  /** Of those, children a later version allows several times, and that version. */
+  manyFrom?: Readonly<Record<string, Version>>;
   /** Children that must appear. */
   needs?: readonly string[];
   /** For "text" elements: the text may be empty (a script fills it in). */
@@ -79,8 +83,11 @@ const LOOK = {
   repeat: { value: { kind: 'tiling' }, since: '0.2' },
 } as const satisfies Record<string, AttributeRule>;
 
-/** What may stand in a scene or a group. */
-const SCENE_CONTENT = ['group', 'model', 'light', 'label', 'a', 'animate', 'sound'] as const;
+/** What may stand in a scene or a group; `panel` is 0.2. */
+const SCENE_CONTENT = ['group', 'model', 'light', 'label', 'a', 'animate', 'sound', 'panel'] as const;
+
+/** A screen corner, for what is fixed to the screen. */
+const CORNER = { value: { kind: 'choice', values: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] } } as const satisfies AttributeRule;
 
 export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
   holoml: {
@@ -108,12 +115,15 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     attributes: { src: { value: { kind: 'url', for: 'script' }, required: true } },
   },
   scene: {
-    children: [...SCENE_CONTENT, 'viewpoint', 'hud', 'slider', 'choice'],
-    once: ['viewpoint'],
+    children: [...SCENE_CONTENT, 'viewpoint', 'hud', 'slider', 'choice', 'plan'],
+    // 0.2: several viewpoints, the places a page's address can name (checked in index.ts: each with an id).
+    once: ['viewpoint', 'plan'],
+    manyFrom: { viewpoint: '0.2' },
     attributes: {
       id: { value: { kind: 'id' }, since: '0.2' },
       background: { value: { kind: 'color' } },
       environment: { value: { kind: 'url', for: 'environment' }, since: '0.2' },
+      sky: { value: { kind: 'url', for: 'environment' }, since: '0.2' },
     },
   },
   group: {
@@ -141,6 +151,8 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
   viewpoint: {
     children: 'none',
     attributes: {
+      id: { value: { kind: 'id' }, since: '0.2' },
+      label: { value: { kind: 'text' }, since: '0.2' },
       position: { value: { kind: 'vector3' } },
       'look-at': { value: { kind: 'vector3' } },
       mode: { value: { kind: 'choice', values: ['orbit', 'walk'] } },
@@ -175,7 +187,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     },
   },
   a: {
-    children: ['model', 'group', 'label'],
+    children: ['model', 'group', 'label', 'panel'],
     attributes: {
       href: { value: { kind: 'url', for: 'link' }, required: true },
     },
@@ -196,6 +208,11 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       to: { value: { kind: 'animation-value' }, required: true },
       duration: { value: { kind: 'duration' }, required: true },
       repeat: { value: { kind: 'repeat' } },
+      // 0.2: click actions (checked in index.ts: trigger, toggle, and label need begin="click").
+      begin: { value: { kind: 'choice', values: ['load', 'click'] }, since: '0.2' },
+      trigger: { value: { kind: 'idref' }, since: '0.2' },
+      toggle: { value: { kind: 'flag' }, since: '0.2' },
+      label: { value: { kind: 'text' }, since: '0.2' },
     },
   },
   sound: {
@@ -207,6 +224,10 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       loop: { value: { kind: 'flag' } },
       autoplay: { value: { kind: 'flag' } },
       volume: { value: { kind: 'number', min: 0, max: 1 } },
+      // Plays when its trigger is clicked (checked in index.ts: begin="click" needs a trigger).
+      begin: { value: { kind: 'choice', values: ['load', 'click'] } },
+      trigger: { value: { kind: 'idref' } },
+      label: { value: { kind: 'text' } },
     },
   },
   hud: {
@@ -215,7 +236,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     emptyText: true,
     attributes: {
       id: { value: { kind: 'id' } },
-      corner: { value: { kind: 'choice', values: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] } },
+      corner: CORNER,
       size: { value: { kind: 'number', positive: true } },
       color: { value: { kind: 'color' } },
     },
@@ -226,7 +247,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     children: 'text',
     attributes: {
       id: { value: { kind: 'id' } },
-      corner: { value: { kind: 'choice', values: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] } },
+      corner: CORNER,
       min: { value: { kind: 'number' } },
       max: { value: { kind: 'number' } },
       step: { value: { kind: 'number', positive: true } },
@@ -245,7 +266,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     needs: ['option'],
     attributes: {
       id: { value: { kind: 'id' } },
-      corner: { value: { kind: 'choice', values: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] } },
+      corner: CORNER,
       label: { value: { kind: 'text' } },
       target: { value: { kind: 'idref' } },
       material: { value: { kind: 'text' } },
@@ -261,7 +282,40 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       ...LOOK,
     },
   },
+  /**
+   * Text of more than one line (issue #11): a flat board placed and turned
+   * like a model, its lines wrapped to a width; blank lines part paragraphs.
+   */
+  panel: {
+    since: '0.2',
+    children: 'text',
+    attributes: {
+      id: { value: { kind: 'id' } },
+      position: { value: { kind: 'vector3' } },
+      rotation: { value: { kind: 'vector3' } },
+      width: { value: { kind: 'number', positive: true } },
+      size: { value: { kind: 'number', positive: true } },
+      color: { value: { kind: 'color' } },
+      background: { value: { kind: 'color' } },
+    },
+  },
+  /** A floor plan in a corner of the screen, with the viewer's place on it. */
+  plan: {
+    since: '0.2',
+    children: 'none',
+    attributes: {
+      id: { value: { kind: 'id' } },
+      corner: CORNER,
+      src: { value: { kind: 'url', for: 'picture' }, required: true },
+      area: { value: { kind: 'area' }, required: true },
+      width: { value: { kind: 'number', positive: true } },
+      label: { value: { kind: 'text' } },
+    },
+  },
 };
+
+/** What a click action's trigger may be: something the viewer can click. */
+export const CLICKABLE: readonly string[] = ['model', 'group', 'label', 'panel'];
 
 /** Light attributes that only some light types use. */
 export const LIGHT_ONLY: Readonly<Record<string, readonly string[]>> = {

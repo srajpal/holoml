@@ -7,9 +7,9 @@
  * version="0.1" may use only what 0.1 has (SPEC.md, "Versions").
  */
 import type { Attribute, ElementNode, HoloDocument, Position } from '@holoml/parser';
-import { ANIMATABLE, ANIMATION_VALUES, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast, type Version, type ValueKind } from './rules.ts';
+import { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast, type Version, type ValueKind } from './rules.ts';
 
-export { ANIMATABLE, ANIMATION_VALUES, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast } from './rules.ts';
+export { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast } from './rules.ts';
 export type { AttributeRule, ElementRule, ValueKind, Version } from './rules.ts';
 
 export interface CheckOptions {
@@ -92,6 +92,8 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
   const ids = new Map<string, ElementNode>();
   const animations: ElementNode[] = [];
   const choices: ElementNode[] = [];
+  const sounds: ElementNode[] = [];
+  const viewpoints: ElementNode[] = [];
 
   const visit = (el: ElementNode, insideLink: boolean) => {
     const rule = own(ELEMENTS, el.name);
@@ -107,6 +109,8 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     }
     if (el.name === 'animate') animations.push(el);
     if (el.name === 'choice') choices.push(el);
+    if (el.name === 'sound') sounds.push(el);
+    if (el.name === 'viewpoint') viewpoints.push(el);
     if (el.name === 'a' && insideLink) report('nested-link', 'A link cannot be inside another link', el.start);
 
     // Children.
@@ -139,7 +143,8 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       }
       const n = (counts.get(child.name) ?? 0) + 1;
       counts.set(child.name, n);
-      if (n === 2 && rule.once?.includes(child.name)) {
+      const many = rule.manyFrom?.[child.name];
+      if (n === 2 && rule.once?.includes(child.name) && (many === undefined || !atLeast(version, many))) {
         report('too-many', `<${el.name}> may hold only one <${child.name}>`, child.start);
       }
       visit(child, insideLink || el.name === 'a');
@@ -175,6 +180,51 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       report('bad-target', `The ${which} of a <${el.name}> cannot be animated`, target.start);
     } else if (el.name === 'light' && which === 'position' && attr(el, 'type')?.value === 'ambient') {
       report('bad-target', 'An ambient light has no position to animate', target.start);
+    }
+  }
+  // Click actions (0.2): what begins them, and what can be clicked.
+  const clickable = (trigger: ReturnType<typeof attr>, what: string): boolean => {
+    if (!trigger?.value?.startsWith('#')) return false; // absent, or already reported as a bad value
+    const el = ids.get(trigger.value.slice(1));
+    if (!el) report('unknown-target', `No element has the id "${trigger.value.slice(1)}"`, trigger.start);
+    else if (!CLICKABLE.includes(el.name)) report('bad-target', `${what} begins when its trigger is clicked, and a <${el.name}> cannot be clicked`, trigger.start);
+    return true;
+  };
+  for (const anim of animations) {
+    const onClick = attr(anim, 'begin')?.value === 'click';
+    for (const name of ['trigger', 'toggle', 'label']) {
+      const a = attr(anim, name);
+      if (a && !onClick) report('missing-attribute', `<animate> with "${name}" needs the attribute begin="click"`, a.start);
+    }
+    if (!onClick) continue;
+    const trigger = attr(anim, 'trigger');
+    if (trigger) clickable(trigger, 'An <animate> with begin="click"');
+    else {
+      // Without a trigger, a click on the target begins it: the target must be something that can be clicked.
+      const target = attr(anim, 'target')?.value;
+      const el = target?.startsWith('#') ? ids.get(target.slice(1)) : undefined;
+      if (el && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
+    }
+    const repeat = attr(anim, 'repeat');
+    if (attr(anim, 'toggle') && repeat && repeat.value?.trim() !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
+  }
+  for (const sound of sounds) {
+    const onClick = attr(sound, 'begin')?.value === 'click';
+    const trigger = attr(sound, 'trigger');
+    for (const name of ['trigger', 'label']) {
+      const a = attr(sound, name);
+      if (a && !onClick) report('missing-attribute', `<sound> with "${name}" needs the attribute begin="click"`, a.start);
+    }
+    if (!onClick) continue;
+    if (!trigger) report('missing-attribute', '<sound begin="click"> needs a "trigger", the thing whose click plays it', sound.start);
+    else clickable(trigger, 'A <sound> with begin="click"');
+    const autoplay = attr(sound, 'autoplay');
+    if (autoplay) report('bad-value', '"autoplay": a sound that begins on a click does not also play by itself', autoplay.start);
+  }
+  // Places (0.2): when a scene has several viewpoints, an address names one by its id.
+  if (viewpoints.length > 1 && atLeast(version, '0.2')) {
+    for (const vp of viewpoints) {
+      if (!attr(vp, 'id')) report('missing-attribute', 'Each <viewpoint> of a scene with several needs an "id", its name in the page\'s address', vp.start);
     }
   }
   // Choices (0.2): what they change, and their options' values.
@@ -350,6 +400,13 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
         : { code: 'unsupported-version', message: `This checker knows HoloML ${ctx.known.join(' and ')}, not "${value}"` };
     case 'animation-value':
       return null; // chosen by what is animated, in checkAttributes()
+    case 'area': {
+      const parts = v.split(/\s+/);
+      if (parts.length !== 4 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not four numbers, such as "-6 -4 6 4"`);
+      if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
+      const [x0, z0, x1, z1] = parts.map(Number) as [number, number, number, number];
+      return x1 > x0 && z1 > z0 ? null : bad('must be "x0 z0 x1 z1", with x1 more than x0 and z1 more than z0');
+    }
     case 'tiling': {
       const parts = v.split(/\s+/);
       if ((parts.length !== 1 && parts.length !== 2) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or two, such as "3" or "3 2"`);
