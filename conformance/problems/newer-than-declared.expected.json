@@ -94,6 +94,11 @@
       "code": "unknown-attribute",
       "line": 19,
       "column": 26
+    },
+    {
+      "code": "unknown-element",
+      "line": 21,
+      "column": 5
     }
   ]
 }

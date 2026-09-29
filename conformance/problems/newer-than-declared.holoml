@@ -18,5 +18,6 @@
     <group load="near" near="5">
       <model src="m.glb" stand-in="s.glb" />
     </group>
+    <water size="4 2 4" caustics />
   </scene>
 </holoml>

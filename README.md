@@ -56,10 +56,12 @@ gravity for walking, walking and turning speeds, a crosshair, shadows,
 textured materials, light from a panorama of the surroundings, the
 animation of lights and the background, text panels, things that act
 when clicked (a door that opens, a light switch), several places to go
-to on one page, a sky, a floor plan on the screen, and groups of models
+to on one page, a sky, a floor plan on the screen, groups of models
 that load only while the viewer is near, with lighter stand-ins until
-then; a page says `version="0.2"` to use them. The syntax is strict: a mistake stops with
-its line and column. Later versions: physics, and spaces shared by
+then, water that things are seen through, with light from its waves,
+and sounds that come from a place; a page says `version="0.2"` to use
+them. The syntax is strict: a mistake stops with its line and column.
+Later versions: movement along paths, physics, and spaces shared by
 several people.
 
 ## What is here
