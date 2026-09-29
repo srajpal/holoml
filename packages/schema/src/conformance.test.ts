@@ -46,20 +46,20 @@ describe('conformance samples (O2, O3, O4)', () => {
         'identifier-spaces': 'bad-value',
         overflow: 'bad-value',
         'inherited-names': 'unknown-attribute',
-        // HoloML 0.2 (draft).
+        // HoloML 0.2.
         'newer-than-declared': 'unknown-element',
         'bad-02-values': 'bad-value',
         'animated-light-targets': 'bad-target',
         'inline-script': 'text-not-allowed',
         'hud-in-group': 'child-not-allowed',
-        // HoloML 0.2 (draft), browser milestone 18.
+        // HoloML 0.2, browser milestone 18.
         'bad-slider': 'bad-value',
         'bad-choice': 'bad-target',
-        // HoloML 0.2 (draft), browser milestone 19.
+        // HoloML 0.2, browser milestone 19.
         'bad-click-actions': 'missing-attribute',
-        // HoloML 0.2 (draft), browser milestone 20.
+        // HoloML 0.2, browser milestone 20.
         'bad-loading-by-area': 'missing-attribute',
-        // HoloML 0.2 (draft), browser milestone 21.
+        // HoloML 0.2, browser milestone 21.
         'bad-water': 'missing-attribute',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);

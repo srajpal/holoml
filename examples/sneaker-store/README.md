@@ -1,6 +1,6 @@
 # Sneaker store
 
-A sneaker store to walk through, in HoloML 0.2 (draft): one shoe, the
+A sneaker store to walk through, in HoloML 0.2: one shoe, the
 Everyday Runner, in ten colourways on the walls of a bright hall. Each
 bay's shoes load as you come near; until then a lighter copy of each
 stands in. Open a shoe to see it close up on a turntable: go around it,

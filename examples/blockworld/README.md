@@ -1,6 +1,6 @@
 # Blockworld
 
-A very small block game in HoloML 0.2 (draft): an island of blocks made
+A very small block game in HoloML 0.2: an island of blocks made
 by the page's script from a seed. Break blocks, place them, and find the
 five gems hidden in the stone before bringing them to the chest. A day
 lasts four minutes; at night, torches give light.

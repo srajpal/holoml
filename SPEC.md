@@ -1,4 +1,4 @@
-# HoloML 0.1, and 0.2 (draft)
+# HoloML 0.1 and 0.2
 
 HoloML is a small markup language for 3D web pages. A HoloML page
 describes a scene: 3D models, where the viewer starts, lights, text
@@ -6,13 +6,13 @@ labels, links, and simple animation. It is written like HTML, by hand if
 you like, and read by a HoloML-aware browser, which shows the scene as a
 space you can orbit or walk around.
 
-Status: version 0.1, the first version (2026-09-26), is final. Version
-0.2 is a draft (from 2026-09-27): it adds scripts, sound, text on the
-screen, walls and gravity for walking, and the animation of lights and
-the background. It grows with the example sites of the HyperSpace 3D
-browser (milestones 17 to 21 of its roadmap) and is finished when they
-are. What 0.2 adds is marked "(0.2)"; a page uses it by saying
-`version="0.2"` (section 9). The first renderer is the HyperSpace 3D
+Status: version 0.1, the first version (2026-09-26), and version 0.2
+(2026-09-29) are final. Version 0.2 adds scripts, sound, text on the
+screen, walls and gravity for walking, the animation of lights and the
+background, and more (section 9); it grew with the example sites of the
+HyperSpace 3D browser (milestones 17 to 21 of its roadmap). What 0.2
+adds is marked "(0.2)"; a page uses it by saying `version="0.2"`
+(section 9). The first renderer is the HyperSpace 3D
 browser (milestone 14 of its roadmap). This text is licensed under CC BY
 4.0 (LICENSE-SPEC); the code in this repository is under Apache 2.0.
 
@@ -924,7 +924,7 @@ a reader that knows only 0.1 refuses a 0.2 page with
 
 - 0.1 (2026-09-26): models, groups, lights, labels, links, materials,
   animation of position, rotation, and scale, orbit and walk.
-- 0.2 (draft, from 2026-09-27): scripts and the scene API (section 10),
+- 0.2 (2026-09-29; begun 2026-09-27): scripts and the scene API (section 10),
   `sound`, `hud`, `slider`, `choice`, walls and gravity (`solid`,
   `gravity`, `jump`), a crosshair, walking and turning speeds (`speed`,
   `turn-speed`), shadows, textured materials (`map`, `normal-map`,

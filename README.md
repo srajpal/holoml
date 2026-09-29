@@ -7,18 +7,19 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: version 0.1, written down; version 0.2, a draft.**
+**Status: versions 0.1 and 0.2, written down.**
 [SPEC.md](SPEC.md) describes the language; this repository has a
 parser, a checker, conformance samples, and example sites. HoloML is the
 markup language of
 [HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
 (short: HyperSpace 3D), the open-source 3D browser built alongside it,
-which shows HoloML pages. Version 0.2 grows with the browser's example
-sites: so far scripts, sound, text on the screen, walls and gravity, the
+which shows HoloML pages. Version 0.2 grew with the browser's example
+sites: scripts, sound, text on the screen, walls and gravity, the
 animation of lights, shadows, textured materials, choices that change a
 material in place, light from the surroundings, text of more than one
 line on a board, doors and lamps that work with a click, places to go
-to, a sky, and a floor plan. Files use the extension `.holoml`.
+to, a sky, a floor plan, models that load as the viewer comes near,
+water, and sounds from a place. Files use the extension `.holoml`.
 
 ## Why a new language
 
@@ -50,7 +51,7 @@ at. See the story in the browser repository's README.
 
 Version 0.1 covers 3D models (glTF 2.0), groups, where the viewer starts
 (orbit or walk), lights, labels, links, changing a model's materials,
-and simple animation. Version 0.2 (a draft) adds scripts with a small
+and simple animation. Version 0.2 adds scripts with a small
 scene API, sound, text, sliders, and choices on the screen, walls and
 gravity for walking, walking and turning speeds, a crosshair, shadows,
 textured materials, light from a panorama of the surroundings, the
@@ -68,7 +69,7 @@ several people.
 
 ```
 holoml/
-  SPEC.md            the language: version 0.1, and 0.2 (a draft)
+  SPEC.md            the language: versions 0.1 and 0.2
   packages/
     parser/          @holoml/parser: text to a tree, with line and column; no dependencies
     schema/          @holoml/schema: checks a tree against the spec and lists problems
@@ -79,14 +80,16 @@ holoml/
     sofa-studio/     a HoloML 0.2 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
     harbour-loft/    a HoloML 0.2 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
     sneaker-store/   a HoloML 0.2 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart
+    aquarium/        a HoloML 0.2 ocean tunnel: 30 fish swum by a script, water, light from the waves, bubbles, feeding
 ```
 
 The examples are published with GitHub Pages:
 https://srajpal.github.io/holoml/showroom/,
 https://srajpal.github.io/holoml/blockworld/,
 https://srajpal.github.io/holoml/sofa-studio/,
-https://srajpal.github.io/holoml/harbour-loft/, and
-https://srajpal.github.io/holoml/sneaker-store/. Open an example's
+https://srajpal.github.io/holoml/harbour-loft/,
+https://srajpal.github.io/holoml/sneaker-store/, and
+https://srajpal.github.io/holoml/aquarium/. Open an example's
 `index.holoml` in a browser that shows HoloML, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
 where they are also listed under "HoloML examples".
@@ -104,7 +107,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-204 unit and conformance tests passed on 2026-09-29 on Windows 11. GitHub
+217 unit and conformance tests passed on 2026-09-29 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Built with the Buildwright approach

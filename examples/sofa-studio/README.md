@@ -1,6 +1,6 @@
 # Sofa studio
 
-A small shop page in HoloML 0.2 (draft): one sofa in a sunlit room.
+A small shop page in HoloML 0.2: one sofa in a sunlit room.
 Choose its fabric and its wood in place, watch the price follow, switch
 the room to evening light, and go on to an ordinary web page to "add it
 to the cart" (there is no shop behind it).

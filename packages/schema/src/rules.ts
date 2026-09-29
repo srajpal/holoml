@@ -6,8 +6,8 @@
  *
  * The table is the newest version's. What a later version added says so
  * in `since`; a page that declares an earlier version may not use it
- * (SPEC.md, "Versions"). Version 0.2 is a draft that grows with the
- * browser's example sites (HyperSpace 3D milestones 17 to 21).
+ * (SPEC.md, "Versions"). Version 0.2 grew with the browser's example
+ * sites (HyperSpace 3D milestones 17 to 21).
  */
 
 export type ValueKind =
