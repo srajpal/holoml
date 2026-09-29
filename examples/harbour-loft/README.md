@@ -1,6 +1,6 @@
 # Harbour Loft
 
-A flat to tour, for an estate agent, in HoloML 0.2 (draft): the top floor
+A flat to tour, for an estate agent, in HoloML 0.2: the top floor
 of an old sail loft on a harbour. Walk through its rooms, open the doors,
 switch the lamps on, read about each room on a panel, see where you are
 on the floor plan, look out at the marina, go up to the roof terrace, and

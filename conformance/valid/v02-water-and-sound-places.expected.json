@@ -1,0 +1,205 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.2",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Water, and sounds from a place",
+                "at": "3:12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "5:3",
+        "attributes": [
+          [
+            "background",
+            "#0b2a3a",
+            "5:10"
+          ]
+        ],
+        "children": [
+          {
+            "element": "viewpoint",
+            "at": "6:5",
+            "attributes": [
+              [
+                "position",
+                "0 1.6 6",
+                "6:16"
+              ],
+              [
+                "mode",
+                "walk",
+                "6:35"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "water",
+            "at": "7:5",
+            "attributes": [
+              [
+                "position",
+                "0 0 0",
+                "7:12"
+              ],
+              [
+                "size",
+                "12 5 20",
+                "7:29"
+              ],
+              [
+                "color",
+                "#1f6f8b",
+                "7:44"
+              ],
+              [
+                "clarity",
+                "14",
+                "7:60"
+              ],
+              [
+                "caustics",
+                null,
+                "7:73"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "model",
+            "at": "8:5",
+            "attributes": [
+              [
+                "id",
+                "fish",
+                "8:12"
+              ],
+              [
+                "src",
+                "models/fish.glb",
+                "8:22"
+              ],
+              [
+                "position",
+                "0 2 0",
+                "8:44"
+              ],
+              [
+                "animation",
+                "Swim",
+                "8:61"
+              ],
+              [
+                "autoplay",
+                null,
+                "8:78"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "sound",
+            "at": "9:5",
+            "attributes": [
+              [
+                "id",
+                "bubbles",
+                "9:12"
+              ],
+              [
+                "src",
+                "sounds/bubbles.ogg",
+                "9:25"
+              ],
+              [
+                "position",
+                "2 0.5 -3",
+                "9:50"
+              ],
+              [
+                "range",
+                "12",
+                "9:70"
+              ],
+              [
+                "loop",
+                null,
+                "9:81"
+              ],
+              [
+                "autoplay",
+                null,
+                "9:86"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "group",
+            "at": "10:5",
+            "attributes": [
+              [
+                "position",
+                "-3 0 0",
+                "10:12"
+              ]
+            ],
+            "children": [
+              {
+                "element": "sound",
+                "at": "11:7",
+                "attributes": [
+                  [
+                    "src",
+                    "sounds/hum.ogg",
+                    "11:14"
+                  ],
+                  [
+                    "position",
+                    "0 1 0",
+                    "11:35"
+                  ],
+                  [
+                    "volume",
+                    "0.5",
+                    "11:52"
+                  ],
+                  [
+                    "loop",
+                    null,
+                    "11:65"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

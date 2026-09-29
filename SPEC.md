@@ -1,4 +1,4 @@
-# HoloML 0.1, and 0.2 (draft)
+# HoloML 0.1 and 0.2
 
 HoloML is a small markup language for 3D web pages. A HoloML page
 describes a scene: 3D models, where the viewer starts, lights, text
@@ -6,13 +6,13 @@ labels, links, and simple animation. It is written like HTML, by hand if
 you like, and read by a HoloML-aware browser, which shows the scene as a
 space you can orbit or walk around.
 
-Status: version 0.1, the first version (2026-09-26), is final. Version
-0.2 is a draft (from 2026-09-27): it adds scripts, sound, text on the
-screen, walls and gravity for walking, and the animation of lights and
-the background. It grows with the example sites of the HyperSpace 3D
-browser (milestones 17 to 21 of its roadmap) and is finished when they
-are. What 0.2 adds is marked "(0.2)"; a page uses it by saying
-`version="0.2"` (section 9). The first renderer is the HyperSpace 3D
+Status: version 0.1, the first version (2026-09-26), and version 0.2
+(2026-09-29) are final. Version 0.2 adds scripts, sound, text on the
+screen, walls and gravity for walking, the animation of lights and the
+background, and more (section 9); it grew with the example sites of the
+HyperSpace 3D browser (milestones 17 to 21 of its roadmap). What 0.2
+adds is marked "(0.2)"; a page uses it by saying `version="0.2"`
+(section 9). The first renderer is the HyperSpace 3D
 browser (milestone 14 of its roadmap). This text is licensed under CC BY
 4.0 (LICENSE-SPEC); the code in this repository is under Apache 2.0.
 
@@ -238,7 +238,7 @@ the scene, and only from the page's own site.
 Everything that is shown. Holds `group`, `model`, `light`, `label`, `a`,
 `animate`, and (0.2) `sound`, `panel`, `hud`, `slider`, and `choice`, in
 any order and number, at most one `viewpoint` ((0.2) several, as places;
-see `viewpoint`), and (0.2) at most one `plan`.
+see `viewpoint`), and (0.2) at most one `plan` and one `water`.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
@@ -466,6 +466,40 @@ without its shadows.
 </group>
 ```
 
+### `water`
+
+(0.2) A box of water, such as a tank, a pool, or a stretch of sea. It
+stands in `scene`, at most one; holds nothing.
+
+| Attribute | Value | Default | Meaning |
+|---|---|---|---|
+| `position` | vector | `"0 0 0"` | The middle of the water's floor |
+| `size` | three numbers more than 0 (required) | | Its width (x), height (y), and depth (z), in metres; its top is the surface |
+| `color` | colour | `"#1f6f8b"` | The colour that things seen through the water fade into |
+| `clarity` | number, more than 0 | `15` | How far one can see through it, in metres |
+| `caustics` | flag | off | The moving net of light that the waves on the surface cast on everything below it |
+
+- What is seen through the water fades into its colour with how far the
+  view travels through it, evenly: a thing `clarity` metres into the
+  water has faded fully, and one half as far has half faded. From inside
+  the water that is the whole way to the thing; from outside, only the
+  part of the way inside the box, as when looking into a tank through
+  its glass. The background and the sky do not fade, and neither do
+  labels and panels: text stays as it is, to be read.
+- With `caustics`, the light plays over what is in the water, most on
+  what faces up to the surface (floors, rocks, the backs of fish), and
+  fainter the deeper it is. It moves; with reduced motion it holds
+  still. A renderer may leave it out when it must (for example on a
+  machine that draws in software), saying so where the page's author
+  can see it (such as the console), as with shadows.
+- The water is not solid and has no weight: the walker is stopped by the
+  page's own models (a tank's glass), not by the water, and sounds and
+  gravity are as they are elsewhere.
+
+```
+<water position="0 0 -6" size="16 6 24" color="#1f6f8b" clarity="14" caustics />
+```
+
 ### Loading by area
 
 (0.2) A large scene can load its models where the viewer goes. A
@@ -649,18 +683,27 @@ shows an action's end at once. Scripts still hear the click (section
 | `loop` | flag | off | Start again at the end, until stopped |
 | `autoplay` | flag | off | Play as soon as sounds may play (below) |
 | `volume` | number from 0 to 1 | `1` | How loud |
+| `position` | vector | none | Where it comes from: with it, the sound comes from that place (below) |
+| `range` | number, more than 0 | `20` | With `position`, and needing it: how far the sound reaches, in metres |
 | `begin` | `load` or `click` | `load` | With `click`, it plays each time its trigger is clicked (see "Click actions"); such a sound has no `autoplay` |
 | `trigger` | id reference | none | With `begin="click"`, and needed then: the element whose click plays it |
 | `label` | text | the trigger's id | With `begin="click"`: its name for the keyboard and screen readers |
 
 A renderer must not play any sound before the viewer's first click,
 tap, or key on the page: web pages may not start sounds on their own,
-and neither may HoloML pages. `autoplay` sounds start then. In 0.2 a
-sound's place in the scene does not change how it sounds.
+and neither may HoloML pages. `autoplay` sounds start then.
+
+A sound without a `position` sounds the same wherever the viewer is. A
+sound with a `position` (in its parent's space, so that a sound in a
+group moves with the group) comes from that place: it plays at its
+`volume` within 1 metre of the viewer, grows quieter evenly as the
+viewer moves away, and is silent from `range` metres on; and it comes
+from the viewer's left or right as the place is.
 
 ```
 <sound id="birds" src="sounds/birds.ogg" loop autoplay volume="0.4" />
 <sound id="pop" src="sounds/pop.wav" />
+<sound id="bubbler" src="sounds/bubbles.ogg" position="2 0.3 -4" range="10" loop autoplay />
 ```
 
 ### `hud`
@@ -881,7 +924,7 @@ a reader that knows only 0.1 refuses a 0.2 page with
 
 - 0.1 (2026-09-26): models, groups, lights, labels, links, materials,
   animation of position, rotation, and scale, orbit and walk.
-- 0.2 (draft, from 2026-09-27): scripts and the scene API (section 10),
+- 0.2 (2026-09-29; begun 2026-09-27): scripts and the scene API (section 10),
   `sound`, `hud`, `slider`, `choice`, walls and gravity (`solid`,
   `gravity`, `jump`), a crosshair, walking and turning speeds (`speed`,
   `turn-speed`), shadows, textured materials (`map`, `normal-map`,
@@ -890,13 +933,13 @@ a reader that knows only 0.1 refuses a 0.2 page with
   and colour, and of the background, text of more than one line
   (`panel`), click actions (`begin`, `trigger`, `toggle`), places
   (several viewpoints, and `#name` in an address), a `sky`, a floor
-  plan (`plan`), and loading by area (`load`, `near`, and stand-ins).
-  Everything in 0.1 means the same in a 0.2 page. Still to come in 0.2,
-  as the example sites need them: movement along paths, and sounds that
-  come from a place.
+  plan (`plan`), loading by area (`load`, `near`, and stand-ins), water
+  (`water`), sounds from a place (a sound's `position` and `range`),
+  and a model's animation speed in the scene API. Everything in 0.1
+  means the same in a 0.2 page.
 
-Ideas for later versions: physics, named colours, styles shared between
-elements, and spaces shared by several people.
+Ideas for later versions: movement along paths, physics, named colours,
+styles shared between elements, and spaces shared by several people.
 
 ## 10. Scripts and the scene API
 
@@ -949,11 +992,12 @@ nothing. After a thing is removed, setting its members does nothing.
 | `id` | all | Its id, or `null` |
 | `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"panel"`, `"sound"`, `"hud"`, `"slider"`, or `"choice"` |
 | `parent` | all | The group thing it is in, or `null` |
-| `position` | model, group, label, panel, light | Where it is; can be set |
+| `position` | model, group, label, panel, light, sound | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says) |
 | `rotation` | model, group, panel | How it is turned; can be set |
 | `scale` | model, group | How big; can be set |
 | `visible` | model, group, label, panel | Whether it is shown; can be set |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
+| `animationSpeed` | model | How fast its own animation plays: `1` as it was made, `2` twice as fast, `0.5` half as fast, `0` held still; from 0 to 4; can be set. A value outside that range is an error. A model that plays no animation keeps the value for when it does |
 | `loaded` | model, group | (Read only) Whether its file has loaded (a model); whether every model in it that is near enough to load has loaded or been left out (a group). A group that loads by area, or is in one, is not loaded while it is let go |
 | `text` | label, panel, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set |
 | `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
@@ -973,7 +1017,7 @@ nothing. After a thing is removed, setting its members does nothing.
 |---|---|---|
 | `click` | The viewer clicks or taps a point of the scene (not a drag), with any button | `thing` (the innermost element with a place that was hit, or `null`), `point` and `normal` (where it was hit, and which way the face hit is facing, or `null`), and `button` (`"left"`, `"right"`, or `"middle"`). A right-click goes to the page instead of opening the renderer's menu while a script listens for clicks. A click on a link still follows it, and a click on a trigger still runs its click actions |
 | `key` | A key goes down or up while the page has the keyboard | `key` (the key, as a web page's `KeyboardEvent.key`: `"e"`, `"1"`, `" "`) and `down` (`true` or `false`). The renderer's own keys (walking, turning) still work |
-| `frame` | Before each frame is drawn | `time` (milliseconds since the scene was shown) and `dt` (milliseconds since the last frame). While a script listens for frames, the renderer keeps drawing |
+| `frame` | Before each frame is drawn | `time` (milliseconds since the scene was shown) and `dt` (milliseconds since the last frame). While a script listens for frames, the renderer keeps drawing, except while the page cannot be seen (for example, while its tab is behind another): then it may stop drawing, and frames with it, until the page is seen again |
 | `change` | The viewer moves a slider, or picks an option of a choice | `thing` (the slider or the choice) and `value` (a slider's number, or the chosen option's value) |
 | `load` | A group that loads by area (`load="near"`) has loaded its models (its `loaded` became `true`), or let them go | `thing` (the group) and `loaded` (`true` when its models are in, `false` when they were let go). A model a script adds to a group already in does not make it tell again |
 

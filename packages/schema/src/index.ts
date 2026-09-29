@@ -214,6 +214,9 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     if (attr(anim, 'toggle') && repeat && repeat.value?.trim() !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
   }
   for (const sound of sounds) {
+    // Sounds from a place: how far one comes needs where it comes from.
+    const range = attr(sound, 'range');
+    if (range && !attr(sound, 'position')) report('missing-attribute', '<sound> with "range" needs a "position", the place it comes from', range.start);
     const onClick = attr(sound, 'begin')?.value === 'click';
     const trigger = attr(sound, 'trigger');
     for (const name of ['trigger', 'label']) {
@@ -411,6 +414,12 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
       if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
       const [x0, z0, x1, z1] = parts.map(Number) as [number, number, number, number];
       return x1 > x0 && z1 > z0 ? null : bad('must be "x0 z0 x1 z1", with x1 more than x0 and z1 more than z0');
+    }
+    case 'size': {
+      const parts = v.split(/\s+/);
+      if (parts.length !== 3 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not three numbers, such as "12 4 20"`);
+      if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
+      return parts.every((p) => Number(p) > 0) ? null : bad('each of the three must be more than 0');
     }
     case 'tiling': {
       const parts = v.split(/\s+/);

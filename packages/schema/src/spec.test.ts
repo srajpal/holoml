@@ -38,3 +38,17 @@ describe('O1: the specification', () => {
     });
   }
 });
+
+describe('X1: HoloML 0.2 is complete (browser milestone 21)', () => {
+  const text = spec.replace(/\s+/g, ' ');
+
+  it('no sentence about 0.2 calls it a draft or lists anything still to come in it', () => {
+    const sentences = text.split(/(?<=\.) /);
+    const unfinished = sentences.filter((s) => /\b0\.2\b/.test(s) && /draft|still to come|to come in|is finished when/i.test(s));
+    expect(unfinished).toEqual([]);
+  });
+
+  it('movement along paths is one of the ideas for later versions', () => {
+    expect(text).toMatch(/Ideas for later versions: movement along paths/);
+  });
+});

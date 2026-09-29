@@ -224,6 +224,66 @@ describe('examples', () => {
     for (const page of ['about.holoml', 'index.html']) expect(readFileSync(join(dir, page), 'utf8')).toMatch(/Materials Variants Shoe" © 2021 Shopify, Inc\., from the Khronos glTF Sample Assets/);
   });
 
+  it("the aquarium's pages name only files that exist, and the tank stays within 20 MB and the page limits with its bubbles and food", () => {
+    const dir = join(EXAMPLES, 'aquarium');
+    for (const name of ['index.holoml', 'about.holoml']) {
+      const page = readFileSync(join(dir, name), 'utf8');
+      for (const [, src] of page.matchAll(/src="([^"]+)"/g)) expect(statSync(join(dir, src!)).size, `${src} in ${name}`).toBeGreaterThan(0);
+    }
+    const page = readFileSync(join(dir, 'index.holoml'), 'utf8');
+    const models = [...page.matchAll(/<model [^>]*src="([^"]+)"/g)].map((m) => m[1]!);
+    // The script adds 18 bubbles for each air stone and 24 flakes of food.
+    const script = readFileSync(join(dir, 'aquarium.js'), 'utf8');
+    expect(script).toContain('models/bubble.glb');
+    expect(script).toContain('models/flake.glb');
+    const stones = [...page.matchAll(/<model src="models\/airstone\.glb"/g)].length;
+    const triangles = models.reduce((sum, src) => sum + trianglesOf(join(dir, src)), 0) + stones * 18 * trianglesOf(join(dir, 'models/bubble.glb')) + 24 * trianglesOf(join(dir, 'models/flake.glb'));
+    expect(triangles).toBeLessThan(2_000_000);
+    let bytes = 0;
+    for (const src of new Set([...models, ...[...page.matchAll(/<sound [^>]*src="([^"]+)"/g)].map((m) => m[1]!), 'models/bubble.glb', 'models/flake.glb', 'aquarium.js', 'ocean.js'])) bytes += statSync(join(dir, src)).size;
+    expect(bytes).toBeLessThan(20 * 1024 * 1024);
+  });
+
+  it("the aquarium's fish: every kind has its model with a swim, and the page puts in as many as ocean.js says", async () => {
+    const dir = join(EXAMPLES, 'aquarium');
+    const { KINDS } = (await import(new URL('../../../examples/aquarium/ocean.js', import.meta.url).href)) as { KINDS: { kind: string; count: number }[] };
+    const page = readFileSync(join(dir, 'index.holoml'), 'utf8');
+    expect(KINDS.length).toBeGreaterThanOrEqual(5);
+    for (const k of KINDS) {
+      const g = gltfJson(join(dir, `models/${k.kind}.glb`)) as { animations?: { name: string }[] };
+      expect((g.animations ?? []).map((a) => a.name), k.kind).toContain('Swim');
+      for (let i = 1; i <= k.count; i++) expect(page).toMatch(new RegExp(`<model id="${k.kind}-${i}" src="models/${k.kind}\\.glb"[^>]* animation="Swim" autoplay`));
+      // Its kind's first fish is a button in the outline, for the keyboard.
+      expect(page).toContain(`trigger="#${k.kind}-1"`);
+    }
+  });
+
+  it('the aquarium credits every fish (CC BY 4.0 or CC0) and Poly Haven, on its about page and in its credits', () => {
+    const dir = join(EXAMPLES, 'aquarium');
+    const credits = readFileSync(join(dir, 'models/CREDITS.md'), 'utf8');
+    const about = readFileSync(join(dir, 'about.holoml'), 'utf8');
+    for (const who of ['Babylon.js', 'DigitalLife3D', 'BlueMesh', 'Amy Scott-Murray', 'GoldenZtuff', 'zixisun02', 'Dsanchez13', 'Microsoft']) {
+      expect(credits).toContain(who);
+      expect(about).toContain(who);
+    }
+    for (const words of ['CC BY 4.0', 'CC0', 'Objaverse', 'Poly Haven', 'Boulder 01', 'Dead Tree Trunk 02', 'Lambis Shell', 'Aerial Beach 01']) expect(credits).toContain(words);
+    expect(about).toMatch(/Poly Haven \(CC0\)/);
+    // No licence that is not CC BY 4.0 or CC0 (the file has Windows line ends where Git converts them, as on
+    // GitHub's Windows machines).
+    for (const line of credits.split(/\r?\n/).filter((l) => /^- [a-z-]+\.glb, /.test(l))) expect(line).toMatch(/CC BY 4\.0\.$|CC0 1\.0\.$/);
+  });
+
+  it("the aquarium's water, bubbling from its air stones, and Feed button", () => {
+    const page = readFileSync(join(EXAMPLES, 'aquarium/index.holoml'), 'utf8');
+    expect(page).toMatch(/<water [^>]*size="24 6\.8 34"[^>]* caustics \/>/);
+    const stones = [...page.matchAll(/<model src="models\/airstone\.glb" position="([^"]+)"/g)].map((m) => m[1]!.split(' ').map(Number));
+    const bubblers = [...page.matchAll(/<sound id="bubbler-\d" src="sounds\/bubbles\.wav" position="([^"]+)" range="(\d+)"/g)];
+    expect(stones.length).toBeGreaterThan(0);
+    expect(bubblers).toHaveLength(stones.length);
+    bubblers.forEach(([, at], i) => expect(at!.split(' ').map(Number)[0]).toBe(stones[i]![0]));
+    expect(page).toMatch(/<sound id="plop" src="sounds\/plop\.wav" begin="click" trigger="#feed"/);
+  });
+
   it('the showroom credits its models, and the about page says where they come from', () => {
     const credits = readFileSync(join(EXAMPLES, 'showroom/models/CREDITS.md'), 'utf8');
     expect(credits).toMatch(/Kenney/);

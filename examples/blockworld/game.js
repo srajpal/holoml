@@ -1,4 +1,4 @@
-// Blockworld: a very small block game in HoloML 0.2 (draft). The page
+// Blockworld: a very small block game in HoloML 0.2. The page
 // (index.holoml) holds the sky, the lights, the sounds, the chest, and the
 // text on the screen; this script makes the island from a seed and plays
 // the game through the scene API, `holoml` (SPEC.md section 10).

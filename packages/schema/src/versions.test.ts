@@ -10,7 +10,7 @@ const page02 = `<holoml version="0.2">
   </scene>
 </holoml>`;
 
-describe('versions (HoloML 0.2 draft)', () => {
+describe('versions (HoloML 0.2)', () => {
   it('a 0.2 page is valid for a reader that knows 0.2', () => {
     expect(check(parse(page02))).toEqual([]);
   });

@@ -1,0 +1,12 @@
+<holoml version="0.2">
+  <scene>
+    <water />
+    <water size="12 5" clarity="0" caustics="yes" />
+    <group>
+      <water size="1 1 1" />
+    </group>
+    <water size="4 0 4" color="blue" />
+    <sound src="sounds/hum.ogg" range="10" />
+    <sound src="sounds/hum.ogg" position="0 1" range="-2" />
+  </scene>
+</holoml>
