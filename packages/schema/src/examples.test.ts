@@ -268,8 +268,9 @@ describe('examples', () => {
     }
     for (const words of ['CC BY 4.0', 'CC0', 'Objaverse', 'Poly Haven', 'Boulder 01', 'Dead Tree Trunk 02', 'Lambis Shell', 'Aerial Beach 01']) expect(credits).toContain(words);
     expect(about).toMatch(/Poly Haven \(CC0\)/);
-    // No licence that is not CC BY 4.0 or CC0.
-    for (const line of credits.split('\n').filter((l) => /^- [a-z-]+\.glb, /.test(l))) expect(line).toMatch(/CC BY 4\.0\.$|CC0 1\.0\.$/);
+    // No licence that is not CC BY 4.0 or CC0 (the file has Windows line ends where Git converts them, as on
+    // GitHub's Windows machines).
+    for (const line of credits.split(/\r?\n/).filter((l) => /^- [a-z-]+\.glb, /.test(l))) expect(line).toMatch(/CC BY 4\.0\.$|CC0 1\.0\.$/);
   });
 
   it("the aquarium's water, bubbling from its air stones, and Feed button", () => {
