@@ -484,7 +484,8 @@ stands in `scene`, at most one; holds nothing.
   water has faded fully, and one half as far has half faded. From inside
   the water that is the whole way to the thing; from outside, only the
   part of the way inside the box, as when looking into a tank through
-  its glass. The background and the sky do not fade.
+  its glass. The background and the sky do not fade, and neither do
+  labels and panels: text stays as it is, to be read.
 - With `caustics`, the light plays over what is in the water, most on
   what faces up to the surface (floors, rocks, the backs of fish), and
   fainter the deeper it is. It moves; with reduced motion it holds
