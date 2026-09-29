@@ -1,0 +1,43 @@
+<holoml version="0.2">
+  <head>
+    <title>About Harbour Loft</title>
+    <meta name="description" content="What this tour is, what it shows of HoloML 0.2, what it is made of, and where to find HoloML." />
+    <meta name="author" content="The HoloML Authors" />
+  </head>
+  <scene background="#9fb4c4" sky="light/sky.jpg" environment="light/harbour.hdr">
+    <viewpoint position="0 1.4 1.7" look-at="0 1.3 -0.7" />
+    <light type="ambient" intensity="0.9" />
+    <light type="directional" position="10.4 11.8 12.4" look-at="0 0 0" intensity="3" color="#fff1dc" />
+    <model src="models/deck.glb" />
+
+    <label position="0 2.2 -0.7" size="0.16" color="#1d6fa5">Harbour Loft</label>
+
+    <panel position="-0.62 1.62 -0.7" width="1.1" size="0.042" color="#1f2328" background="#f7f4ee">
+      About this tour
+
+      Harbour Loft is an example of HoloML 0.2, an open markup language for 3D pages. The flat, its roof terrace, and this page are written in HoloML: the rooms and their light, the panels, the doors and lamps that work with a click, the places to go to, and the floor plan. A short script, loft.js, turns the day to evening.
+
+      The flat, its price, and the agent are made up. The booking page sends nothing.
+    </panel>
+    <panel position="0.62 1.62 -0.7" width="1.1" size="0.036" color="#1f2328" background="#f7f4ee">
+      Made with
+
+      The furniture, the textures, and the harbour's panorama are from Poly Haven (polyhaven.com, CC0), by Kirill Sannikov, Kuutti Siitonen, Ulan Cabanilla, Patrik Pangerl, James Ray Cock, Serhii Khromov, Mateusz Sadek, Vibrant Nordic, Yann Kervran, Jenelle van Heerden, Sergej Majboroda, Charlotte Baglioni, Rob Tuytel, Dimitrios Savva, colormass, Rico Cilliers, and Greg Zaal.
+
+      The walls, the kitchen, the bathroom, the bed, the floor plan, and the sounds are made by the site's own script, tools/prepare.mjs.
+    </panel>
+
+    <a href="https://github.com/srajpal/holoml/blob/main/SPEC.md">
+      <panel position="-0.9 0.78 -0.7" width="0.8" size="0.05" color="#ffffff" background="#1d6fa5">The HoloML specification</panel>
+    </a>
+    <a href="https://github.com/srajpal/holoml/tree/main/examples/harbour-loft">
+      <panel position="0 0.78 -0.7" width="0.8" size="0.05" color="#ffffff" background="#1d6fa5">This tour's source</panel>
+    </a>
+    <a href="https://github.com/srajpal/hypersol-hyperspace-3d">
+      <panel position="0.9 0.78 -0.7" width="0.8" size="0.05" color="#ffffff" background="#1d6fa5">HyperSpace 3D, the browser</panel>
+    </a>
+    <a href="index.holoml">
+      <panel position="0 0.5 -0.7" width="0.8" size="0.05" color="#ffffff" background="#5b6472">Back to the flat</panel>
+    </a>
+  </scene>
+</holoml>

@@ -1,0 +1,59 @@
+<holoml version="0.2">
+  <head>
+    <title>Harbour Loft: the roof terrace</title>
+    <meta name="description" content="Harbour Loft's roof terrace, with the whole harbour around it. A HoloML 0.2 page." />
+    <meta name="author" content="The HoloML Authors" />
+    <script src="loft.js" />
+  </head>
+  <!-- Up on the roof: the same harbour all round, a deck of weathered
+       planks, glass railings, and the stair house back down to the flat. -->
+  <scene id="terrace" background="#9fb4c4" sky="light/sky.jpg" environment="light/harbour.hdr">
+    <!-- The flat's door arrives here (the first place); the other is at the railing, over the marina. -->
+    <viewpoint id="door" label="By the stairs" position="-3.6 1.6 -0.4" look-at="0.5 1.3 3.2" mode="walk" />
+    <viewpoint id="rail" label="At the railing" position="1.2 1.6 2.5" look-at="1.8 1.1 8" mode="walk" />
+
+    <light id="fill" type="ambient" intensity="0.9" />
+    <light id="sun" type="directional" position="10.4 11.8 12.4" look-at="0 0 0" intensity="3" color="#fff1dc" shadows />
+
+    <group shadows>
+      <model src="models/deck.glb" />
+      <model src="models/stair-house.glb" solid />
+      <model src="models/outdoor-set.glb" position="3 0 -1.4" rotation="0 90 0" solid />
+      <model src="models/lounger.glb" position="-0.6 0 0.5" solid />
+      <model src="models/lounger.glb" position="0.4 0 0.5" solid />
+      <model src="models/planter.glb" position="-0.4 0 -2.85" solid />
+      <model src="models/planter.glb" position="1.2 0 -2.85" solid />
+      <model src="models/planter.glb" position="4.15 0 1.8" rotation="0 90 0" solid />
+    </group>
+
+    <!-- Glass railings on every side, each its own solid model (one
+         around the whole deck would hold the walker inside its box). -->
+    <model src="models/railing.glb" position="-4.5 0 3.2" scale="9 1 1" solid />
+    <model src="models/railing.glb" position="4.5 0 3.2" rotation="0 90 0" scale="6.4 1 1" solid />
+    <model src="models/railing.glb" position="-1.9 0 -3.2" scale="6.4 1 1" solid />
+    <model src="models/railing.glb" position="-4.5 0 3.2" rotation="0 90 0" scale="4.2 1 1" solid />
+
+    <panel position="-1.885 1.5 -2.05" rotation="0 90 0" width="0.9" size="0.05" color="#1f2328" background="#f7f4ee">
+      Roof terrace, 50 m²
+
+      Private, with the whole harbour around it: the marina, the hills, and the evening sun.
+    </panel>
+
+    <!-- The way back: the stair house's door, down to the flat's terrace door. -->
+    <a href="index.holoml#terrace-door">
+      <model src="models/door.glb" position="-4.1 0 -0.98">
+        <material name="DoorPaint" color="#2f3d36" />
+      </model>
+      <panel position="-2.55 1.6 -0.985" width="0.9" size="0.05" color="#f7f4ee" background="#2f3d36">Back down to the flat</panel>
+    </a>
+
+    <choice id="time" corner="top-left" label="Light" value="day">
+      <option value="day">Day</option>
+      <option value="evening">Evening</option>
+    </choice>
+    <hud corner="bottom-left" size="15">
+      Walk with the arrow keys or W, A, S, D, and drag to look around
+      The stair house's door goes back down to the flat
+    </hud>
+  </scene>
+</holoml>

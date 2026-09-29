@@ -1,0 +1,292 @@
+<holoml version="0.2">
+  <head>
+    <title>Harbour Loft</title>
+    <meta name="description" content="A loft by the harbour to tour: walk through its rooms, open the doors, switch the lamps on, read about each room, see where you are on the plan, and go up to the roof terrace. A HoloML 0.2 page for an estate agent." />
+    <meta name="author" content="The HoloML Authors" />
+    <script src="loft.js" />
+  </head>
+  <!-- The harbour's panorama is the view out of the windows (sky) and the
+       light in the rooms (environment); the sun comes in through the tall
+       windows. loft.js turns the day to evening (the Light choice). -->
+  <scene id="loft" background="#9fb4c4" sky="light/sky.jpg" environment="light/harbour.hdr">
+    <!-- Places: the viewer starts in the hall (the first), walking. The
+         terrace's way back arrives at #terrace-door. -->
+    <viewpoint id="hall" label="Hall" position="0 1.6 -2.9" look-at="0 1.45 3.75" mode="walk" />
+    <viewpoint id="living" label="Living room" position="-0.3 1.6 -0.75" look-at="-1.4 0.9 3.75" mode="walk" />
+    <viewpoint id="kitchen" label="Kitchen" position="-2.6 1.6 1.95" look-at="-4.6 1.05 -0.9" mode="walk" />
+    <viewpoint id="bedroom" label="Bedroom" position="2.7 1.6 2.8" look-at="4.6 0.7 0" mode="walk" />
+    <viewpoint id="study" label="Study" position="-2.7 1.6 -2.5" look-at="-5.6 1.2 -2.5" mode="walk" />
+    <viewpoint id="bathroom" label="Bathroom" position="2.75 1.6 -2.1" look-at="5.6 1 -2.6" mode="walk" />
+    <viewpoint id="terrace-door" label="By the door to the terrace" position="-5.55 1.6 0.9" look-at="1 1.4 1.2" mode="walk" />
+
+    <!-- The fill (its brightness also sets the sky's and the panorama's) and the sun. -->
+    <light id="fill" type="ambient" intensity="1.7" />
+    <light id="sun" type="directional" position="10.4 11.8 12.4" look-at="0 0 0" intensity="3.5" color="#fff1dc" shadows />
+
+    <!-- The doors: a click (or Enter on its button) swings one open, and
+         the next shuts it, with the sound of its latch. -->
+    <group shadows>
+      <group id="study-hinge" position="-2 0 -3.05" rotation="0 -90 0">
+        <model id="study-door" src="models/door.glb" solid />
+      </group>
+      <group id="bathroom-hinge" position="2 0 -3.35" rotation="0 -90 0">
+        <model id="bathroom-door" src="models/door.glb" solid />
+      </group>
+      <group id="bedroom-hinge" position="2 0 0.55" rotation="0 90 0">
+        <model id="bedroom-door" src="models/door.glb" solid />
+      </group>
+      <!-- The front door stays shut. -->
+      <model src="models/door.glb" position="-0.48 0 -3.85" solid>
+        <material name="DoorPaint" color="#3e4a52" />
+      </model>
+    </group>
+    <animate target="#study-hinge" attribute="rotation" to="0 -180 0" duration="0.8s" begin="click" trigger="#study-door" toggle label="Study door" />
+    <sound src="sounds/door.wav" begin="click" trigger="#study-door" volume="0.7" />
+    <animate target="#bathroom-hinge" attribute="rotation" to="0 0 0" duration="0.8s" begin="click" trigger="#bathroom-door" toggle label="Bathroom door" />
+    <sound src="sounds/door.wav" begin="click" trigger="#bathroom-door" volume="0.7" />
+    <animate target="#bedroom-hinge" attribute="rotation" to="0 0 0" duration="0.8s" begin="click" trigger="#bedroom-door" toggle label="Bedroom door" />
+    <sound src="sounds/door.wav" begin="click" trigger="#bedroom-door" volume="0.7" />
+
+    <!-- The lamps: a switch, or the lamp itself, turns its light and its
+         bulb's glow on and off. -->
+    <!-- The hall: a pendant, its switch by the front door. -->
+    <light id="hall-light" type="point" position="0 2.1 -2.5" range="5" intensity="0" color="#ffd9a6" />
+    <group position="0 1.827 -2.5">
+      <model src="models/pendant.glb" />
+      <model id="hall-glow" src="models/glow.glb" position="0 0.42 0" scale="0.001" />
+    </group>
+    <model id="hall-switch" src="models/switch.glb" position="-0.8 1.1 -3.75" />
+    <animate target="#hall-light" attribute="intensity" from="0" to="1.2" duration="0.2s" begin="click" trigger="#hall-switch" toggle label="Hall light" />
+    <animate target="#hall-glow" attribute="scale" from="0.001 0.001 0.001" to="1 1 1" duration="0.2s" begin="click" trigger="#hall-switch" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#hall-switch" volume="0.6" />
+
+    <!-- The kitchen: two pendants over the island, their switch by the hall. -->
+    <light id="kitchen-light" type="point" position="-3.95 2 0.8" range="5" intensity="0" color="#ffd9a6" />
+    <group position="-4.55 1.827 0.8">
+      <model src="models/pendant.glb" />
+      <model id="kitchen-glow-1" src="models/glow.glb" position="0 0.42 0" scale="0.001" />
+    </group>
+    <group position="-3.35 1.827 0.8">
+      <model src="models/pendant.glb" />
+      <model id="kitchen-glow-2" src="models/glow.glb" position="0 0.42 0" scale="0.001" />
+    </group>
+    <model id="kitchen-switch" src="models/switch.glb" position="-1.05 1.1 -1.19" />
+    <animate target="#kitchen-light" attribute="intensity" from="0" to="1.2" duration="0.2s" begin="click" trigger="#kitchen-switch" toggle label="Kitchen lights" />
+    <animate target="#kitchen-glow-1" attribute="scale" from="0.001 0.001 0.001" to="1 1 1" duration="0.2s" begin="click" trigger="#kitchen-switch" toggle />
+    <animate target="#kitchen-glow-2" attribute="scale" from="0.001 0.001 0.001" to="1 1 1" duration="0.2s" begin="click" trigger="#kitchen-switch" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#kitchen-switch" volume="0.6" />
+
+    <!-- The bathroom: a pendant, its switch in the hall beside the door. -->
+    <light id="bathroom-light" type="point" position="4 2.1 -2.3" range="4.5" intensity="0" color="#ffe6c4" />
+    <group position="4 1.827 -2.3">
+      <model src="models/pendant.glb" />
+      <model id="bathroom-glow" src="models/glow.glb" position="0 0.42 0" scale="0.001" />
+    </group>
+    <model id="bathroom-switch" src="models/switch.glb" position="1.94 1.1 -3.55" rotation="0 -90 0" />
+    <animate target="#bathroom-light" attribute="intensity" from="0" to="1.2" duration="0.2s" begin="click" trigger="#bathroom-switch" toggle label="Bathroom light" />
+    <animate target="#bathroom-glow" attribute="scale" from="0.001 0.001 0.001" to="1 1 1" duration="0.2s" begin="click" trigger="#bathroom-switch" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#bathroom-switch" volume="0.6" />
+
+    <!-- The living room's reading lamp, on its table by the window: click the lamp. -->
+    <light id="living-light" type="point" position="0.55 1.15 3.05" range="4" intensity="0" color="#ffd9a6" />
+    <group id="living-lamp" position="0.55 0.761 3.22" rotation="0 180 0">
+      <model src="models/pipe-lamp.glb" />
+      <model id="living-glow" src="models/glow.glb" position="0 0.3 0.062" scale="0.001" />
+    </group>
+    <animate target="#living-light" attribute="intensity" from="0" to="1" duration="0.2s" begin="click" trigger="#living-lamp" toggle label="Living room lamp" />
+    <animate target="#living-glow" attribute="scale" from="0.001 0.001 0.001" to="0.7 0.7 0.7" duration="0.2s" begin="click" trigger="#living-lamp" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#living-lamp" volume="0.6" />
+
+    <!-- The bedside lamps, one each side of the bed. -->
+    <light id="bedside-left-light" type="point" position="2.8 0.95 -0.3" range="3" intensity="0" color="#ffd9a6" />
+    <group id="bedside-left" position="2.8 0.548 -0.44">
+      <model src="models/pipe-lamp.glb" />
+      <model id="bedside-left-glow" src="models/glow.glb" position="0 0.3 0.062" scale="0.001" />
+    </group>
+    <animate target="#bedside-left-light" attribute="intensity" from="0" to="0.9" duration="0.2s" begin="click" trigger="#bedside-left" toggle label="Bedside lamp, left" />
+    <animate target="#bedside-left-glow" attribute="scale" from="0.001 0.001 0.001" to="0.7 0.7 0.7" duration="0.2s" begin="click" trigger="#bedside-left" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#bedside-left" volume="0.6" />
+    <light id="bedside-right-light" type="point" position="5.4 0.95 -0.3" range="3" intensity="0" color="#ffd9a6" />
+    <group id="bedside-right" position="5.4 0.548 -0.44">
+      <model src="models/pipe-lamp.glb" />
+      <model id="bedside-right-glow" src="models/glow.glb" position="0 0.3 0.062" scale="0.001" />
+    </group>
+    <animate target="#bedside-right-light" attribute="intensity" from="0" to="0.9" duration="0.2s" begin="click" trigger="#bedside-right" toggle label="Bedside lamp, right" />
+    <animate target="#bedside-right-glow" attribute="scale" from="0.001 0.001 0.001" to="0.7 0.7 0.7" duration="0.2s" begin="click" trigger="#bedside-right" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#bedside-right" volume="0.6" />
+
+    <!-- The study's desk lamp, its arm reaching over the desk. -->
+    <light id="desk-light" type="spot" position="-5.85 1.44 -3.05" look-at="-5.55 0.79 -2.55" angle="28" range="3" intensity="0" color="#fff0d8" />
+    <group id="desk-lamp" position="-5.85 0.79 -3.25" rotation="0 180 0">
+      <model src="models/desk-lamp.glb" />
+      <model id="desk-glow" src="models/glow.glb" position="-0.005 0.69 -0.177" scale="0.001" />
+    </group>
+    <animate target="#desk-light" attribute="intensity" from="0" to="1.6" duration="0.2s" begin="click" trigger="#desk-lamp" toggle label="Desk lamp" />
+    <animate target="#desk-glow" attribute="scale" from="0.001 0.001 0.001" to="0.75 0.75 0.75" duration="0.2s" begin="click" trigger="#desk-lamp" toggle />
+    <sound src="sounds/switch.wav" begin="click" trigger="#desk-lamp" volume="0.6" />
+
+    <!-- The estate agent's panels, one in each room. -->
+    <panel position="1.925 1.55 -1.83" rotation="0 -90 0" width="0.7" size="0.045" color="#1f2328" background="#f7f4ee">
+      Harbour Loft, 90 m²
+
+      The top floor of an old sail loft on the quay: an open living room and kitchen, a bedroom, a study, a bathroom, and a roof terrace of its own.
+
+      Offers over $685,000. An example: the flat and its price are made up.
+    </panel>
+    <panel position="-1.75 1.55 -1.175" width="0.85" size="0.045" color="#1f2328" background="#f7f4ee">
+      Living room and kitchen, 40 m²
+
+      Three tall windows over the marina, oak herringbone floors, the old brick wall, and a kitchen with white stone worktops and an island for three.
+
+      The door in the brick wall leads up to the roof terrace.
+    </panel>
+    <panel position="2.075 1.55 2.4" rotation="0 90 0" width="0.7" size="0.045" color="#1f2328" background="#f7f4ee">
+      Bedroom, 18 m²
+
+      Two windows, one over the water, a wall of wardrobes, and room for a king-size bed.
+    </panel>
+    <panel position="-4 1.55 -1.325" rotation="0 180 0" width="0.7" size="0.045" color="#1f2328" background="#f7f4ee">
+      Study, 10 m²
+
+      A window over the desk, and shelves for books. It would make a small second bedroom.
+    </panel>
+    <panel position="3.6 1.75 -3.735" width="0.7" size="0.045" color="#1f2328" background="#f7f4ee">
+      Bathroom, 12 m²
+
+      A bath, a walk-in shower, and a basin with storage, in white tiles.
+    </panel>
+
+    <!-- The links: booking a viewing (a web page), about this tour, and up to the roof terrace (a second HoloML page, reached with a fade). -->
+    <a href="booking.html">
+      <panel position="-1.925 1.5 -1.68" rotation="0 90 0" width="0.5" size="0.06" color="#ffffff" background="#1d6fa5">Book a viewing</panel>
+    </a>
+    <a href="about.holoml">
+      <panel position="1.25 1.5 -3.735" width="0.5" size="0.06" color="#ffffff" background="#5b6472">About this tour</panel>
+    </a>
+    <a href="terrace.holoml">
+      <model src="models/door.glb" position="-6.1 0 0.42" rotation="0 -90 0">
+        <material name="DoorPaint" color="#2f3d36" />
+      </model>
+      <panel position="-5.985 1.6 1.95" rotation="0 90 0" width="0.62" size="0.05" color="#f7f4ee" background="#2f3d36">Up to the roof terrace</panel>
+    </a>
+
+    <!-- The walls, windows, and furniture, after the things to use: Tab
+         reaches the places, doors, lamps, and links first. -->
+    <!-- prepare.mjs: from here (made from tools/layout.mjs; run tools/prepare.mjs again to change it) -->
+    <!-- The walls: a box of paint stretched to each piece, every one solid. -->
+    <group solid shadows>
+      <model src="models/wall.glb" position="-5.8 1.5 3.85" scale="0.8 3 0.2" />
+      <model src="models/wall.glb" position="-4.6 0.15 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="-4.6 2.85 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="-3.3 1.5 3.85" scale="1 3 0.2" />
+      <model src="models/wall.glb" position="-2 0.15 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="-2 2.85 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="-0.7 1.5 3.85" scale="1 3 0.2" />
+      <model src="models/wall.glb" position="0.6 0.15 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="0.6 2.85 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="2.3 1.5 3.85" scale="1.8 3 0.2" />
+      <model src="models/wall.glb" position="4 0.15 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="4 2.85 3.85" scale="1.6 0.3 0.2" />
+      <model src="models/wall.glb" position="5.5 1.5 3.85" scale="1.4 3 0.2" />
+      <model src="models/wall.glb" position="-3.35 1.5 -3.85" scale="5.7 3 0.2" />
+      <model src="models/wall.glb" position="0 2.55 -3.85" scale="1 0.9 0.2" />
+      <model src="models/wall.glb" position="3.35 1.5 -3.85" scale="5.7 3 0.2" />
+      <model src="models/wall.glb" position="-6.1 1.5 -3.45" scale="0.2 3 0.6" />
+      <model src="models/wall.glb" position="-6.1 0.45 -2.5" scale="0.2 0.9 1.3" />
+      <model src="models/wall.glb" position="-6.1 2.75 -2.5" scale="0.2 0.5 1.3" />
+      <model src="models/wall.glb" position="-6.1 1.5 -1.55" scale="0.2 3 0.6" />
+      <model src="models/wall.glb" position="6.1 1.5 -3.175" scale="0.2 3 1.15" />
+      <model src="models/wall.glb" position="6.1 0.75 -2.2" scale="0.2 1.5 0.8" />
+      <model src="models/wall.glb" position="6.1 2.75 -2.2" scale="0.2 0.5 0.8" />
+      <model src="models/wall.glb" position="6.1 1.5 -0.75" scale="0.2 3 2.1" />
+      <model src="models/wall.glb" position="6.1 0.45 0.95" scale="0.2 0.9 1.3" />
+      <model src="models/wall.glb" position="6.1 2.75 0.95" scale="0.2 0.5 1.3" />
+      <model src="models/wall.glb" position="6.1 1.5 2.675" scale="0.2 3 2.15" />
+      <model src="models/wall.glb" position="-3.45 1.5 -1.25" scale="5.1 3 0.12" />
+      <model src="models/wall.glb" position="0 2.7 -1.25" scale="1.8 0.6 0.12" />
+      <model src="models/wall.glb" position="1.42 1.5 -1.25" scale="1.04 3 0.12" />
+      <model src="models/wall.glb" position="-2 1.5 -3.4" scale="0.12 3 0.7" />
+      <model src="models/wall.glb" position="-2 2.55 -2.55" scale="0.12 0.9 1" />
+      <model src="models/wall.glb" position="-2 1.5 -1.68" scale="0.12 3 0.74" />
+      <model src="models/wall.glb" position="2 1.5 -3.55" scale="0.12 3 0.4" />
+      <model src="models/wall.glb" position="2 2.55 -2.85" scale="0.12 0.9 1" />
+      <model src="models/wall.glb" position="2 1.5 -1.4" scale="0.12 3 1.9" />
+      <model src="models/wall.glb" position="2 2.55 0.05" scale="0.12 0.9 1" />
+      <model src="models/wall.glb" position="2 1.5 2.15" scale="0.12 3 3.2" />
+      <model src="models/wall.glb" position="4.03 1.5 -0.75" scale="3.94 3 0.12" />
+      <model src="models/brick-wall.glb" />
+    </group>
+    <!-- The floor, the ceiling, the windows, and the furniture. -->
+    <group shadows>
+      <model src="models/floor.glb" />
+      <model id="ceiling" src="models/ceiling.glb" />
+      <model src="models/window-tall.glb" position="-4.6 0.3 3.85" rotation="0 180 0" />
+      <model src="models/window-tall.glb" position="-2 0.3 3.85" rotation="0 180 0" />
+      <model src="models/window-tall.glb" position="0.6 0.3 3.85" rotation="0 180 0" />
+      <model src="models/window-tall.glb" position="4 0.3 3.85" rotation="0 180 0" />
+      <model src="models/window.glb" position="-6.1 0.9 -2.5" rotation="0 90 0" />
+      <model src="models/window-small.glb" position="6.1 1.5 -2.2" rotation="0 -90 0" />
+      <model src="models/window.glb" position="6.1 0.9 0.95" rotation="0 -90 0" />
+      <model src="models/sofa.glb" position="-1 0 0.9" solid />
+      <model src="models/pillows.glb" position="-1 0.42 0.72" />
+      <model src="models/rug.glb" position="-1 0 2.05" />
+      <model src="models/coffee-table.glb" position="-1 0 2.15" solid />
+      <model src="models/lounge-chair.glb" position="0.62 0 2.2" rotation="0 -90 0" solid />
+      <model src="models/tall-table.glb" position="0.55 0 3.22" solid />
+      <model src="models/sideboard.glb" position="1.68 0 1.83" rotation="0 -90 0" solid />
+      <model src="models/picture.glb" position="1.935 1.55 1.83" rotation="0 -90 0" />
+      <model src="models/plant.glb" position="1.65 0 3.42" scale="2.8" solid />
+      <model src="models/plant.glb" position="1.7 0.68 2.72" />
+      <model src="models/kitchen.glb" position="-6 0 -1.19" solid />
+      <model src="models/island.glb" position="-3.95 0 0.8" solid />
+      <model src="models/stool.glb" position="-4.55 0 1.47" scale="0.8" solid />
+      <model src="models/stool.glb" position="-3.95 0 1.47" scale="0.8" solid />
+      <model src="models/stool.glb" position="-3.35 0 1.47" scale="0.8" solid />
+      <model src="models/dining-table.glb" position="-4.3 0 2.85" scale="0.85 0.75 0.85" solid />
+      <model src="models/dining-chair.glb" position="-4.3 0 2.1" solid />
+      <model src="models/dining-chair.glb" position="-5.05 0 2.85" rotation="0 90 0" solid />
+      <model src="models/dining-chair.glb" position="-3.55 0 2.85" rotation="0 -90 0" solid />
+      <model src="models/plant.glb" position="-5.68 0 3.42" scale="2.8" solid />
+      <model src="models/desk.glb" position="-5.53 0 -2.53" rotation="0 90 0" solid />
+      <model src="models/desk-chair.glb" position="-4.72 0 -2.5" rotation="0 -90 0" solid />
+      <model src="models/shelves.glb" position="-3.4 0 -3.5" solid />
+      <model src="models/books.glb" position="-3.4 0.125 -3.52" />
+      <model src="models/books-2.glb" position="-3.4 0.625 -3.52" />
+      <model src="models/books.glb" position="-3.35 1.135 -3.52" />
+      <model src="models/books-2.glb" position="-3.45 1.645 -3.52" />
+      <model src="models/plant.glb" position="-5.78 0.79 -1.75" />
+      <model src="models/bed.glb" position="4.1 0 -0.69" solid />
+      <model src="models/bedside-table.glb" position="2.8 0 -0.44" solid />
+      <model src="models/bedside-table.glb" position="5.4 0 -0.44" solid />
+      <model src="models/wardrobe.glb" position="6 0 2.85" rotation="0 -90 0" solid />
+      <model src="models/plant.glb" position="2.45 0 3.42" scale="2.8" solid />
+      <model src="models/bath.glb" position="5.6 0 -2.9" solid />
+      <model src="models/shower.glb" position="5.5 0 -1.31" />
+      <model src="models/vanity.glb" position="3.4 0 -0.81" rotation="0 180 0" solid />
+      <model src="models/toilet.glb" position="2.06 0 -1.6" rotation="0 90 0" solid />
+      <model src="models/bath-tiles.glb" position="0 0 0" />
+      <model src="models/plant.glb" position="-1.62 0 -3.42" scale="2.8" solid />
+    </group>
+    <!-- The glass: outside the shadows, so the sun comes through. -->
+    <model src="models/glass.glb" position="-4.6 1.5 3.85" rotation="0 180 0" scale="1.6 2.4 1" />
+    <model src="models/glass.glb" position="-2 1.5 3.85" rotation="0 180 0" scale="1.6 2.4 1" />
+    <model src="models/glass.glb" position="0.6 1.5 3.85" rotation="0 180 0" scale="1.6 2.4 1" />
+    <model src="models/glass.glb" position="4 1.5 3.85" rotation="0 180 0" scale="1.6 2.4 1" />
+    <model src="models/glass.glb" position="-6.1 1.7 -2.5" rotation="0 90 0" scale="1.3 1.6 1" />
+    <model src="models/frosted.glb" position="6.1 2 -2.2" rotation="0 -90 0" scale="0.8 1 1" />
+    <model src="models/glass.glb" position="6.1 1.7 0.95" rotation="0 -90 0" scale="1.3 1.6 1" />
+    <model src="models/glass.glb" position="5.65 1.02 -1.81" rotation="0 0 0" scale="0.7 1.96 1" solid />
+    <!-- prepare.mjs: to here -->
+
+    <!-- On the screen: the floor plan (top right), the Light choice (for loft.js), and a line of help. -->
+    <plan src="plans/loft.png" area="-6.2 -3.95 6.2 3.95" corner="top-right" width="300" label="Floor plan of Harbour Loft" />
+    <choice id="time" corner="top-left" label="Light" value="day">
+      <option value="day">Day</option>
+      <option value="evening">Evening</option>
+    </choice>
+    <hud corner="bottom-left" size="15">
+      Walk with the arrow keys or W, A, S, D, and drag to look around
+      Click a door to open it, and a switch or a lamp to light it
+    </hud>
+  </scene>
+</holoml>
