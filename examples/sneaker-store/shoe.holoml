@@ -1,0 +1,78 @@
+<holoml version="0.2">
+  <head>
+    <title>Everyday Runner</title>
+    <meta name="description" content="One shoe close up, on a turntable: orbit around it, turn it over to see the sole, choose its colour (it changes in place) and its size, and add it to your cart. A HoloML 0.2 shop page." />
+    <meta name="author" content="The HoloML Authors" />
+    <script src="shoe.js" />
+  </head>
+  <!-- The shoe turns once on its turntable as the page opens (at once with
+       reduced motion); drag to go around it. The store's links open this
+       page with ?colour=<id>, and shoe.js picks that colour. -->
+  <scene id="studio" background="#ebe8e3">
+    <viewpoint position="0.5 0.3 0.5" look-at="0 0.1 0" />
+
+    <light type="ambient" intensity="0.45" />
+    <light type="directional" position="1.6 3.2 2.2" look-at="0 0 0" intensity="1.5" color="#fffaf2" shadows />
+    <light type="directional" position="-2.4 1.4 -1.2" look-at="0 0.1 0" intensity="0.55" color="#e8f0ff" />
+
+    <hud id="price" corner="top-right" size="20" color="#1f2328">
+      Everyday Runner
+      Midnight
+      $120
+    </hud>
+    <hud id="cart" corner="top-left" size="18" color="#1f2328">Cart: empty</hud>
+
+    <!-- The buttons in the scene, beside the turntable and facing the first view: each is also a button (or a link) in the outline, for the keyboard and screen readers. -->
+    <panel id="add" position="0.3 0.23 -0.18" rotation="0 45 0" width="0.19" size="0.022" color="#ffffff" background="#1d6fa5">Add to cart</panel>
+    <panel id="turn-over" position="0.3 0.15 -0.18" rotation="0 45 0" width="0.19" size="0.02" color="#ffffff" background="#5b6472">Turn it over</panel>
+    <a href="checkout.html">
+      <panel position="0.3 0.075 -0.18" rotation="0 45 0" width="0.19" size="0.02" color="#1d6fa5" background="#ffffff">Checkout</panel>
+    </a>
+    <a href="index.holoml">
+      <panel position="-0.18 0.075 0.3" rotation="0 45 0" width="0.22" size="0.02" color="#1d6fa5" background="#ffffff">Back to the store</panel>
+    </a>
+
+    <group shadows>
+      <model src="models/studio.glb" />
+      <model src="models/turntable.glb" />
+      <!-- The shoe turns on the turntable (spin); turned over, about its middle (flip). -->
+      <group id="spin" position="0 0.035 0">
+        <group id="flip" position="0 0.077 0">
+          <model id="shoe" src="models/shoe.glb" position="-0.0016 -0.077 -0.0048" />
+        </group>
+      </group>
+    </group>
+    <animate target="#spin" attribute="rotation" from="0 45 0" to="0 405 0" duration="9s" />
+    <animate target="#flip" attribute="rotation" to="180 0 0" duration="0.9s" begin="click" trigger="#turn-over" toggle label="Turn it over" />
+    <sound id="chime" src="sounds/add.wav" begin="click" trigger="#add" volume="0.5" label="Add to cart" />
+
+    <choice id="colour" corner="bottom-left" label="Colour" target="#shoe" material="Shoe" value="midnight">
+      <!-- prepare.mjs: the colours (from colourways.js: edit there, and run tools/prepare.mjs) -->
+      <option value="midnight">Midnight</option>
+      <option value="beach" map="colours/beach.jpg">Beach</option>
+      <option value="street" map="colours/street.jpg">Street</option>
+      <option value="forest" map="colours/forest.jpg">Forest</option>
+      <option value="sunset" map="colours/sunset.jpg">Sunset</option>
+      <option value="lemon" map="colours/lemon.jpg">Lemon</option>
+      <option value="violet" map="colours/violet.jpg">Violet</option>
+      <option value="sky" map="colours/sky.jpg">Sky</option>
+      <option value="cloud" map="colours/cloud.jpg">Cloud</option>
+      <option value="ember" map="colours/ember.jpg">Ember</option>
+      <!-- end of prepare.mjs's colours -->
+    </choice>
+    <choice id="size" corner="bottom-left" label="Size (EU)" value="42">
+      <option>36</option>
+      <option>37</option>
+      <option>38</option>
+      <option>39</option>
+      <option>40</option>
+      <option>41</option>
+      <option>42</option>
+      <option>43</option>
+      <option>44</option>
+      <option>45</option>
+      <option>46</option>
+      <option>47</option>
+    </choice>
+  </scene>
+</holoml>
