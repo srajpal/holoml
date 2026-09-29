@@ -7,6 +7,15 @@ Attribution 4.0 International License (see LICENSE-SPEC).
 
 The examples use models, pictures, and sounds from other people, each
 credited in its example's models/CREDITS.md. All are CC0 (no
-conditions) except the sneaker store's shoe, "Materials Variants Shoe"
-© 2021 Shopify, Inc., from the Khronos glTF Sample Assets, under the
-Creative Commons Attribution 4.0 International licence (CC BY 4.0).
+conditions) except these, under the Creative Commons Attribution 4.0
+International licence (CC BY 4.0):
+
+- The sneaker store's shoe, "Materials Variants Shoe" © 2021 Shopify,
+  Inc., from the Khronos glTF Sample Assets.
+- The aquarium's fish, all but the barramundi (CC0): the great white
+  shark and the grey snapper by the Babylon.js authors, from the
+  Babylon.js asset library; and, from Sketchfab (as copied by
+  Objaverse), the flatback sea turtle by DigitalLife3D, the gilt-head
+  bream by BlueMesh, the Atlantic mackerel by Amy Scott-Murray, the tuna
+  by GoldenZtuff, the clownfish by zixisun02, and the copperband
+  butterflyfish by Dsanchez13.
