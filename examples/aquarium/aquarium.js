@@ -232,7 +232,7 @@ for (let i = 0; i < FLAKES; i++) {
   const [thing] = holoml.add(`<model src="models/flake.glb" position="${FEEDER.join(' ')}" />`);
   if (!thing) continue;
   thing.visible = false;
-  food.push({ thing, p: [...FEEDER], v: [0, 0, 0], falling: false, landed: 0 });
+  food.push({ thing, p: [...FEEDER], v: [0, 0, 0], falling: false, landed: 0, eaten: false });
 }
 
 let fed = false;
@@ -242,6 +242,7 @@ function feed() {
     f.p = [FEEDER[0] + random(-0.5, 0.5), FEEDER[1] + random(-0.1, 0.1), FEEDER[2] + random(-0.5, 0.5)];
     f.v = [random(-0.03, 0.03), -random(0.08, 0.14), random(-0.03, 0.03)];
     f.landed = 0;
+    f.eaten = false;
     f.thing.position = f.p;
     f.thing.rotation = [random(-20, 20), random(0, 360), random(-20, 20)];
     f.thing.visible = true;
@@ -261,8 +262,9 @@ function feed() {
   status.text = 'Food is falling: the fish are coming.';
 }
 
-function eat(flake) {
+function eat(flake, byFish = true) {
   flake.falling = false;
+  flake.eaten = byFish;
   flake.thing.visible = false;
 }
 
@@ -277,13 +279,14 @@ function sink(dt) {
       f.p[1] = 0.1;
       f.v = [0, 0, 0];
       f.landed += dt;
-      if (f.landed > 20) eat(f);
+      if (f.landed > 20) eat(f, false);
     }
     f.thing.position = f.p;
   }
   if (!food.some((f) => f.falling)) {
     fed = false;
-    status.text = 'The fish have eaten.';
+    const left = food.filter((f) => !f.eaten).length;
+    status.text = left ? `The fish have eaten; ${left} ${left === 1 ? 'flake' : 'flakes'} sank into the sand.` : 'The fish have eaten.';
   }
 }
 
@@ -293,15 +296,39 @@ holoml.on('key', (e) => {
 
 // ---- The board ------------------------------------------------------------------------
 
-// A click on a fish (any of them, with the mouse), or on the button of its kind in the outline (the keyboard and screen readers).
-holoml.on('click', (e) => {
+/**
+ * The fish a click means: the one clicked, or, for a click on the tunnel's
+ * glass (or anything else between the viewer and the fish), the fish
+ * nearest the line from the viewer through that point, beyond it.
+ */
+function clicked(e) {
   const id = e.thing?.id ?? '';
-  if (id === 'feed') {
+  const own = fish.find((f) => f.thing.id === id);
+  if (own) return own;
+  if (!e.point) return null;
+  const eye = holoml.viewer.position;
+  const ray = unit(sub(e.point, eye));
+  const reach = length(sub(e.point, eye));
+  let best = null;
+  let nearest = Infinity;
+  for (const f of fish) {
+    const to = sub(f.p, eye);
+    const along = to[0] * ray[0] + to[1] * ray[1] + to[2] * ray[2];
+    if (along < reach - 0.5) continue;
+    const off = length(sub(to, scale(ray, along)));
+    if (off < Math.max(0.35, LENGTH[f.kind.kind] * 0.5) && off < nearest) [best, nearest] = [f, off];
+  }
+  return best;
+}
+
+// A click on a fish (with the mouse, through the glass too), or on the button of its kind in the outline (the keyboard and screen readers).
+holoml.on('click', (e) => {
+  if (e.thing?.id === 'feed') {
     feed();
     return;
   }
-  const k = KINDS.find((x) => id.startsWith(`${x.kind}-`));
-  if (k) board.text = `${k.name}\n\n${k.text}`;
+  const f = clicked(e);
+  if (f) board.text = `${f.kind.name}\n\n${f.kind.text}`;
 });
 
 // ---- Frames ------------------------------------------------------------------------------
@@ -316,7 +343,7 @@ function start() {
       stop = null;
       return;
     }
-    const dt = Math.min(0.05, e.dt / 1000);
+    const dt = Math.min(0.1, e.dt / 1000);
     const now = e.time / 1000;
     swim(dt, now);
     rise(dt, now);
