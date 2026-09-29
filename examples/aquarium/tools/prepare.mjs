@@ -448,7 +448,7 @@ function page() {
   for (const f of starts()) {
     fishLines.push(`<model id="${f.id}" src="models/${f.kind.kind}.glb" position="${vec(...f.at)}" rotation="0 ${fixed(f.turn)} 0" animation="Swim" autoplay />`);
     // Each kind's first fish is a button in the outline too: for the keyboard and screen readers, "About" it.
-    if (f.id.endsWith('-1')) buttons.push(`<sound src="sounds/blip.wav" begin="click" trigger="#${f.id}" label="About the ${f.kind.name.toLowerCase()}" volume="0.5" />`);
+    if (f.id.endsWith('-1')) buttons.push(`<sound src="sounds/blip.wav" begin="click" trigger="#${f.id}" label="About ${f.kind.about}" volume="0.5" />`);
   }
   between('index.holoml', 'the tank', [...decorLines, ...plantLines]);
   between('index.holoml', 'bubblers', soundLines);

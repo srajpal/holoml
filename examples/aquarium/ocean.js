@@ -72,12 +72,14 @@ export const AIRSTONES = [
 /**
  * The fish: how many of each kind, how fast they cruise and hurry
  * (metres a second), the depths they keep to, whether they school, how
- * near they come to the glass, and what the board in the tunnel says of
- * them. Their models are models/<kind>.glb, each with its "Swim".
+ * near they come to the glass, what the board in the tunnel says of them,
+ * and how the page's list names them ("About the tuna"). Their models are
+ * models/<kind>.glb, each with its "Swim".
  */
 export const KINDS = [
   {
     kind: 'shark',
+    about: 'the great white shark',
     name: 'Great white shark',
     count: 2,
     speed: [0.9, 1.6],
@@ -88,6 +90,7 @@ export const KINDS = [
   },
   {
     kind: 'turtle',
+    about: 'the flatback sea turtle',
     name: 'Flatback sea turtle',
     count: 1,
     speed: [0.35, 0.7],
@@ -98,6 +101,7 @@ export const KINDS = [
   },
   {
     kind: 'tuna',
+    about: 'the tuna',
     name: 'Tuna',
     count: 2,
     speed: [1.2, 2.2],
@@ -108,6 +112,7 @@ export const KINDS = [
   },
   {
     kind: 'barramundi',
+    about: 'the barramundi',
     name: 'Barramundi',
     count: 2,
     speed: [0.4, 1.0],
@@ -118,6 +123,7 @@ export const KINDS = [
   },
   {
     kind: 'bream',
+    about: 'the gilt-head bream',
     name: 'Gilt-head bream',
     count: 6,
     speed: [0.5, 1.2],
@@ -128,6 +134,7 @@ export const KINDS = [
   },
   {
     kind: 'mackerel',
+    about: 'the Atlantic mackerel',
     name: 'Atlantic mackerel',
     count: 8,
     speed: [0.8, 1.6],
@@ -138,6 +145,7 @@ export const KINDS = [
   },
   {
     kind: 'snapper',
+    about: 'the grey snapper',
     name: 'Grey snapper',
     count: 4,
     speed: [0.4, 1.0],
@@ -148,6 +156,7 @@ export const KINDS = [
   },
   {
     kind: 'clownfish',
+    about: 'the clownfish',
     name: 'Clownfish',
     count: 3,
     speed: [0.15, 0.4],
@@ -158,6 +167,7 @@ export const KINDS = [
   },
   {
     kind: 'butterflyfish',
+    about: 'the copperband butterflyfish',
     name: 'Copperband butterflyfish',
     count: 2,
     speed: [0.2, 0.5],

@@ -157,7 +157,7 @@
       <sound src="sounds/blip.wav" begin="click" trigger="#tuna-1" label="About the tuna" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#barramundi-1" label="About the barramundi" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#bream-1" label="About the gilt-head bream" volume="0.5" />
-      <sound src="sounds/blip.wav" begin="click" trigger="#mackerel-1" label="About the atlantic mackerel" volume="0.5" />
+      <sound src="sounds/blip.wav" begin="click" trigger="#mackerel-1" label="About the Atlantic mackerel" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#snapper-1" label="About the grey snapper" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#clownfish-1" label="About the clownfish" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#butterflyfish-1" label="About the copperband butterflyfish" volume="0.5" />
