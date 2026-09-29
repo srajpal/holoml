@@ -4,7 +4,7 @@
 // tank's models and the scene's parts in index.holoml from it).
 
 /** The water: the tank's inside, its surface at the top (metres). */
-export const TANK = { min: [-9, 0, -16], max: [9, 6.5, 14] };
+export const TANK = { min: [-12, 0, -20], max: [12, 6.5, 14] };
 
 /** The tunnel: a half-cylinder of glass along z on the tank's floor, from its mouth in the front wall to its end. */
 export const TUNNEL = { radius: 2.4, from: 14, to: -12 };
@@ -29,14 +29,14 @@ export const ROCKS = [
 
 /** Rockwork along the foot of the walls: large boulders, half sunk in the sand (the fish keep clear of the walls anyway). */
 export const ROCKWORK = [
-  { at: [-8.3, -0.6, -12], scale: 3.2, turn: 15 },
-  { at: [-8.6, -0.8, -3], scale: 3.6, turn: 140 },
-  { at: [-8.4, -0.6, 6], scale: 3.0, turn: 260 },
-  { at: [8.4, -0.7, -11], scale: 3.4, turn: 95 },
-  { at: [8.6, -0.8, -1.5], scale: 3.8, turn: 330 },
-  { at: [8.3, -0.6, 8], scale: 3.1, turn: 200 },
-  { at: [-5, -0.8, -15.6], scale: 3.3, turn: 60 },
-  { at: [5.5, -0.7, -15.4], scale: 3.0, turn: 170 },
+  { at: [-11.3, -0.6, -15], scale: 3.2, turn: 15 },
+  { at: [-11.6, -0.8, -5], scale: 3.6, turn: 140 },
+  { at: [-11.4, -0.6, 5], scale: 3.0, turn: 260 },
+  { at: [11.4, -0.7, -13], scale: 3.4, turn: 95 },
+  { at: [11.6, -0.8, -2.5], scale: 3.8, turn: 330 },
+  { at: [11.3, -0.6, 7.5], scale: 3.1, turn: 200 },
+  { at: [-6, -0.8, -19.6], scale: 3.3, turn: 60 },
+  { at: [6.5, -0.7, -19.4], scale: 3.0, turn: 170 },
 ];
 
 /** A sunken log (Poly Haven's dead tree trunk). */
@@ -56,9 +56,9 @@ export const PLANTS = [
     { kind: i % 2 ? 'seagrass-a' : 'seagrass-b', at: [3.0 + (i % 2) * 0.4, 0, z + 1.2], turn: i * 70 },
   ]),
   ...[
-    [-8.1, -14.5], [-7.9, -9], [-8.2, -2.5], [-8.0, 5.5], [-8.1, 12.5],
-    [8.1, -14], [8.0, -7.5], [8.2, -1], [8.0, 6.5], [8.1, 12.8],
-    [-4.5, -15.2], [4.2, -15.1],
+    [-10.8, -17.5], [-10.4, -10], [-10.9, -1], [-10.5, 8.5], [-9.6, 12.8],
+    [10.8, -17], [10.5, -8], [10.9, 1.5], [10.4, 10.5], [9.8, 12.9],
+    [-3.5, -19.2], [3.2, -19.1], [-7.5, -14.5], [7.8, -15.5],
   ].map(([x, z], i) => ({ kind: 'kelp', at: [x, 0, z], turn: i * 53 })),
 ];
 

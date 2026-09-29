@@ -1,7 +1,7 @@
 # Ocean tunnel
 
 An aquarium to walk through, in HoloML 0.2: a glass tunnel along the
-floor of a tank 18 m wide, 30 m long, and 6.5 m deep. Great white
+floor of a tank 24 m wide, 34 m long, and 6.5 m deep. Great white
 sharks, a flatback sea turtle, tuna, barramundi, and schools of bream,
 mackerel, snapper, clownfish, and copperband butterflyfish swim over
 and around you, among rocks, plants that sway, and bubbles rising from
