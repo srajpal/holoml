@@ -56,8 +56,9 @@ gravity for walking, walking and turning speeds, a crosshair, shadows,
 textured materials, light from a panorama of the surroundings, the
 animation of lights and the background, text panels, things that act
 when clicked (a door that opens, a light switch), several places to go
-to on one page, a sky, and a floor plan on the screen; a page says
-`version="0.2"` to use them. The syntax is strict: a mistake stops with
+to on one page, a sky, a floor plan on the screen, and groups of models
+that load only while the viewer is near, with lighter stand-ins until
+then; a page says `version="0.2"` to use them. The syntax is strict: a mistake stops with
 its line and column. Later versions: physics, and spaces shared by
 several people.
 
@@ -75,13 +76,15 @@ holoml/
     blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night, a speed slider
     sofa-studio/     a HoloML 0.2 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
     harbour-loft/    a HoloML 0.2 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
+    sneaker-store/   a HoloML 0.2 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart
 ```
 
 The examples are published with GitHub Pages:
 https://srajpal.github.io/holoml/showroom/,
 https://srajpal.github.io/holoml/blockworld/,
-https://srajpal.github.io/holoml/sofa-studio/, and
-https://srajpal.github.io/holoml/harbour-loft/. Open an example's
+https://srajpal.github.io/holoml/sofa-studio/,
+https://srajpal.github.io/holoml/harbour-loft/, and
+https://srajpal.github.io/holoml/sneaker-store/. Open an example's
 `index.holoml` in a browser that shows HoloML, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
 where they are also listed under "HoloML examples".
@@ -99,7 +102,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-182 unit and conformance tests passed on 2026-09-27 on Windows 11. GitHub
+204 unit and conformance tests passed on 2026-09-29 on Windows 11. GitHub
 Actions runs them on Windows and Linux for every push.
 
 ## Built with the Buildwright approach
