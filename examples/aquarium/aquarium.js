@@ -173,12 +173,16 @@ function swim(dt, now) {
     const pace = was + clamp(speed - was, -0.6 * dt, 0.9 * dt);
     f.v = scale(next, pace);
     f.p = add(f.p, scale(f.v, dt));
-    // Never through the glass or the walls, whatever the steering did.
+    // Never through the glass, the walls, or a rock, whatever the steering did.
     for (let a = 0; a < 3; a++) f.p[a] = clamp(f.p[a], TANK.min[a] + 0.2, TANK.max[a] - 0.2);
     const gap = tunnelGap(f.p, f.kind.clearance * 0.5);
     if (gap < 0) {
       const out = unit([f.p[0], Math.max(0.05, f.p[1]), 0]);
       f.p = add(f.p, scale(out, -gap));
+    }
+    for (const r of ROCKS) {
+      const g = rockGap(f.p, r, f.kind.clearance * 0.5);
+      if (g < 0) f.p = add(f.p, scale(unit(sub(f.p, rockBall(r).at)), -g));
     }
     f.thing.position = f.p;
     f.thing.rotation = rotation(Math.atan2(f.v[0], f.v[2]), Math.asin(clamp(f.v[1] / (length(f.v) || 1), -1, 1)));
