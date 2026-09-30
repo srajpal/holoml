@@ -80,10 +80,10 @@ describe('Y5: the site has its parts at their addresses', () => {
   it('asks nothing of another site: every picture, style, and script is its own', () => {
     for (const path of built.pages) {
       const page = html(path);
-      const fetched = [...page.matchAll(/<(?:img|script|link|source|iframe|video|audio)\b[^>]*\s(?:src|href)="([^"]*)"/g)].map((m) => m[1]!);
+      const fetched = [...page.matchAll(/<(?:img|script|link|source|iframe|video|audio)\b[^>]*\s(?:src|href)="([^"]*)"/gi)].map((m) => m[1]!);
       expect(fetched.filter((u) => /^[a-z][a-z0-9+.-]*:|^\/\//i.test(u)), path).toEqual([]);
-      // One script, the site's own (code.js), and none written into the page.
-      expect(page.match(/<script\b[^>]*>/g), path).toEqual([expect.stringMatching(/^<script src="(?:\.\.\/)*code\.js" defer>$/)]);
+      // One script, the site's own (code.js), and none written into the page, in any case of letters.
+      expect(page.match(/<script\b[^>]*>/gi), path).toEqual([expect.stringMatching(/^<script src="(?:\.\.\/)*code\.js" defer>$/)]);
       expect(page, path).not.toMatch(/\sstyle="[^"]*url\(/);
     }
     const css = readFileSync(join(out, 'style.css'), 'utf8');
