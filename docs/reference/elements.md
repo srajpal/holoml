@@ -368,7 +368,7 @@ Changes the position, rotation, or scale of an element over time, starting when 
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `id` | id | none | A name, for scripts |
+| `id` | id | none | A name. Nothing in 0.2 uses it: a plan is not one of the kinds of thing a script can find (section 10) |
 | `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-right` | Where on the screen |
 | `src` | address (required) |  | The picture: a PNG, JPEG, or WebP file from the page's own site |
 | `area` | area (required) |  | The rectangle of the ground the picture shows |

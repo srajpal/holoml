@@ -2,7 +2,7 @@
 
 **A markup language for 3D web pages**
 
-- This version: 0.2, second edition, with clarifications (2026-09-29)
+- This version: 0.2, third edition, with corrections (2026-09-30)
 - Status: experimental (see "Status of this document")
 - Latest published version: https://srajpal.github.io/holoml/spec/
 - Source: https://github.com/srajpal/holoml/blob/main/SPEC.md
@@ -30,10 +30,13 @@ says of its experimental specifications [RFC7841]: HoloML has one
 renderer so far, and until version 1.0 a later version may change or
 remove what an earlier one has.
 
-This document describes HoloML 0.2, published 2026-09-29, in its second
-edition: the language is the same, and the document is written in the
-form of W3C specifications, with clarifications where the first edition
-left something unsaid (appendix C lists them). Version 0.1 (2026-09-26)
+This document describes HoloML 0.2, published 2026-09-29, in its third
+edition, of 2026-09-30. The language is the same. The second edition
+(2026-09-29) wrote the document in the form of W3C specifications, with
+clarifications where the first left something unsaid. The third corrects
+places where the document disagreed with itself, with HoloML's checker,
+or with its first renderer, and says exactly what a reader reports and
+where (appendix C lists the changes of both). Version 0.1 (2026-09-26)
 is part of 0.2: every 0.1 page means the same in 0.2. Both versions are
 fixed: what a page written for either means will not change.
 
@@ -530,9 +533,11 @@ A 3D model from a glTF 2.0 file. Holds any number of `material`.
 | `stand-in` | address | none | (0.2) A lighter model shown in its place until it has loaded, and again once it is let go (see "Loading by area") |
 
 With `animation` and no `autoplay`, the model is shown in the first
-frame of that animation (a pose). A renderer that cannot load the file
-MUST show the rest of the scene, and SHOULD mark where the model would
-be.
+frame of that animation (a pose). When the viewer asked for reduced
+motion, a renderer MUST hold a model's own animation at its first frame
+in the same way, `autoplay` or not, and whatever speed a script gives
+it. A renderer that cannot load the file MUST show the rest of the
+scene, and SHOULD mark where the model would be.
 
 ```holoml-scene
 <model src="models/robot.glb" animation="Wave" autoplay />
@@ -561,6 +566,12 @@ Pictures come from the page's own site, like models, and count toward
 the renderer's limits; `color` multiplies the colour picture. A picture
 given here takes the place of the model's own.
 
+A material that takes no light (glTF's KHR_materials_unlit) is changed
+like any other in what it has: its `color`, its `opacity`, and (0.2)
+its colour picture (`map`, with `repeat`). It has no metalness,
+roughness, or bumps, so those attributes change nothing in it. The same
+holds for an `option` and for a script's `material()`.
+
 ```holoml-scene
 <model src="models/coupe.glb">
   <material name="Paint" color="#c0182a" metalness="0.8" roughness="0.3" />
@@ -585,7 +596,9 @@ The viewpoint the viewer starts at says how they move (`mode`,
 with a position and a direction to look. A renderer MUST let the viewer
 go to each place, for example from a list that the keyboard and screen
 readers reach, named by `label`, and MUST go to the place that a link to
-`#name` on the same page names.
+`#name` on the same page names. How it goes there is the renderer's
+choice: it MAY fade out and in, as between pages (see `a`), and cuts
+when the viewer asked for reduced motion.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
@@ -603,9 +616,14 @@ readers reach, named by `label`, and MUST go to the place that a link to
 - `orbit`: the viewer circles the `look-at` point: drag to go around it,
   scroll or pinch to come closer or move away.
 - `walk`: the viewer walks on the floor at the height of `position`:
-  the arrow keys or W, A, S, D to move, drag to look around. A script
-  can change the speeds while the page is open (`holoml.viewer.speed`
-  and `turnSpeed`, section 10).
+  keys walk forward and back, step to either side, and turn, and
+  dragging looks around. Which keys they are is the renderer's choice.
+  A script can change the speeds while the page is open
+  (`holoml.viewer.speed` and `turnSpeed`, section 10).
+
+*Note (non-normative):* in HyperSpace 3D, W and S or the up and down
+arrows walk, A and D step to the side, the left and right arrows turn,
+Page Up and Page Down look up and down, and Shift runs.
 
 Renderers SHOULD also offer keyboard and touch equivalents, including
 turning and looking up and down from the keyboard, so that a page with
@@ -670,7 +688,10 @@ it softly so that models are still visible.
   ambient lights: when their intensities add up to less than 0.6, it is
   that much dimmer (at 0.3, half as bright), so a page makes evening or
   night by dimming its ambient lights. Without ambient lights it is at
-  full.
+  full. The ambient lights that count are those in the scene at the
+  time: one a script adds counts, and one it removes no longer does, so
+  that a scene whose ambient lights have all been removed is at full
+  again.
 
 ```holoml-scene
 <light type="ambient" intensity="0.4" />
@@ -868,6 +889,10 @@ colour, and the scene's background. Holds nothing. It may stand in
   without a jump.
 - If two `animate` elements change the same attribute of the same
   element, the later one in the document wins.
+- When the viewer asked for reduced motion, a renderer MUST show an
+  animation's end at once: the value at `to`, without the movement,
+  whatever its `repeat`. It follows the viewer's wish when that changes
+  while the page is open.
 
 ```holoml
 <holoml version="0.2">
@@ -1061,7 +1086,7 @@ MUST give the picture its `label` for screen readers.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `id` | id | none | A name, for scripts |
+| `id` | id | none | A name. Nothing in 0.2 uses it: a plan is not one of the kinds of thing a script can find (section 10) |
 | `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-right` | Where on the screen |
 | `src` | address (required) | | The picture: a PNG, JPEG, or WebP file from the page's own site |
 | `area` | area (required) | | The rectangle of the ground the picture shows |
@@ -1205,8 +1230,12 @@ sounds, pictures, surroundings, sky, and plan, from their addresses:
 scripts, sounds, and pictures only from the page's own site ([section
 12](#12-security-considerations)). A file that cannot be loaded is left
 out, and the rest of the scene is shown. The page is ready when every
-model and sound it loads with the page has loaded or been left out
-(section 10, `holoml.ready`).
+file it loads with the page has loaded or been left out (section 10,
+`holoml.ready`): its models and their stand-ins, its sounds, and its
+pictures, which are those of materials and options, the surroundings,
+the sky, and the plan. What a group that loads by area holds counts
+only when the group is within reach of where the viewer starts (section
+7, "Loading by area").
 
 (Clarified) A renderer MUST read a model's file as the glTF 2.0
 specification defines [GLTF]. A glTF file may use extensions, which it
@@ -1259,8 +1288,12 @@ renderer need not draw while nothing in the scene changes.
 The viewer moves as the starting viewpoint says (orbit or walk, and
 (0.2) walls and gravity). A click or a tap follows a link (`a`) or runs
 a trigger's click actions, and (0.2) a page's scripts hear clicks and
-keys (section 10). A renderer's outline gives the keyboard and screen
-readers the page's links, named things, places, and click actions
+keys (section 10). Where one click does several of these, they come in
+this order: first the page's scripts are told (the `click` event, for
+any button), then the trigger's click actions run, then the link is
+followed; the last two for the main button or a tap only. A renderer's
+outline gives the keyboard and screen readers the page's links, named
+things, places, and click actions
 ([section 14](#14-accessibility-considerations)).
 
 ### Leaving a page
@@ -1296,9 +1329,9 @@ holoml.on('click', (e) => {
 | Member | What it is |
 |---|---|
 | `holoml.version` | The version the page declares, such as `"0.2"` |
-| `holoml.ready` | A promise, kept when every model and sound has loaded or been left out |
-| `holoml.find(id)` | The element with this id, as a thing (below), or `null` |
-| `holoml.add(markup, parent)` | Adds elements written in HoloML (what a `scene` or `group` may hold: `group`, `model`, `light`, `label`, `sound`) to the scene, or into the group thing `parent`. Returns the new things. The markup is checked like the page's: an element with a problem is left out, and the console says why |
+| `holoml.ready` | A promise, kept when the page is ready: when every file it loads with the page (models, sounds, and pictures; section 9, "Loading") has loaded or been left out |
+| `holoml.find(id)` | The element with this id, as a thing (below), or `null`: when no element has the id, and when the element is not of a kind that is a thing (the scene, a viewpoint, a plan) |
+| `holoml.add(markup, parent)` | Adds elements written in HoloML to the scene, or into the group thing `parent`. The markup's own elements are `group`, `model`, `light`, `label`, and `sound`; a group in it holds what a page's group holds. Returns the new things, one for each of the markup's own elements that was added. The markup is checked like a 0.2 page's: an element with a problem is left out, and the console says why. So is any other element written as the markup's own, and, wherever it is in the markup, an `animate` and a `sound` that begins on a click: what a script adds, the script moves and plays |
 | `holoml.remove(thing)` | Removes an element and everything in it |
 | `holoml.on(type, listener)` | Calls `listener` with each event of that type (below). Returns a function that stops it |
 | `holoml.aim()` | What is in the middle of the view, under the crosshair: `{ thing, point, normal }` as for a click, or `null` |
@@ -1317,27 +1350,33 @@ holoml.on('click', (e) => {
 | `turnSpeed` | For walking: how fast they turn, in degrees a second, from 10 to 720; starts as the `viewpoint` says, and can be set. A value outside the range is an error |
 
 Vectors are arrays of three numbers, `[x, y, z]`: metres for positions
-and degrees for rotations, in the parent's space, as in the markup.
+and degrees for rotations, in the parent's space, as in the markup. The
+viewer's `position` and `direction`, and the `point` and `normal` of a
+click and of `holoml.aim()`, are in the scene's own space, whatever
+groups the thing that was hit is in. An array that a thing or the
+viewer gives is frozen: a script cannot change it in place, which is an
+error, and sets the member to a new array to move the thing.
 
 ### Things
 
 `holoml.find` and `holoml.add` give things: handles on elements. A
 member a thing's kind does not have is `undefined`, and setting it does
-nothing. After a thing is removed, setting its members does nothing.
+nothing: it is not an error, and the member is `undefined` still. After
+a thing is removed, setting its members does nothing.
 
 | Member | Kinds | What it is |
 |---|---|---|
 | `id` | all | Its id, or `null` |
 | `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"panel"`, `"sound"`, `"hud"`, `"slider"`, or `"choice"` |
-| `parent` | all | The group thing it is in, or `null` |
-| `position` | model, group, label, panel, light, sound | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says) |
+| `parent` | all | The nearest group it is in, as a thing, or `null` when it is in none. A link is not a thing, and does not count: a model in a link in a group has that group as its parent |
+| `position` | model, group, label, panel, light, sound | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says), and setting `null` is an error: a sound that has a place keeps one |
 | `rotation` | model, group, panel | How it is turned; can be set |
 | `scale` | model, group | How big; can be set |
-| `visible` | model, group, label, panel | Whether it is shown; can be set |
+| `visible` | model, group, label, panel | Whether it is shown; can be set. A thing that is not shown, by its own `visible` or that of a group around it, takes no clicks (a click, the crosshair, and `holoml.aim()` go through it to what is behind) and does not stop the walker, whatever its `solid` |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
 | `animationSpeed` | model | How fast its own animation plays: `1` as it was made, `2` twice as fast, `0.5` half as fast, `0` held still; from 0 to 4; can be set. A value outside that range is an error. A model that plays no animation keeps the value for when it does |
 | `loaded` | model, group | (Read only) Whether its file has loaded (a model); whether every model in it that is near enough to load has loaded or been left out (a group). A group that loads by area, or is in one, is not loaded while it is let go |
-| `text` | label, panel, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set |
+| `text` | label, panel, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set. A renderer MAY keep only the start of a very long text (HyperSpace 3D keeps 10,000 characters) |
 | `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
 | `intensity` | light | How bright; can be set |
 | `material(name, change)` | model | Changes one of the model's materials; `change` may have `color`, `metalness`, `roughness`, and `opacity`, as `material` has |
@@ -1356,9 +1395,9 @@ Every event has a `type`, its kind, as `holoml.on` was given it
 
 | Type | When | Members | What they hold |
 |---|---|---|---|
-| `click` | The viewer clicks or taps a point of the scene (not a drag), with any button | `thing`, `point`, `normal`, `button` | `thing` is the innermost element with a place that was hit, or `null`; `point` and `normal` say where it was hit, and which way the face hit is facing, or are `null`; `button` is `"left"`, `"right"`, or `"middle"`. A right-click goes to the page instead of opening the renderer's menu while a script listens for clicks. A click on a link still follows it, and a click on a trigger still runs its click actions |
-| `key` | A key goes down or up while the page has the keyboard | `key`, `down`, `repeat` | `key` is the key, as a web page's `KeyboardEvent.key` (`"e"`, `"1"`, `" "`); `down` is `true` or `false`; `repeat` is `true` when the key is held down and repeating, as a web page's `KeyboardEvent.repeat` (clarified). The renderer's own keys (walking, turning) still work |
-| `frame` | Before each frame is drawn | `time`, `dt` | `time` is the milliseconds since the scene was shown, and `dt` the milliseconds since the last frame. While a script listens for frames, the renderer MUST keep drawing, except while the page cannot be seen (for example, while its tab is behind another): then it MAY stop drawing, and frames with it, until the page is seen again |
+| `click` | The viewer clicks or taps a point of the scene (not a drag), with any button | `thing`, `point`, `normal`, `button` | `thing` is the innermost element with a place that was hit, or `null`; `point` and `normal` say where it was hit, and which way the face hit is facing, or are `null`; `button` is `"left"`, `"right"`, or `"middle"`. A right-click goes to the page instead of opening the renderer's menu while a script listens for clicks. A click on a link still follows it, and a click on a trigger still runs its click actions, both after the scripts have been told (section 9, "Interacting") |
+| `key` | A key goes down or up while the page has the keyboard | `key`, `down`, `repeat` | `key` is the key, as a web page's `KeyboardEvent.key` (`"e"`, `"1"`, `" "`); `down` is `true` or `false`; `repeat` is `true` when the key is held down and repeating, as a web page's `KeyboardEvent.repeat` (clarified). The renderer's own keys (walking, turning) still work. A key pressed together with Ctrl, Alt, or the system's key (Meta) is the renderer's and does not reach scripts, and neither does a key that a slider, a choice, or another of the renderer's controls uses while it has the keyboard |
+| `frame` | Before each frame is drawn | `time`, `dt` | `time` is the milliseconds since the scene was shown. `dt` is how far the scene moves on in this frame, in milliseconds: the time since the last frame, but never more than 100, so that after a slow frame what a script moves by `dt` does not jump; and where there is no last frame to measure from (the first frame, and the first after drawing stopped) it is one frame's usual time, about 16. The sum of `dt` can so fall behind `time`. While a script listens for frames, the renderer MUST keep drawing, except while the page cannot be seen (for example, while its tab is behind another): then it MAY stop drawing, and frames with it, until the page is seen again |
 | `change` | The viewer moves a slider, or picks an option of a choice | `thing`, `value` | `thing` is the slider or the choice, and `value` a slider's number or the chosen option's value |
 | `load` | A group that loads by area (`load="near"`) has loaded its models (its `loaded` became `true`), or let them go | `thing`, `loaded` | `thing` is the group, and `loaded` is `true` when its models are in and `false` when they were let go. A model a script adds to a group already in does not make it tell again |
 
@@ -1458,9 +1497,13 @@ surroundings (`environment`), the `sky`, and a `plan`'s picture, which
 also come from the page's own site only.
 
 A page cannot link to `javascript:`, `data:`, or `file:` addresses
-(`unsafe-link`, section 8), and a link to another site opens it as any
-web page opens. A renderer's limits (section 9) keep a heavy or hostile
-page from exhausting the viewer's memory or freezing the renderer.
+(`unsafe-link`, section 8), and cannot hide such a scheme behind a
+control character or a space that a URL parser would drop (a
+`bad-value`, section 6). A renderer that resolves an address SHOULD
+check the scheme of what it resolved to as well. A link to another site
+opens it as any web page opens. A renderer's limits (section 9) keep a
+heavy or hostile page from exhausting the viewer's memory or freezing
+the renderer.
 
 *Note (non-normative):* HyperSpace 3D, opening a page from the
 computer, lets it load files only from its own folder and the folders
@@ -1501,9 +1544,11 @@ motion, and what an author can do.
 - Text is read as text: titles, labels, (0.2) panels, and what is fixed
   to the screen reach screen readers, Find in page, and any text-only
   view of the page.
-- With reduced motion, click actions show their end at once, a fade
-  between pages becomes a cut, (0.2) the water's moving light holds
-  still, and scripts are told (`holoml.reducedMotion`).
+- With reduced motion, animations show their end at once, those that
+  begin with the page and click actions alike, a model's own animation
+  is held at its first frame, a fade between pages or places becomes a
+  cut, (0.2) the water's moving light holds still, and scripts are told
+  (`holoml.reducedMotion`), to keep still what they move.
 - Sound waits for the viewer's first click, tap, or key.
 - A renderer's own controls around a scene (its outline, its text view,
   and what it fixes to the screen) are web content, to which the Web
@@ -1887,9 +1932,11 @@ section 10's tables the same.
 ```webidl
 // HoloML 0.2: the scene API (SPEC.md section 10), in Web IDL. A page's
 // scripts reach it as the global `holoml`. Vectors are arrays of three
-// numbers: metres for positions, degrees for rotations. A thing has the
-// members of its kind's interface; any other member is undefined, and
-// setting it does nothing.
+// numbers: metres for positions, degrees for rotations. One that a
+// thing or the viewer gives is frozen (FrozenArray): a script sets the
+// member to a new array, and does not change the array it was given. A
+// thing has the members of its kind's interface; any other member is
+// undefined, and setting it does nothing and is not an error.
 
 [Exposed=Window]
 interface HoloML {
@@ -1917,6 +1964,8 @@ interface HoloMLViewer {
   attribute double turnSpeed;
 };
 
+// Where a click or the crosshair hit: `point` and `normal` are in the
+// scene's own space.
 dictionary HoloMLHit {
   Thing? thing;
   sequence<double>? point;
@@ -1942,6 +1991,7 @@ dictionary HoloMLEvent {
 interface Thing {
   readonly attribute DOMString? id;
   readonly attribute DOMString kind;
+  // The nearest group it is in; a link between them does not count.
   readonly attribute GroupThing? parent;
   undefined remove();
 };
@@ -2000,6 +2050,8 @@ interface PanelThing : Thing {
 
 [Exposed=Window]
 interface SoundThing : Thing {
+  // Null for a sound that has no place. Setting a place gives it one;
+  // setting null is an error (a TypeError).
   attribute FrozenArray<double>? position;
   undefined play();
   undefined stop();
@@ -2074,6 +2126,78 @@ Change controller: The HoloML Authors
 
 *This appendix is non-normative.*
 
+- 0.2, third edition (2026-09-30): the same language. This edition
+  corrects places where the document disagreed with itself, with
+  HoloML's checker, or with HyperSpace 3D, and says what was left
+  unsaid. HoloML's parser and checker changed with it (their version
+  0.2.2).
+
+  Stricter: two kinds of page that were valid in the second edition are
+  not valid in this one.
+  - Whitespace is the space, the tab, the line feed, and the carriage
+    return only (sections 5 and 6). A value that used another of
+    Unicode's spaces, such as the no-break space, to separate its
+    numbers or around itself is a `bad-value`; HoloML's checker took
+    them as whitespace before.
+  - An address with a control character, with a space or another
+    separator, or with U+FEFF is a `bad-value` (section 6). Before, a
+    control character could hide a scheme from `unsafe-link`, and
+    Unicode's spaces around an address were dropped.
+
+  Corrected, where the document disagreed with itself or with the
+  checker:
+  - A time is a number more than 0 and its unit, in any of a number's
+    forms (`1e3ms`, `1.s`), as section 6 said and the checker did not
+    take.
+  - Text in an attribute is not empty, which the checker held to and
+    the document did not say; the `content` of `meta` may be empty, as
+    in HTML (sections 6 and 7).
+  - `unexpected-end` is the error wherever the text ends inside a tag
+    (the checker gave `invalid-name`, `unquoted-value`, or
+    `stray-slash` in three such places), and an end tag that holds more
+    than its name is unfinished too (section 5).
+  - A group does not hold `water`, and a second `water` is a
+    `too-many`; a `choice` without an `option` is a `missing-child`; a
+    sound's `range` without a `position` is a `missing-attribute`
+    (sections 7 and 8).
+  - A panel's `id` is for a click action's trigger and for scripts, not
+    for `animate`; a plan's `id` is not reached by scripts (section 7).
+  - A 0.1 page is not held to the rules 0.2 added between attributes,
+    and an `id` counts wherever its element stands (section 8).
+  - What refusing a version is, for a checker and for a renderer, and
+    that a page with no `version` is treated the same (section 11).
+
+  Said for the first time:
+  - Which syntax error is reported, and at which character, and the
+    rule that a `<` in a value after a line end is an `unclosed-value`
+    (section 5, "Where a syntax error is reported"); where each problem
+    is reported (section 8, "Where a problem is reported"). A byte order
+    mark is not part of line 1's columns.
+  - How a number is written, which numbers are too large, which values
+    ignore whitespace around them, and how an address's scheme is
+    recognised (section 6).
+  - Reduced motion holds every animation still, those that begin with
+    the page and a model's own as well as click actions (sections 7 and
+    14).
+  - A material that takes no light can be changed in its colour,
+    opacity, and picture (section 7, `material`).
+  - Which keys walk is the renderer's choice (section 7, `viewpoint`);
+    going to a place may fade; the ambient lights that dim the
+    surroundings are those in the scene at the time (section 7,
+    `light`).
+  - The page is ready when every file it loads with the page has
+    loaded, pictures included (sections 9 and 10).
+  - The order of what a click does: the scripts' event, the click
+    actions, the link (section 9, "Interacting").
+  - In the scene API (section 10): what `holoml.add` takes; `find` for
+    an element that is not a thing; a thing's `parent` through a link;
+    that a thing that is not shown takes no clicks and stops no walker;
+    that the arrays a thing gives are frozen; that a sound's place
+    cannot be set to `null`; the space of a hit's `point` and `normal`;
+    `dt`, which is never more than 100; and the keys that do not reach
+    scripts.
+
+  No page that is valid in this edition changes its meaning.
 - 0.2, second edition (2026-09-29): the same language, written in the
   form of W3C specifications, with an abstract, the status, conformance
   classes and requirement words (BCP 14), terminology, the processing
