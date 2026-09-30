@@ -118,9 +118,10 @@ pnpm lint
 pnpm typecheck
 ```
 
-362 unit, conformance, documentation, and site tests passed on
-2026-09-29 on Windows 11. GitHub Actions runs them on Windows and Linux
-for every push. `pnpm site:build` makes the site in `_site/` (open
+409 unit, conformance, documentation, site, and example tests passed on
+2026-09-30 on Windows 11. GitHub Actions runs them on Windows and Linux
+for every push, and the site is published from `main` only after they
+pass there too. `pnpm site:build` makes the site in `_site/` (open
 `_site/index.html`); `pnpm grammar:update` and `pnpm reference:update`
 write the files made from the checker's table and the specification
 (the RELAX NG schema, the reference pages, and the specification's
@@ -160,7 +161,8 @@ Buildwright starts with a small prototype and a repeatable way to make progress.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Ideas for the language start as
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[code of conduct](CODE_OF_CONDUCT.md). Ideas for the language start as
 issues. Rules for AI agents are in [AGENTS.md](AGENTS.md).
 
 ## License
@@ -168,4 +170,6 @@ issues. Rules for AI agents are in [AGENTS.md](AGENTS.md).
 Copyright 2026 The HoloML Authors (see [AUTHORS](AUTHORS)).
 Code: [Apache License 2.0](LICENSE).
 Specification text: [Creative Commons Attribution 4.0](LICENSE-SPEC).
-See [NOTICE](NOTICE).
+See [NOTICE](NOTICE). What the examples use of other people's (models,
+pictures, and sounds) is CC0 or CC BY 4.0, and credited in each
+example's `models/CREDITS.md`.
