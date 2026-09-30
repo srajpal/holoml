@@ -1,0 +1,64 @@
+; HoloML 0.2: the syntax of a page, in ABNF (RFC 5234), with RFC 7405's
+; %s"..." for case-sensitive strings. Informative: SPEC.md section 5 and
+; the conformance samples say what a reader does. Each comment names
+; the syntax error a reader reports where the text breaks the rule
+; beside it.
+; too-deep: nesting more than 256 elements deep, which is not a matter
+; of the grammar (section 5)
+
+document       = [ BOM ] misc element misc
+                 ; no-root: no element at all
+                 ; second-root: a second element after the first
+                 ; text-outside-root: text before or after the element
+                 ; stray-end-tag: an end tag before or after it
+misc           = *( S / comment )
+BOM            = %xFEFF
+
+element        = empty-element / start-tag content end-tag
+                 ; unclosed-element: the text ends before the end tag
+                 ; unsupported-markup: "<!" or "<?" other than a comment
+empty-element  = "<" name *( 1*S attribute ) *S "/>"
+                 ; stray-slash: a "/" in a tag not followed by ">"
+start-tag      = "<" name *( 1*S attribute ) *S ">"
+                 ; unexpected-end: the text ends inside a tag
+                 ; missing-space: an attribute with no space before it
+end-tag        = "</" name *S ">"
+                 ; mismatched-end-tag: the name of another element
+                 ; stray-end-tag: an end tag with no element open
+content        = *( element / comment / text )
+
+name           = LOWER *( LOWER / DIGIT / "-" )
+                 ; invalid-name: no letter where a name begins
+                 ; uppercase-name: an upper-case letter in a name
+attribute      = name [ *S "=" *S value ]
+                 ; a name alone is a flag (autoplay)
+                 ; duplicate-attribute: a name given twice in one tag
+value          = DQUOTE *( dq-char / reference ) DQUOTE
+               / "'" *( sq-char / reference ) "'"
+                 ; unquoted-value: a value without quotes
+                 ; unclosed-value: a value whose closing quote is missing
+                 ; less-than-in-value: a "<" in a value
+dq-char        = %x01-21 / %x23-25 / %x27-3B / %x3D-10FFFF
+                 ; any character but NUL, '"', "&", and "<"
+sq-char        = %x01-25 / %x28-3B / %x3D-10FFFF
+                 ; any character but NUL, "'", "&", and "<"
+
+text           = 1*( text-char / reference )
+text-char      = %x01-25 / %x27-3B / %x3D-10FFFF
+                 ; any character but NUL, "&", and "<"
+                 ; null-character: NUL anywhere in a page
+reference      = "&" ( %s"amp" / %s"lt" / %s"gt" / %s"quot" / %s"apos"
+                     / "#" 1*7DIGIT / %s"#x" 1*6HEXDIG ) ";"
+                 ; a number names a Unicode scalar value other than 0:
+                 ; 1 to 10FFFF, but not D800 to DFFF
+                 ; bad-character-reference: any other "&"
+comment        = "<!--" *( comment-char / "-" comment-char ) [ "-" ] "-->"
+comment-char   = %x01-2C / %x2E-10FFFF
+                 ; any character but NUL and "-"
+                 ; unclosed-comment: a comment with no "-->"
+                 ; bad-comment: "--" inside a comment
+
+S              = SP / HTAB / LF / CR
+LOWER          = %x61-7A
+                 ; DIGIT, HEXDIG, SP, HTAB, LF, CR, and DQUOTE are
+                 ; RFC 5234's core rules
