@@ -15,7 +15,12 @@ HyperSpace 3D, the first renderer, for one page.
 | One file: a model, a file a model names, a sound, or a picture | 32 MB |
 | All the page's model, sound, and picture files together | 128 MB |
 | A picture's width and height | 4096 pixels each |
-| Triangles, in all the page's models | 2 million, each model counted as it is drawn |
+| All the page's pictures together, once decoded | 134,217,728 pixels (eight pictures of 4096 by 4096) |
+| All the page's sounds together, once decoded | 600 seconds |
+| Triangles, in all the page's models | 2 million, each model counted as it is drawn, once it is decoded |
+| Lights that shine from a place or a direction, those in model files included | 32; later ones are left out |
+| Lights that cast shadows | 4; later ones shine without shadows |
+| A place, a size, or a scale | within 1,000,000; beyond it the default is used |
 | One file's loading (a model with the files it names, or a sound) | 30 seconds |
 | A text that a script sets (a label's, a panel's, or one on the screen) | 10,000 characters |
 
@@ -38,6 +43,14 @@ HyperSpace 3D, the first renderer, for one page.
 - (0.2) What a script adds with `holoml.add` counts as well. What would
   cross a limit is left out, and the console says why
   ([section 10, "Limits for scripts"](../../SPEC.md#limits-for-scripts)).
+
+## Without a graphics card
+
+Where Chromium draws in software (a computer without a graphics card, a
+virtual machine, some remote desktops), HyperSpace 3D draws a scene with
+half as many pixels each way and without smoothed edges, and leaves out
+shadows and the water's moving light, so that the scene still moves. The
+console says so once.
 
 ## Staying within them
 

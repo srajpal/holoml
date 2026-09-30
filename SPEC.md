@@ -1263,8 +1263,10 @@ pictures (KHR_texture_basisu).
 A renderer MAY set limits on what one page can use, so that a heavy or
 hostile page cannot exhaust the viewer's memory or freeze the renderer:
 for example the size of the page's text, the number of elements, the
-number and size of model files, the size of pictures inside models, and
-the number of triangles. When a page goes past a limit, the renderer
+number and size of model files, the size of pictures inside models, the
+number of triangles, what the files become once they are decoded (the
+pixels of pictures, the seconds of sound), the number of lights, and how
+far from the middle of the scene a thing may be. When a page goes past a limit, the renderer
 SHOULD show as much of the scene as it can, leave out what crossed the
 limit, and tell the viewer what was left out and why. Such limits are
 the renderer's choice, not part of the language: a valid page stays
@@ -1273,8 +1275,12 @@ valid whatever a renderer's limits are.
 *Note (non-normative):* HyperSol HyperSpace 3D allows per page 2 MB of
 text, 10,000 elements, 64 model files (a file used by many models is
 loaded once), 32 MB for one model or sound file and 128 MB for all of
-them, pictures up to 4096 by 4096 pixels, 2 million triangles in all,
-and 30 seconds for a file to load.
+them, pictures up to 4096 by 4096 pixels and 134,217,728 pixels of
+pictures in all once decoded, 2 million triangles in all (counted as
+drawn, once a model is decoded), 600 seconds of sound in all, 32 lights
+that shine from a place or a direction (those in model files included),
+of which the first 4 that ask cast shadows, places, sizes, and scales
+within 1,000,000, and 30 seconds for a file to load.
 
 ### Drawing
 
@@ -1283,6 +1289,11 @@ materials, animations, (0.2) shadows, water, and sky, as section 7 says.
 While a 0.2 page's scripts listen for frames, it keeps drawing, except
 while the page cannot be seen (section 10, the `frame` event). A
 renderer need not draw while nothing in the scene changes.
+
+*Note (non-normative):* Where Chromium draws in software (a computer
+without a graphics card), HyperSpace 3D draws the scene with half as
+many pixels each way and without smoothed edges, and leaves out shadows
+and the water's moving light; it says so in the console.
 
 ### Interacting
 
@@ -2144,6 +2155,11 @@ Change controller: The HoloML Authors
     separator, or with U+FEFF is a `bad-value` (section 6). Before, a
     control character could hide a scheme from `unsafe-link`, and
     Unicode's spaces around an address were dropped.
+
+  The notes on HyperSpace 3D's limits (section 9, "Limits") and on how
+  it draws in software (section 9, "Drawing") follow the renderer: it
+  now also limits what pictures and sounds become once decoded, the
+  number of lights, and how far away a thing may be.
 
   Corrected, where the document disagreed with itself or with the
   checker:
