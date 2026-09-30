@@ -74,7 +74,7 @@ A named piece of information about the page, as in HTML. [In the specification](
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
 | `name` | text (required) |  | What it is, for example `description` or `author` |
-| `content` | text (required) |  | Its value |
+| `content` | text, which may be empty (required) |  | Its value |
 
 ## `script`
 

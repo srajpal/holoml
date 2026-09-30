@@ -1,4 +1,4 @@
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NUMBER_PATTERN } from './patterns.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN } from './patterns.ts';
 import { ELEMENTS, VERSION, VERSIONS, type AttributeRule, type ElementRule, type ValueKind } from './rules.ts';
 
 /**
@@ -23,7 +23,8 @@ export function relaxNg(): string {
     '# ids, targets that exist, values that depend on one another). A page',
     '# is read as XML would be: a flag, written alone (autoplay), is an',
     '# attribute with an empty value. "(0.2)" marks what a 0.1 page may',
-    '# not use.',
+    '# not use. An address holds no control character (\\p{Cc}), no space or',
+    '# other separator (\\p{Z}), and no U+FEFF (written by its number).',
     '',
     'start = holoml',
     '',
@@ -69,7 +70,8 @@ function attribute(name: string, rule: AttributeRule): Part {
 function value(kind: ValueKind): string {
   switch (kind.kind) {
     case 'text':
-      return 'text';
+      // A token is read without the whitespace around it, so one of length 1 or more is not empty.
+      return kind.empty ? 'text' : 'xsd:token { minLength = "1" }';
     case 'number': {
       const facets: string[] = [];
       if (kind.positive) facets.push('minExclusive = "0"');
@@ -87,10 +89,10 @@ function value(kind: ValueKind): string {
     case 'duration':
       return `xsd:token { pattern = "${DURATION_PATTERN}" }`;
     case 'url': {
-      if (kind.for === 'link') return 'xsd:token { pattern = "[^\\s]+" }';
+      if (kind.for === 'link') return `xsd:token { pattern = "[^${NOT_IN_ADDRESS_RNC}]+" }`;
       // A page may write an extension in either case; XML Schema's patterns have no switch for that.
       const anyCase = FILE_EXTENSIONS[kind.for].map((e) => e.replace(/[a-z]/g, (c) => `[${c}${c.toUpperCase()}]`)).join('|');
-      return `xsd:token { pattern = "[^\\s?#]*\\.(${anyCase})([?#][^\\s]*)?" }`;
+      return `xsd:token { pattern = "[^${NOT_IN_ADDRESS_RNC}?#]*\\.(${anyCase})([?#][^${NOT_IN_ADDRESS_RNC}]*)?" }`;
     }
     case 'tiling':
       return 'list { more-than-0 } | list { more-than-0, more-than-0 }';

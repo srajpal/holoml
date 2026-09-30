@@ -6,7 +6,8 @@
 # ids, targets that exist, values that depend on one another). A page
 # is read as XML would be: a flag, written alone (autoplay), is an
 # attribute with an empty value. "(0.2)" marks what a 0.1 page may
-# not use.
+# not use. An address holds no control character (\p{Cc}), no space or
+# other separator (\p{Z}), and no U+FEFF (written by its number).
 
 start = holoml
 
@@ -28,14 +29,14 @@ title =
 
 meta =
   element meta {
-    attribute name { text },
+    attribute name { xsd:token { minLength = "1" } },
     attribute content { text },
     empty
   }
 
 script =  # (0.2)
   element script {
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([jJ][sS]|[mM][jJ][sS])([?#][^\s]*)?" } },
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([jJ][sS]|[mM][jJ][sS])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
     empty
   }
 
@@ -43,8 +44,8 @@ scene =
   element scene {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
     attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
-    attribute environment { xsd:token { pattern = "[^\s?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute sky { xsd:token { pattern = "[^\s?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute environment { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute sky { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint* & hud* & slider* & choice* & plan? & water?)
   }
 
@@ -67,25 +68,25 @@ model =
     attribute position { list { number, number, number } }?,
     attribute rotation { list { number, number, number } }?,
     attribute scale { list { number } | list { number, number, number } }?,
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\s]*)?" } },
-    attribute animation { text }?,
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
+    attribute animation { xsd:token { minLength = "1" } }?,
     attribute autoplay { flag }?,
     attribute solid { flag }?,  # (0.2)
     attribute shadows { flag }?,  # (0.2)
-    attribute stand-in { xsd:token { pattern = "[^\s?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute stand-in { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     material*
   }
 
 material =
   element material {
-    attribute name { text },
+    attribute name { xsd:token { minLength = "1" } },
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute metalness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute roughness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute opacity { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
-    attribute map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute normal-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute roughness-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute normal-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute roughness-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
     empty
   }
@@ -93,7 +94,7 @@ material =
 viewpoint =
   element viewpoint {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
-    attribute label { text }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.2)
     attribute position { list { number, number, number } }?,
     attribute look-at { list { number, number, number } }?,
     attribute mode { string "orbit" | string "walk" }?,
@@ -130,7 +131,7 @@ label =
 
 a =
   element a {
-    attribute href { xsd:token { pattern = "[^\s]+" } },
+    attribute href { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}]+" } },
     (model* & group* & label* & panel*)
   }
 
@@ -140,19 +141,19 @@ animate =
     attribute \attribute { string "position" | string "rotation" | string "scale" | string "intensity" | string "color" | string "background" },
     attribute from { text }?,
     attribute to { text },
-    attribute duration { xsd:token { pattern = "([0-9]+(\.[0-9]+)?|\.[0-9]+)(ms|s)" } },
+    attribute duration { xsd:token { pattern = "([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?(ms|s)" } },
     attribute repeat { xsd:token { pattern = "0*[1-9][0-9]*|indefinite" } }?,
     attribute begin { string "load" | string "click" }?,  # (0.2)
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
     attribute toggle { flag }?,  # (0.2)
-    attribute label { text }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.2)
     empty
   }
 
 sound =  # (0.2)
   element sound {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([oO][gG][gG]|[mM][pP]3|[wW][aA][vV])([?#][^\s]*)?" } },
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([oO][gG][gG]|[mM][pP]3|[wW][aA][vV])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
     attribute loop { flag }?,
     attribute autoplay { flag }?,
     attribute volume { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
@@ -160,7 +161,7 @@ sound =  # (0.2)
     attribute range { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute begin { string "load" | string "click" }?,
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
-    attribute label { text }?,
+    attribute label { xsd:token { minLength = "1" } }?,
     empty
   }
 
@@ -188,23 +189,23 @@ choice =  # (0.2)
   element choice {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
-    attribute label { text }?,
+    attribute label { xsd:token { minLength = "1" } }?,
     attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
-    attribute material { text }?,
-    attribute value { text }?,
+    attribute material { xsd:token { minLength = "1" } }?,
+    attribute value { xsd:token { minLength = "1" } }?,
     option+
   }
 
 option =  # (0.2)
   element option {
-    attribute value { text }?,
+    attribute value { xsd:token { minLength = "1" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute metalness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute roughness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute opacity { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
-    attribute map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute normal-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute roughness-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute normal-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute roughness-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
     text  # not empty
   }
@@ -235,10 +236,10 @@ plan =  # (0.2)
   element plan {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } },
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
     attribute area { list { number, number, number, number } },
     attribute width { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
-    attribute label { text }?,
+    attribute label { xsd:token { minLength = "1" } }?,
     empty
   }
 

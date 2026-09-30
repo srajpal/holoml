@@ -1,0 +1,13 @@
+<holoml version="0.1">
+  <scene background="&#160;#000">
+    <group position="1&#160;2&#160;3" />
+    <group position="1 2 3" />
+    <group position="&#160;1 2 3" />
+    <group scale="1&#12288;1&#12288;1" />
+    <group rotation="0&#11;90&#12;0" />
+    <light type="ambient" intensity="1&#160;" />
+    <label size="&#8199;0.2">A figure space before the number</label>
+    <group id="g" />
+    <animate target="#g" attribute="position" to="0 1 0&#8232;" duration="1s&#160;" repeat="&#160;2" />
+  </scene>
+</holoml>

@@ -8,7 +8,7 @@
  */
 import type { Attribute, ElementNode, HoloDocument, Position } from '@holoml/parser';
 import { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast, type Version, type ValueKind } from './rules.ts';
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, INDEFINITE, NUMBER_PATTERN, endsWithExtension, whole } from './patterns.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, INDEFINITE, NUMBER_PATTERN, endsWithExtension, notInAddress, whole } from './patterns.ts';
 
 export { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast } from './rules.ts';
 export type { AttributeRule, ElementRule, ValueKind, Version } from './rules.ts';
@@ -66,6 +66,24 @@ const PICTURE_FILE = endsWithExtension(FILE_EXTENSIONS.picture);
 const ENVIRONMENT_FILE = endsWithExtension(FILE_EXTENSIONS.environment);
 /** Schemes a link or model may use; anything else (javascript:, data:, file:) is refused. */
 const SAFE_SCHEMES = new Set(['http', 'https']);
+
+/**
+ * Whitespace in a value is the syntax's own (SPEC.md sections 5 and 6):
+ * the space, the tab, the line feed, and the carriage return. No other
+ * character separates numbers or is ignored around a value: a no-break
+ * space where a space is meant is a bad value (review 134, L5).
+ */
+const isSpace = (c: number) => c === 0x20 || c === 0x09 || c === 0x0a || c === 0x0d;
+const SPACES = /[ \t\n\r]+/;
+
+/** A value without the whitespace around it. */
+function trimSpace(s: string): string {
+  let start = 0;
+  let end = s.length;
+  while (start < end && isSpace(s.charCodeAt(start))) start += 1;
+  while (end > start && isSpace(s.charCodeAt(end - 1))) end -= 1;
+  return s.slice(start, end);
+}
 
 /** A dictionary's own entry, never an inherited one such as "constructor" (issue #1). */
 function own<T>(dictionary: Readonly<Record<string, T>>, key: string): T | undefined {
@@ -128,7 +146,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
         if (child.type === 'text') text += child.value;
         else report('child-not-allowed', `<${el.name}> holds only text, not <${child.name}>`, child.start);
       }
-      if (text.trim() === '' && !rule.emptyText) report('empty-text', `<${el.name}> needs some text`, el.start);
+      if (trimSpace(text) === '' && !rule.emptyText) report('empty-text', `<${el.name}> needs some text`, el.start);
       return;
     }
     const counts = new Map<string, number>();
@@ -214,7 +232,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       if (el && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
     }
     const repeat = attr(anim, 'repeat');
-    if (attr(anim, 'toggle') && repeat && repeat.value?.trim() !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
+    if (attr(anim, 'toggle') && repeat && trimSpace(repeat.value ?? '') !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
   }
   for (const sound of sounds) {
     // Sounds from a place: how far one comes needs where it comes from.
@@ -253,7 +271,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     for (const option of choice.children) {
       if (option.type !== 'element' || option.name !== 'option') continue;
       const given = attr(option, 'value');
-      const text = option.children.map((c) => (c.type === 'text' ? c.value : '')).join('').replace(/\s+/g, ' ').trim();
+      const text = trimSpace(option.children.map((c) => (c.type === 'text' ? c.value : '')).join('')).split(SPACES).join(' ');
       const value = given?.value ?? text;
       if (values.has(value)) report('bad-value', `Two options of this <choice> have the value "${value}"`, given?.start ?? option.start);
       values.add(value);
@@ -332,7 +350,7 @@ function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: s
     const n = (name: string, fallback: number) => {
       const a = attr(el, name);
       if (!a) return { at: el.start, value: fallback, ok: true };
-      const v = a.value?.trim() ?? '';
+      const v = trimSpace(a.value ?? '');
       return { at: a.start, value: Number(v), ok: NUMBER.test(v) && Number.isFinite(Number(v)) };
     };
     const min = n('min', 0);
@@ -361,10 +379,10 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
   const bad = (why: string) => ({ code: 'bad-value' as const, message: `"${name}": ${why}` });
   if (kind.kind === 'flag') return value === null ? null : bad('written alone, without a value');
   if (value === null) return bad('needs a value');
-  const v = value.trim();
+  const v = trimSpace(value);
   switch (kind.kind) {
     case 'text':
-      return v === '' ? bad('cannot be empty') : null;
+      return v === '' && !kind.empty ? bad('cannot be empty') : null;
     case 'number': {
       if (!NUMBER.test(v)) return bad(`"${value}" is not a number`);
       const n = Number(v);
@@ -375,12 +393,12 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
       return null;
     }
     case 'vector3': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if (parts.length !== 3 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not three numbers, such as "0 1.5 -2"`);
       return parts.every(finite) ? null : bad(`"${value}" has a number too large`);
     }
     case 'scale': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if ((parts.length !== 1 && parts.length !== 3) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or three`);
       return parts.every(finite) ? null : bad(`"${value}" has a number too large`);
     }
@@ -411,20 +429,20 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
     case 'animation-value':
       return null; // chosen by what is animated, in checkAttributes()
     case 'area': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if (parts.length !== 4 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not four numbers, such as "-6 -4 6 4"`);
       if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
       const [x0, z0, x1, z1] = parts.map(Number) as [number, number, number, number];
       return x1 > x0 && z1 > z0 ? null : bad('must be "x0 z0 x1 z1", with x1 more than x0 and z1 more than z0');
     }
     case 'size': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if (parts.length !== 3 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not three numbers, such as "12 4 20"`);
       if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
       return parts.every((p) => Number(p) > 0) ? null : bad('each of the three must be more than 0');
     }
     case 'tiling': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if ((parts.length !== 1 && parts.length !== 2) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or two, such as "3" or "3 2"`);
       return parts.every((p) => Number(p) > 0 && finite(p)) ? null : bad('must be more than 0');
     }
@@ -433,7 +451,8 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
       if (!COUNT.test(v)) return bad('must be a whole number of times, or "indefinite"');
       return Number.isSafeInteger(Number(v)) ? null : bad(`"${value}" is too many times`);
     case 'url': {
-      if (v === '' || /\s/.test(v)) return bad('must be an address without spaces');
+      // Spaces and control characters: a URL parser drops or rewrites them, so the scheme test below could be fooled.
+      if (v === '' || notInAddress.test(v)) return bad('must be an address, without spaces or control characters');
       const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(v)?.[1]?.toLowerCase();
       if (scheme !== undefined && !SAFE_SCHEMES.has(scheme)) {
         return { code: 'unsafe-link', message: `"${name}": "${scheme}:" addresses are not allowed; use http, https, or a relative address` };

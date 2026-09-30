@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from '@holoml/parser';
 import { check } from './index.ts';
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NUMBER_PATTERN, whole } from './patterns.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN, whole } from './patterns.ts';
 import { relaxNg } from './relaxng.ts';
 
 const scene = (inner: string, version = '0.2') => `<holoml version="${version}"><scene>${inner}</scene></holoml>`;
@@ -87,19 +87,30 @@ describe('the RELAX NG schema takes its patterns from the checker (review 134, L
     const known = new Set([NUMBER_PATTERN, COLOR_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, `${COUNT_PATTERN}|${INDEFINITE}`]);
     const others = written.filter((p) => !known.has(p));
     expect(written.filter((p) => known.has(p)).length).toBe(known.size);
-    // What is left are addresses: any characters but whitespace, and for a file its extensions.
-    for (const p of others) expect(p, p).toMatch(/^\[\^\\s/);
+    // What is left are addresses: any characters but those an address may not hold, and for a file its extensions.
+    expect(others.length).toBeGreaterThan(0);
+    for (const p of others) expect(p.startsWith(`[^${NOT_IN_ADDRESS_RNC}`), p).toBe(true);
   });
 
-  /** The pattern the schema gives an element's attribute. */
-  const patternOf = (element: string, attribute: string): RegExp => {
+  /**
+   * Whether the schema takes a value for an element's attribute: its
+   * pattern matches the whole value, as XML Schema's do, and a token or a
+   * number is read without the whitespace around it, runs of it inside
+   * made one space (a string is read as written).
+   */
+  const schemaTakes = (element: string, attribute: string): ((value: string) => boolean) => {
     const body = schema.slice(schema.indexOf(`element ${element} {`));
     const line = body.slice(0, body.indexOf('\n  }')).split('\n').find((l) => l.includes(`attribute ${attribute} {`));
-    const pattern = /pattern = "([^"]*)"/.exec(line ?? '')?.[1];
-    if (pattern === undefined) throw new Error(`the schema has no pattern for ${element} ${attribute}`);
-    // XML Schema's "\s" is the four whitespace characters, and its patterns match a whole value.
-    return whole(pattern.replaceAll('\\s', ' \\t\\n\\r'));
+    const m = /xsd:(\w+) \{ pattern = "([^"]*)"/.exec(line ?? '');
+    if (!m) throw new Error(`the schema has no pattern for ${element} ${attribute}`);
+    // The compact syntax's "\x{...}" is JavaScript's "\u{...}".
+    const pattern = new RegExp(`^(?:${m[2]!.replaceAll('\\x{', '\\u{')})$`, 'u');
+    const collapse = (v: string) => v.split(/[ \t\n\r]+/).filter(Boolean).join(' ');
+    return (value) => pattern.test(m[1] === 'string' ? value : collapse(value));
   };
+
+  /** A value as a page writes it between double quotes: what is not plain ASCII as a character reference. */
+  const asWritten = (value: string) => [...value].map((c) => (/^[ -~]$/.test(c) && !'<&"'.includes(c) ? c : `&#${c.codePointAt(0)};`)).join('');
 
   it('the schema and the checker take and refuse the same values', () => {
     const anim = (extra: string) => scene(`<group id="g" /><animate target="#g" attribute="position" to="1 1 1" ${extra} />`);
@@ -108,19 +119,19 @@ describe('the RELAX NG schema takes its patterns from the checker (review 134, L
         element: 'light',
         attribute: 'intensity',
         page: (v) => scene(`<light type="ambient" intensity="${v}" />`),
-        values: ['0', '1', '1.', '.5', '1e3', '1E+3', '2.5e-1', '007', '+1', '1e', 'e3', '.', '1..2', '0x10', 'bright', '1,5'],
+        values: ['0', '1', '1.', '.5', '1e3', '1E+3', '2.5e-1', '007', ' 1 ', '\t1\n', '+1', '1e', 'e3', '.', '1..2', '0x10', 'bright', '1,5', ' 1', '1　', ''],
       },
       {
         element: 'label',
         attribute: 'color',
         page: (v) => scene(`<label color="${v}">x</label>`),
-        values: ['#fff', '#FFF', '#c0182a', '#C0182A', '#ffff', '#12345', '#1234567', 'fff', '#ggg', 'red'],
+        values: ['#fff', '#FFF', '#c0182a', '#C0182A', ' #fff ', '#ffff', '#12345', '#1234567', 'fff', '#ggg', 'red', ' #fff'],
       },
       {
         element: 'animate',
         attribute: 'duration',
         page: (v) => anim(`duration="${v}"`),
-        values: ['2s', '500ms', '1.5s', '.5s', '10', 's', 'ms', '1 s', '2S', '1sec', '-1s', '+1s'],
+        values: ['2s', '500ms', '1.5s', '.5s', '1.s', '1e3ms', '1.5E-1s', ' 2s ', '10', 's', 'ms', '1 s', '2S', '1sec', '-1s', '+1s', '1ems', '2s '],
       },
       {
         element: 'animate',
@@ -132,19 +143,48 @@ describe('the RELAX NG schema takes its patterns from the checker (review 134, L
         element: 'group',
         attribute: 'id',
         page: (v) => scene(`<group id="${v}" />`),
-        values: ['a', 'A', 'a1', 'a-b', 'a_b', 'coupe', '1a', '-a', '_a', 'a b', 'a.b', 'é'],
+        values: ['a', 'A', 'a1', 'a-b', 'a_b', 'coupe', '1a', '-a', '_a', 'a b', ' a ', 'a.b', 'é'],
       },
       {
         element: 'animate',
         attribute: 'target',
         page: (v) => scene(`<group id="g" /><animate target="${v}" attribute="position" to="1 1 1" duration="1s" />`),
-        values: ['#g', 'g', '##g', '#', '#1', '# g'],
+        values: ['#g', 'g', '##g', '#', '#1', '# g', ' #g '],
+      },
+      {
+        element: 'a',
+        attribute: 'href',
+        page: (v) => scene(`<a href="${v}"><label>x</label></a>`),
+        values: [
+          'coupe.holoml',
+          ' coupe.holoml ',
+          'https://example.org/café?x=1#door',
+          '\u{1F468}‍\u{1F469}.holoml',
+          '',
+          ' ',
+          'a b.holoml',
+          'a\tb.holoml',
+          '\u0001coupe.holoml',
+          'coupe\u001f.holoml',
+          'coupe.holoml\u007f',
+          'coupe\u0085.holoml',
+          ' coupe.holoml',
+          'coupe.holoml　',
+          'a b',
+          '﻿coupe.holoml',
+        ],
+      },
+      {
+        element: 'model',
+        attribute: 'src',
+        page: (v) => scene(`<model src="${v}" />`),
+        values: ['a.glb', 'a.GLB', 'models/a.gltf?v=1', 'a.glb#x', '.glb', ' a.glb ', 'a.obj', 'a.glb.txt', 'dir.glb/file', 'a.glb?x y', 'a.glb?\u0001', ' a.glb', 'a\u0001.glb'],
       },
     ];
     for (const c of cases) {
-      const pattern = patternOf(c.element, c.attribute);
+      const takes = schemaTakes(c.element, c.attribute);
       for (const v of c.values) {
-        expect(pattern.test(v), `${c.element} ${c.attribute}="${v}"`).toBe(codes(c.page(v)).length === 0);
+        expect(takes(v), `${c.element} ${c.attribute}=${JSON.stringify(v)}`).toBe(codes(c.page(asWritten(v))).length === 0);
       }
     }
   });

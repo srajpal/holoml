@@ -179,6 +179,10 @@ HoloML looks like HTML but is strict: a reader stops at the first
 mistake and reports it with its line and column, instead of guessing
 what was meant. Appendix A gives the same syntax as a grammar.
 
+- Whitespace, here and in the rest of this specification, is four
+  characters: the space (U+0020), the tab (U+0009), the line feed
+  (U+000A), and the carriage return (U+000D). Any other space, such as
+  the no-break space (U+00A0), is a character like any other.
 - A document MUST have exactly one root element. Only comments and
   whitespace MAY come before and after it.
 - An element is written `<name attributes>content</name>`, or
@@ -257,28 +261,51 @@ Kinds of value used below:
 
 | Kind | Written as | Examples |
 |---|---|---|
-| number | a decimal number, optionally with an exponent | `0.4`, `-2`, `.5`, `1e3` |
+| text | any characters; not empty, and not whitespace alone, unless its attribute says it may be | `"The HoloML Authors"` |
+| number | a decimal number: an optional `-`, then digits with an optional `.` and more digits, or `.` and digits; optionally with an exponent (`e` or `E`, an optional `+` or `-`, and digits). No `+` before it, and no other form | `0.4`, `-2`, `.5`, `1.`, `1e3` |
 | vector | three numbers separated by whitespace | `"0 1.6 6"` |
 | scale | one number (the same on every axis) or three | `"1.2"`, `"1 2 1"` |
-| colour | `#` and 3 or 6 hexadecimal digits | `"#fff"`, `"#c0182a"` |
-| time | a positive number followed by `s` or `ms` | `"20s"`, `"500ms"` |
-| id | a letter, then letters, digits, `-`, or `_` | `"coupe"` |
+| colour | `#` and 3 or 6 hexadecimal digits, in either case | `"#fff"`, `"#c0182a"` |
+| time | a number more than 0, written without a sign, followed at once by `s` or `ms` | `"20s"`, `"500ms"`, `"1.5e3ms"` |
+| id | a letter (A to Z or a to z), then such letters, digits, `-`, or `_` | `"coupe"` |
 | id reference | `#` and an id in the same document | `"#coupe"` |
-| address | a relative address, or an `http:` or `https:` address, with no spaces | `"models/coupe.glb"`, `"game.js"` |
+| address | a relative address, or an `http:` or `https:` address, with no spaces or control characters | `"models/coupe.glb"`, `"game.js"` |
 | flag | the attribute's name alone | `autoplay` |
 | tiling | (0.2) one number more than 0 (the same both ways) or two | `"3"`, `"3 2"` |
 | area | (0.2) four numbers, x0 z0 x1 z1, with x1 more than x0 and z1 more than z0: a rectangle of the ground, in metres | `"-6 -4 6 4"` |
 
-Numbers MUST be finite: one too large to represent (such as `1e999`)
-is a `bad-value`, and so is a count of repeats too large to count
-exactly. Spaces around a number, a vector, a colour, a time, or an
-address are ignored; an id, an id reference, a choice (such as a light's
-`type`), and the version are written exactly, and spaces around them
-are a `bad-value`.
+Numbers MUST be finite: one too large to represent as a
+double-precision number (such as `1e999`) is a `bad-value`, and so is a
+time with such a number, and a count of repeats too large to count
+exactly (more than 9007199254740991). A number too small to tell from 0
+(such as `1e-999`) is 0.
+
+Whitespace (section 5) around a number, a vector, a scale, a colour, a
+time, a tiling, an area, a count of repeats, or an address is ignored,
+and one or more whitespace characters separate the numbers of a vector,
+a scale, a tiling, or an area. Only whitespace does: another space,
+such as the no-break space (U+00A0), in its place is a `bad-value`. An
+id, an id reference, a choice (such as a light's `type`), and the
+version are written exactly, and whitespace around them is a
+`bad-value`. Text is kept as it is written. It MUST NOT be empty or
+whitespace alone, except where its attribute says it may be (the
+`content` of `meta`). A flag has no value: a flag written with one,
+even an empty one (`autoplay=""`), is a `bad-value`, and so is any other
+attribute written alone, without a value.
 
 Relative addresses are resolved against the page's own address, as in
 HTML [URL]. A page MUST NOT use other schemes (`javascript:`, `data:`,
-`file:`, and so on).
+`file:`, and so on): an address that begins with a scheme (a letter,
+then letters, digits, `+`, `.`, or `-`, and then `:`) other than `http`
+or `https`, in either case, is an `unsafe-link`. An address MUST NOT be
+empty, and MUST NOT contain a control character (U+0000 to U+001F and
+U+007F to U+009F), a space or another of Unicode's separators (its
+general category Z, which has the no-break space), or U+FEFF. URL
+parsers drop some of these and rewrite others, so that an address with
+one might not be the address it looks to be; it is a `bad-value`. An
+address of a file of one kind (a model, a script, a sound, a picture)
+ends with one of that kind's extensions, in either case, before any `?`
+or `#`.
 
 ## 7. Elements
 
@@ -322,7 +349,7 @@ A named piece of information about the page, as in HTML. Holds nothing.
 | Attribute | Value | Meaning |
 |---|---|---|
 | `name` | text (required) | What it is, for example `description` or `author` |
-| `content` | text (required) | Its value |
+| `content` | text, which may be empty (required) | Its value |
 
 ```holoml-head
 <meta name="author" content="The HoloML Authors" />
@@ -1430,7 +1457,8 @@ flag, written alone, is an attribute with an empty value.
 # ids, targets that exist, values that depend on one another). A page
 # is read as XML would be: a flag, written alone (autoplay), is an
 # attribute with an empty value. "(0.2)" marks what a 0.1 page may
-# not use.
+# not use. An address holds no control character (\p{Cc}), no space or
+# other separator (\p{Z}), and no U+FEFF (written by its number).
 
 start = holoml
 
@@ -1452,14 +1480,14 @@ title =
 
 meta =
   element meta {
-    attribute name { text },
+    attribute name { xsd:token { minLength = "1" } },
     attribute content { text },
     empty
   }
 
 script =  # (0.2)
   element script {
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([jJ][sS]|[mM][jJ][sS])([?#][^\s]*)?" } },
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([jJ][sS]|[mM][jJ][sS])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
     empty
   }
 
@@ -1467,8 +1495,8 @@ scene =
   element scene {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
     attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
-    attribute environment { xsd:token { pattern = "[^\s?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute sky { xsd:token { pattern = "[^\s?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute environment { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute sky { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint* & hud* & slider* & choice* & plan? & water?)
   }
 
@@ -1491,25 +1519,25 @@ model =
     attribute position { list { number, number, number } }?,
     attribute rotation { list { number, number, number } }?,
     attribute scale { list { number } | list { number, number, number } }?,
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\s]*)?" } },
-    attribute animation { text }?,
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
+    attribute animation { xsd:token { minLength = "1" } }?,
     attribute autoplay { flag }?,
     attribute solid { flag }?,  # (0.2)
     attribute shadows { flag }?,  # (0.2)
-    attribute stand-in { xsd:token { pattern = "[^\s?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute stand-in { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     material*
   }
 
 material =
   element material {
-    attribute name { text },
+    attribute name { xsd:token { minLength = "1" } },
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute metalness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute roughness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute opacity { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
-    attribute map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute normal-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute roughness-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute normal-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute roughness-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
     empty
   }
@@ -1517,7 +1545,7 @@ material =
 viewpoint =
   element viewpoint {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
-    attribute label { text }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.2)
     attribute position { list { number, number, number } }?,
     attribute look-at { list { number, number, number } }?,
     attribute mode { string "orbit" | string "walk" }?,
@@ -1554,7 +1582,7 @@ label =
 
 a =
   element a {
-    attribute href { xsd:token { pattern = "[^\s]+" } },
+    attribute href { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}]+" } },
     (model* & group* & label* & panel*)
   }
 
@@ -1564,19 +1592,19 @@ animate =
     attribute \attribute { string "position" | string "rotation" | string "scale" | string "intensity" | string "color" | string "background" },
     attribute from { text }?,
     attribute to { text },
-    attribute duration { xsd:token { pattern = "([0-9]+(\.[0-9]+)?|\.[0-9]+)(ms|s)" } },
+    attribute duration { xsd:token { pattern = "([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?(ms|s)" } },
     attribute repeat { xsd:token { pattern = "0*[1-9][0-9]*|indefinite" } }?,
     attribute begin { string "load" | string "click" }?,  # (0.2)
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
     attribute toggle { flag }?,  # (0.2)
-    attribute label { text }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.2)
     empty
   }
 
 sound =  # (0.2)
   element sound {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([oO][gG][gG]|[mM][pP]3|[wW][aA][vV])([?#][^\s]*)?" } },
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([oO][gG][gG]|[mM][pP]3|[wW][aA][vV])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
     attribute loop { flag }?,
     attribute autoplay { flag }?,
     attribute volume { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
@@ -1584,7 +1612,7 @@ sound =  # (0.2)
     attribute range { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute begin { string "load" | string "click" }?,
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
-    attribute label { text }?,
+    attribute label { xsd:token { minLength = "1" } }?,
     empty
   }
 
@@ -1612,23 +1640,23 @@ choice =  # (0.2)
   element choice {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
-    attribute label { text }?,
+    attribute label { xsd:token { minLength = "1" } }?,
     attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
-    attribute material { text }?,
-    attribute value { text }?,
+    attribute material { xsd:token { minLength = "1" } }?,
+    attribute value { xsd:token { minLength = "1" } }?,
     option+
   }
 
 option =  # (0.2)
   element option {
-    attribute value { text }?,
+    attribute value { xsd:token { minLength = "1" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute metalness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute roughness { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
     attribute opacity { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
-    attribute map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute normal-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
-    attribute roughness-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute normal-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute roughness-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
     text  # not empty
   }
@@ -1659,10 +1687,10 @@ plan =  # (0.2)
   element plan {
     attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
-    attribute src { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } },
+    attribute src { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } },
     attribute area { list { number, number, number, number } },
     attribute width { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
-    attribute label { text }?,
+    attribute label { xsd:token { minLength = "1" } }?,
     empty
   }
 

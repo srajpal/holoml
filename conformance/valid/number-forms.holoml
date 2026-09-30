@@ -1,0 +1,16 @@
+<holoml version="0.1">
+  <head>
+    <meta name="note" content="" />
+  </head>
+  <scene background = "#0B0f1E">
+    <group id="g" position="1. .5 1e3" rotation="-0 -.5e1 2.5E-1" scale=" 2 " />
+    <model id="m" src="  models/car.GLB?v=1.2#body  " position="	1
+2  3	" scale="1e0 1E+0 1.0e-0" />
+    <light type="point" intensity="007" range="0" position="-1.5 1e-999 0.0" />
+    <light type="spot" intensity="1.e1" angle="0.0e0" color=" #FFF " />
+    <label size=".2" position="0 2 0">Numbers</label>
+    <animate target="#g" attribute="position" to="0 1 0" duration="1.s" />
+    <animate target="#g" attribute="rotation" to="0 90 0" duration="1e3ms" repeat=" 02 " />
+    <animate target="#m" attribute="scale" to="2 2 2" duration=" .5e1s " repeat=" indefinite " />
+  </scene>
+</holoml>

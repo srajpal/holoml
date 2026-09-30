@@ -1,0 +1,28 @@
+<holoml version="0.2">
+  <scene>
+    <light type="ambient" intensity="bright" />
+    <light type="ambient" intensity="+1" />
+    <light type="ambient" intensity="1e" />
+    <light type="ambient" intensity="e3" />
+    <light type="ambient" intensity="." />
+    <light type="ambient" intensity="1..2" />
+    <light type="ambient" intensity="0x10" />
+    <light type="ambient" intensity="1,5" />
+    <light type="ambient" intensity="Infinity" />
+    <light type="ambient" intensity="NaN" />
+    <light type="ambient" intensity="" />
+    <light type="ambient" intensity />
+    <group position="+1 0 0" />
+    <group position="1 2 3 4" />
+    <group position="1,2,3" />
+    <group position="" />
+    <group scale="1 1" />
+    <model src />
+    <model src="a.glb" autoplay="" />
+    <model src="a.glb">
+      <material name="Paint" repeat="1 2 3" />
+      <material name="Glass" repeat="" />
+    </model>
+    <plan src="plan.png" area="0 0 1" />
+  </scene>
+</holoml>

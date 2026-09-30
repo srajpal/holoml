@@ -11,7 +11,8 @@
  */
 
 export type ValueKind =
-  | { kind: 'text' }
+  /** Any text; not empty, and not only whitespace, unless `empty` allows it. */
+  | { kind: 'text'; empty?: boolean }
   | { kind: 'number'; min?: number; max?: number; positive?: boolean }
   | { kind: 'vector3' }
   /** One number (the same on every axis) or three. */
@@ -108,7 +109,8 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     children: 'none',
     attributes: {
       name: { value: { kind: 'text' }, required: true },
-      content: { value: { kind: 'text' }, required: true },
+      // As in HTML, a piece of information may be empty.
+      content: { value: { kind: 'text', empty: true }, required: true },
     },
   },
   script: {

@@ -25,8 +25,8 @@ export const NUMBER_PATTERN = `-?${UNSIGNED}`;
 /** A colour: `#` and 3 or 6 hexadecimal digits. */
 export const COLOR_PATTERN = '#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})';
 
-/** A time: a number and its unit, `s` or `ms`. */
-export const DURATION_PATTERN = '([0-9]+(\\.[0-9]+)?|\\.[0-9]+)(ms|s)';
+/** A time: a number without a sign, and its unit, `s` or `ms`: `20s`, `500ms`, `1.5e3ms`. */
+export const DURATION_PATTERN = `${UNSIGNED}(ms|s)`;
 
 /** An id: a letter, then letters, digits, `-`, or `_`. */
 export const ID_PATTERN = '[A-Za-z][A-Za-z0-9_\\-]*';
@@ -48,6 +48,28 @@ export const FILE_EXTENSIONS = {
   picture: ['png', 'jpg', 'jpeg', 'webp'],
   environment: ['hdr', 'png', 'jpg', 'jpeg'],
 } as const satisfies Record<string, readonly string[]>;
+
+/**
+ * What an address may not contain, as the inside of a character class:
+ * control characters (Unicode's category Cc: U+0000 to U+001F and U+007F
+ * to U+009F) and spaces and other separators (category Z: the space, the
+ * no-break space, and the like). A URL parser drops or rewrites some of
+ * these, so an address with one might not be the address it looks to be
+ * (review 134, L2: a control character before "javascript:" hid it).
+ */
+const NOT_IN_ADDRESS = '\\p{Cc}\\p{Z}';
+/** And U+FEFF, the byte order mark's character, which is in neither category. */
+const ALSO_NOT_IN_ADDRESS = 'FEFF';
+
+/** Does a value hold a character an address may not? */
+export const notInAddress = new RegExp(`[${NOT_IN_ADDRESS}\\u{${ALSO_NOT_IN_ADDRESS}}]`, 'u');
+
+/**
+ * The same characters for the RELAX NG schema, as the inside of a
+ * character class: the compact syntax writes a character by its number
+ * as "\x{...}".
+ */
+export const NOT_IN_ADDRESS_RNC = `${NOT_IN_ADDRESS}\\x{${ALSO_NOT_IN_ADDRESS}}`;
 
 /** The JavaScript expression for a pattern: the whole value, from start to end. */
 export function whole(pattern: string): RegExp {
