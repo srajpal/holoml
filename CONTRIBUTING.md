@@ -39,5 +39,7 @@ Actions ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
   sign. You may add yourself to [AUTHORS](AUTHORS).
 - Report security problems privately, as described in
   [SECURITY.md](SECURITY.md).
+- `main` is protected: it cannot be force-pushed or deleted, and a pull
+  request is merged once its automatic builds pass on Windows and Linux.
 
 The rules for AI agents working here are in [AGENTS.md](AGENTS.md).
