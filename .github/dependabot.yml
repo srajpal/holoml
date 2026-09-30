@@ -1,0 +1,28 @@
+# Dependabot (review 134, H3): once a week it looks for newer versions of
+# the actions the workflows use (named there by commit) and of the
+# packages in package.json, and proposes them as pull requests, which
+# the automatic builds check like any other. Minor and patch updates
+# come together, one pull request for the actions and one for the
+# packages; a major version comes on its own. At most five are open at
+# a time.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      packages:
+        patterns: ['*']
+        update-types: [minor, patch]
