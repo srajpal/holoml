@@ -75,5 +75,8 @@ Electron, for its picture decoder and encoder) makes the colourways and
 their pictures, the shoe's models and stand-ins, the room's models, the
 chime, and `models/CREDITS.md`, and writes the places, the shelves, the
 bays, and the colour options into `index.holoml` and `shoe.holoml`
-between their `prepare.mjs` comments. `colourways.js` holds the
+between their `prepare.mjs` comments. It makes `models/` and `colours/`
+afresh, in the cache, and puts them in place only when everything is
+made, so a run that fails, or finds no cache, leaves them as they were.
+`colourways.js` holds the
 colourways, their colours, and their prices.

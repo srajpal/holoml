@@ -26,6 +26,7 @@ import { app, nativeImage } from 'electron';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { RATE, wav } from '../../tools/sound.mjs';
 import { AIRSTONES, GALLERY, KINDS, LOGS, PLANTS, ROCKS, ROCKWORK, SHELLS, TANK, TUNNEL } from '../ocean.js';
 import { BABYLON_COMMIT, FISH } from './fish.mjs';
 import { fitFish, fitMaterials } from './fit.mjs';
@@ -317,28 +318,6 @@ function tank() {
 }
 
 // ---- Sounds ---------------------------------------------------------------------------------
-
-const RATE = 22050;
-
-/** A mono 16-bit WAV file of samples from -1 to 1. */
-function wav(samples) {
-  const data = Buffer.alloc(samples.length * 2);
-  samples.forEach((v, i) => data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, v)) * 32767), i * 2));
-  const head = Buffer.alloc(44);
-  head.write('RIFF', 0, 'ascii');
-  head.writeUInt32LE(36 + data.length, 4);
-  head.write('WAVEfmt ', 8, 'ascii');
-  head.writeUInt32LE(16, 16);
-  head.writeUInt16LE(1, 20);
-  head.writeUInt16LE(1, 22);
-  head.writeUInt32LE(RATE, 24);
-  head.writeUInt32LE(RATE * 2, 28);
-  head.writeUInt16LE(2, 32);
-  head.writeUInt16LE(16, 34);
-  head.write('data', 36, 'ascii');
-  head.writeUInt32LE(data.length, 40);
-  return Buffer.concat([head, data]);
-}
 
 /** The same random numbers every time the tools run. */
 function randoms(seed) {

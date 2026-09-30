@@ -3,25 +3,8 @@
 // swaying plants; a thinner copy of a detailed model; and writing a
 // model's parts and materials into a .glb file.
 
+import { add3, boxFaces, cross, ellipsoid as roundShape, len, linear, merge, sub, unit } from '../../tools/shapes.mjs';
 import { GlbWriter, axisAngle } from './glb.mjs';
-
-export const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-export const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-export const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const len = (a) => Math.hypot(a[0], a[1], a[2]);
-const unit = (a) => {
-  const l = len(a) || 1;
-  return [a[0] / l, a[1] / l, a[2] / l];
-};
-
-/** A colour from "#rrggbb" to glTF's linear red, green, and blue. */
-export function linear(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  return [n >> 16, (n >> 8) & 255, n & 255].map((c) => {
-    const v = c / 255;
-    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-  });
-}
 
 /** A glTF material: a colour (sRGB), how rough and how metallic, a glow, see-through, both sides, and pictures by texture index. */
 export function material(name, { color = '#ffffff', rough = 0.8, metal = 0, glow, opacity = 1, doubleSided = false, map, normalMap, roughnessMap, unlit = false } = {}) {
@@ -55,20 +38,7 @@ export function quad(origin, u, v, mat, tile = null) {
 
 /** A box between two corners, its faces outward; `skip` leaves faces out ("top", "bottom", "left", "right", "front", "back"). */
 export function box(min, max, mat, { skip = [], tile = null } = {}) {
-  const [x0, y0, z0] = min;
-  const [x1, y1, z1] = max;
-  const [w, h, d] = [x1 - x0, y1 - y0, z1 - z0];
-  const faces = {
-    right: [[x1, y0, z1], [0, 0, -d], [0, h, 0]],
-    left: [[x0, y0, z0], [0, 0, d], [0, h, 0]],
-    top: [[x0, y1, z1], [w, 0, 0], [0, 0, -d]],
-    bottom: [[x0, y0, z0], [w, 0, 0], [0, 0, d]],
-    front: [[x0, y0, z1], [w, 0, 0], [0, h, 0]],
-    back: [[x1, y0, z0], [-w, 0, 0], [0, h, 0]],
-  };
-  return Object.entries(faces)
-    .filter(([k]) => !skip.includes(k))
-    .flatMap(([, [o, u, v]]) => quad(o, u, v, mat, tile));
+  return boxFaces(min, max, skip).flatMap(([o, u, v]) => quad(o, u, v, mat, tile));
 }
 
 /**
@@ -166,50 +136,7 @@ export function ground(x0, x1, z0, z1, step, height, mat, tile) {
 
 /** A round thing (a bubble, a stone): an ellipsoid of `rings` by `segments`. */
 export function ellipsoid(centre, radii, mat, { segments = 16, rings = 10 } = {}) {
-  const positions = [];
-  const normals = [];
-  const uvs = [];
-  const indices = [];
-  for (let j = 0; j <= rings; j++) {
-    const phi = (j / rings) * Math.PI;
-    for (let i = 0; i <= segments; i++) {
-      const th = (i / segments) * 2 * Math.PI;
-      const d = [Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)];
-      positions.push(centre[0] + radii[0] * d[0], centre[1] + radii[1] * d[1], centre[2] + radii[2] * d[2]);
-      normals.push(...unit([d[0] / radii[0], d[1] / radii[1], d[2] / radii[2]]));
-      uvs.push(i / segments, j / rings);
-    }
-  }
-  for (let j = 0; j < rings; j++) {
-    for (let i = 0; i < segments; i++) {
-      const a = j * (segments + 1) + i;
-      const b = a + segments + 1;
-      indices.push(a, a + 1, b, a + 1, b + 1, b);
-    }
-  }
-  return [{ positions, normals, uvs, indices, material: mat }];
-}
-
-/** Joins the parts of each material into one primitive. */
-export function merge(parts) {
-  const byMaterial = new Map();
-  for (const p of parts) byMaterial.set(p.material, [...(byMaterial.get(p.material) ?? []), p]);
-  return [...byMaterial.entries()].map(([mat, list]) => {
-    const indices = [];
-    let base = 0;
-    for (const p of list) {
-      for (const i of p.indices) indices.push(i + base);
-      base += p.positions.length / 3;
-    }
-    return {
-      positions: new Float32Array(list.flatMap((p) => Array.from(p.positions))),
-      normals: new Float32Array(list.flatMap((p) => Array.from(p.normals))),
-      uvs: new Float32Array(list.flatMap((p) => Array.from(p.uvs))),
-      indices: base > 65535 ? new Uint32Array(indices) : new Uint16Array(indices),
-      material: mat,
-      ...(list[0].joints ? { joints: new Uint8Array(list.flatMap((p) => Array.from(p.joints))), weights: new Float32Array(list.flatMap((p) => Array.from(p.weights))) } : {}),
-    };
-  });
+  return roundShape(centre, radii, mat, { segments, rings });
 }
 
 /**

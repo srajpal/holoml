@@ -50,7 +50,10 @@ electron examples/sofa-studio/tools/prepare.mjs
 ```
 
 `download.mjs` saves the models, textures, and light from Poly Haven's
-API into `tools/cache/` (not kept in the repository). `prepare.mjs`
+API into `tools/cache/` (not kept in the repository), and checks each
+file against the SHA-256 recorded for it in `tools/checksums.json`: a
+file that Poly Haven has changed stops the tool (`--record` takes a new
+or changed file, for you to look at and commit). `prepare.mjs`
 (run with Electron, for its picture decoder) splits the sofa's single
 material into Fabric and Wood by the colour of its own picture under
 each triangle, recolours the frame's picture as oak and ebony and the

@@ -70,12 +70,18 @@ electron examples/harbour-loft/tools/prepare.mjs
 ```
 
 `download.mjs` saves the models, textures, and the harbour's panorama
-from Poly Haven's API into `tools/cache/` (not kept in the repository).
+from Poly Haven's API into `tools/cache/` (not kept in the repository),
+and checks each file against the SHA-256 recorded for it in
+`tools/checksums.json`: Poly Haven serves an asset's newest version, and
+a file that has changed stops the tool (`--record` takes a new or
+changed file, for you to look at and commit).
 `tools/layout.mjs` is the flat's plan: its walls and their openings, its
 rooms, the doors' hinges, and where each piece of furniture stands.
 `prepare.mjs` (run with Electron, for its picture decoder and a canvas)
 makes every model, re-encodes the pictures for the web, makes the sky,
 the light, the floor plan, the sounds, and `models/CREDITS.md`, and
 writes the walls, windows, and furniture into `index.holoml` between its
-two `prepare.mjs` comments. The doors, lamps, panels, places, and links
-are written in the page by hand.
+two `prepare.mjs` comments. It makes `models/` afresh, in the cache, and
+puts it in place only when every model is made, so a run that fails, or
+finds no cache, leaves the models as they were. The doors, lamps,
+panels, places, and links are written in the page by hand.

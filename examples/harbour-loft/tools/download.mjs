@@ -5,14 +5,23 @@
 // repository root:
 //
 //   node examples/harbour-loft/tools/download.mjs
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+//
+// Every file is checked against the SHA-256 recorded for it in
+// checksums.json: Poly Haven serves the newest version of an asset, and a
+// file that has changed stops the tool instead of changing the site. To
+// take a new or changed file on purpose, run with --record, look at the
+// file, and commit checksums.json.
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fetchJson, keeper, readSums, writeSums } from '../../tools/cache.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
 const API = 'https://api.polyhaven.com';
-const HEADERS = { 'User-Agent': 'HoloML examples (https://github.com/srajpal/holoml)' };
+const CHECKSUMS = join(here, 'checksums.json');
+const record = process.argv.includes('--record');
+const sums = readSums(CHECKSUMS);
 
 /** The furniture, lamps, and plants (glTF). The walls, floors, doors, kitchen, bathroom, and bed are made by prepare.mjs. */
 export const MODELS = [
@@ -53,20 +62,8 @@ export const TEXTURES = [
 /** The harbour: its HDR panorama at 1k (the light), and Poly Haven's own tonemapped picture of it (the sky). */
 export const HARBOUR = 'simons_town_harbour';
 
-async function get(path) {
-  const r = await fetch(`${API}${path}`, { headers: HEADERS, signal: AbortSignal.timeout(60_000) });
-  if (!r.ok) throw new Error(`${path}: ${r.status}`);
-  return r.json();
-}
-
-async function save(url, file) {
-  if (existsSync(file)) return;
-  const r = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(300_000) });
-  if (!r.ok) throw new Error(`${url}: ${r.status}`);
-  mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, Buffer.from(await r.arrayBuffer()));
-  console.log(`saved ${file.slice(cache.length + 1)}`);
-}
+const get = (path) => fetchJson(`${API}${path}`);
+const save = keeper({ cache, sums, record });
 
 const credits = [];
 const note = async (id, kind) => {
@@ -97,5 +94,7 @@ const harbour = await get(`/files/${HARBOUR}`);
 await save(harbour.hdri['1k'].hdr.url, join(cache, 'light', `${HARBOUR}.hdr`));
 await save(harbour.tonemapped.url, join(cache, 'light', `${HARBOUR}.jpg`));
 await note(HARBOUR, 'HDRI');
+mkdirSync(cache, { recursive: true });
 writeFileSync(join(cache, 'credits.json'), JSON.stringify(credits, null, 2));
-console.log(`${credits.length} assets in ${cache}`);
+if (record) writeSums(CHECKSUMS, sums);
+console.log(`${credits.length} assets in ${cache}, each file as its checksum says`);

@@ -26,32 +26,30 @@
 //
 //   electron examples/harbour-loft/tools/prepare.mjs
 import { app, BrowserWindow, nativeImage } from 'electron';
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cacheProblem, makingFolder, putInPlace } from '../../tools/cache.mjs';
+import { decode, encode } from '../../tools/pictures.mjs';
+import { Chunk, add3, boxFaces, cross, dot, ellipsoid as roundShape, glbBytes, len, linear, luminance, merge, unit } from '../../tools/shapes.mjs';
+import { RATE, random, wav } from '../../tools/sound.mjs';
 import { BRICK_WALL, DOORS, FURNITURE, H, LEAF, OUTSIDE, ROOMS, SCREENS, TERRACE, WALLS, wallBoxes } from './layout.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
 const site = join(here, '..');
 const MODELS = join(site, 'models');
+/**
+ * Where the models are made: a folder in the cache, put in MODELS' place
+ * only when every one is made, so that a run that fails (or finds no
+ * cache) leaves the committed models as they were.
+ */
+let making = MODELS;
 
 /** Each model's box in its own space, for the floor plan: its file's name, then { min, max }. */
 const BOUNDS = new Map();
 
 // ---- Pictures ------------------------------------------------------------------
-
-/** A picture's pixels: width, height, and 4 bytes a pixel (blue, green, red, alpha). */
-function decode(file) {
-  const image = nativeImage.createFromPath(file);
-  if (image.isEmpty()) throw new Error(`${file}: not a picture Electron can read`);
-  const { width, height } = image.getSize();
-  return { width, height, data: image.toBitmap() };
-}
-
-function encode(picture, quality) {
-  return nativeImage.createFromBitmap(picture.data, { width: picture.width, height: picture.height }).toJPEG(quality);
-}
 
 /** A JPEG again at web quality, at most `size` pixels wide (normal maps a little higher: their errors show as bumps). */
 function reencode(from, quality, size = 1024) {
@@ -68,8 +66,6 @@ function reencode(from, quality, size = 1024) {
  * request (a page of 40 models with their pictures beside them took 200).
  */
 const PICTURES = new Map();
-
-const luminance = (r, g, b) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 
 /** Recolours a picture: each pixel's lightness, within the picture's own range, picks a colour between `dark` and `light` (the weave keeps its pattern). */
 function tint(picture, dark, light) {
@@ -129,15 +125,6 @@ const PALETTE = {
   Cushion: { color: '#e9e3d6', rough: 0.95 },
 };
 
-/** A colour from "#rrggbb" to glTF's linear red, green, and blue. */
-function linear(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  return [n >> 16, (n >> 8) & 255, n & 255].map((c) => {
-    const v = c / 255;
-    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-  });
-}
-
 function gltfMaterial(name, spec, image) {
   const m = {
     name,
@@ -160,14 +147,6 @@ function gltfMaterial(name, spec, image) {
 
 // ---- Geometry ------------------------------------------------------------------------
 
-const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-const len = (a) => Math.hypot(a[0], a[1], a[2]);
-const unit = (a) => {
-  const l = len(a);
-  return [a[0] / l, a[1] / l, a[2] / l];
-};
 const tileOf = (material, extra) => (extra?.[material] ?? PALETTE[material])?.tile ?? 1;
 
 /**
@@ -194,20 +173,7 @@ function quad(origin, u, v, material, tile = tileOf(material)) {
 
 /** A box between two corners, its faces outward; `skip` leaves out faces ("top", "bottom", "left", "right", "front", "back"). */
 function box(min, max, material, { skip = [], tile } = {}) {
-  const [x0, y0, z0] = min;
-  const [x1, y1, z1] = max;
-  const [w, h, d] = [x1 - x0, y1 - y0, z1 - z0];
-  const faces = {
-    right: [[x1, y0, z1], [0, 0, -d], [0, h, 0]],
-    left: [[x0, y0, z0], [0, 0, d], [0, h, 0]],
-    top: [[x0, y1, z1], [w, 0, 0], [0, 0, -d]],
-    bottom: [[x0, y0, z0], [w, 0, 0], [0, 0, d]],
-    front: [[x0, y0, z1], [w, 0, 0], [0, h, 0]],
-    back: [[x1, y0, z0], [-w, 0, 0], [0, h, 0]],
-  };
-  return Object.entries(faces)
-    .filter(([k]) => !skip.includes(k))
-    .flatMap(([, [o, u, v]]) => quad(o, u, v, material, tile ?? tileOf(material)));
+  return boxFaces(min, max, skip).flatMap(([o, u, v]) => quad(o, u, v, material, tile ?? tileOf(material)));
 }
 
 /** The inside of a box, open at the top: a sink, a bath, a basin. */
@@ -270,28 +236,7 @@ function cylinder(base, radius, height, material, { segments = 24, top = true, b
 
 /** An ellipsoid: a pillow, a bulb's glow. */
 function ellipsoid(centre, radii, material, { segments = 24, rings = 12 } = {}) {
-  const positions = [];
-  const normals = [];
-  const uvs = [];
-  const indices = [];
-  for (let j = 0; j <= rings; j++) {
-    const phi = (j / rings) * Math.PI;
-    for (let i = 0; i <= segments; i++) {
-      const th = (i / segments) * 2 * Math.PI;
-      const d = [Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)];
-      positions.push(centre[0] + radii[0] * d[0], centre[1] + radii[1] * d[1], centre[2] + radii[2] * d[2]);
-      normals.push(...unit([d[0] / radii[0], d[1] / radii[1], d[2] / radii[2]]));
-      uvs.push(i / segments, j / rings);
-    }
-  }
-  for (let j = 0; j < rings; j++) {
-    for (let i = 0; i < segments; i++) {
-      const a = j * (segments + 1) + i;
-      const b = a + segments + 1;
-      indices.push(a, a + 1, b, a + 1, b + 1, b);
-    }
-  }
-  return [{ positions, normals, uvs, indices, material }];
+  return roundShape(centre, radii, material, { segments, rings });
 }
 
 /** Turning about an axis, in degrees, as three.js turns (x, then y, then z). */
@@ -321,46 +266,16 @@ function placed(parts, turn, at = [0, 0, 0]) {
   });
 }
 
-/** Joins the parts of each material into one. */
-function merge(parts) {
-  const byMaterial = new Map();
-  for (const p of parts) byMaterial.set(p.material, [...(byMaterial.get(p.material) ?? []), p]);
-  return [...byMaterial.entries()].map(([material, list]) => {
-    const positions = list.flatMap((p) => p.positions);
-    const indices = [];
-    let base = 0;
-    for (const p of list) {
-      for (const i of p.indices) indices.push(i + base);
-      base += p.positions.length / 3;
-    }
-    return {
-      positions: new Float32Array(positions),
-      normals: new Float32Array(list.flatMap((p) => p.normals)),
-      uvs: new Float32Array(list.flatMap((p) => p.uvs)),
-      indices: base > 65535 ? new Uint32Array(indices) : new Uint16Array(indices),
-      material,
-    };
-  });
-}
-
 /** Writes a model made here as a .glb: one mesh, a primitive for each material (from PALETTE, or `extra`), its pictures inside. */
 function writeModel(file, parts, extra = {}) {
   const prims = merge(parts);
   const materials = { ...PALETTE, ...extra };
-  const chunks = [];
-  let length = 0;
+  const data = new Chunk();
   const views = [];
   const accessors = [];
   const add = (array, type, target, bounds) => {
     const bytes = Buffer.from(array.buffer, array.byteOffset, array.byteLength);
-    const pad = (4 - (length % 4)) % 4;
-    if (pad) {
-      chunks.push(Buffer.alloc(pad));
-      length += pad;
-    }
-    views.push({ buffer: 0, byteOffset: length, byteLength: bytes.length, target });
-    chunks.push(bytes);
-    length += bytes.length;
+    views.push({ buffer: 0, byteOffset: data.append(bytes), byteLength: bytes.length, target });
     const componentType = array instanceof Float32Array ? 5126 : array instanceof Uint32Array ? 5125 : 5123;
     const size = { SCALAR: 1, VEC2: 2, VEC3: 3 }[type];
     accessors.push({ bufferView: views.length - 1, componentType, count: array.length / size, type, ...bounds });
@@ -417,14 +332,14 @@ function writeModel(file, parts, extra = {}) {
           samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }],
         }
       : {}),
-    buffers: [{ byteLength: length }],
+    buffers: [{ byteLength: data.length }],
     bufferViews: views,
     accessors,
   };
   writeGlb(
     file,
     gltf,
-    [Buffer.concat(chunks)],
+    [Buffer.concat(data.pieces)],
     images.map((n) => {
       if (!PICTURES.has(n)) throw new Error(`${file}: no picture ${n}`);
       return PICTURES.get(n);
@@ -439,46 +354,18 @@ function writeModel(file, parts, extra = {}) {
  * order) in the one binary chunk.
  */
 function writeGlb(file, g, buffers, pictures) {
-  const chunks = [];
-  let length = 0;
-  const append = (bytes) => {
-    const pad = (4 - (length % 4)) % 4;
-    if (pad) {
-      chunks.push(Buffer.alloc(pad));
-      length += pad;
-    }
-    const at = length;
-    chunks.push(bytes);
-    length += bytes.length;
-    return at;
-  };
-  const starts = buffers.map((b) => append(b));
+  const bin = new Chunk();
+  const starts = buffers.map((b) => bin.append(b));
   for (const v of g.bufferViews) {
     v.byteOffset = (v.byteOffset ?? 0) + starts[v.buffer];
     v.buffer = 0;
   }
   g.images = (g.images ?? []).map((image, i) => {
-    g.bufferViews.push({ buffer: 0, byteOffset: append(pictures[i]), byteLength: pictures[i].length });
+    g.bufferViews.push({ buffer: 0, byteOffset: bin.append(pictures[i]), byteLength: pictures[i].length });
     return { ...(image.name ? { name: image.name } : {}), mimeType: 'image/jpeg', bufferView: g.bufferViews.length - 1 };
   });
   if (g.images.length === 0) delete g.images;
-  const tail = (4 - (length % 4)) % 4;
-  if (tail) chunks.push(Buffer.alloc(tail));
-  const bin = Buffer.concat(chunks);
-  g.buffers = [{ byteLength: bin.length }];
-  const text = Buffer.from(JSON.stringify(g));
-  const json = Buffer.concat([text, Buffer.alloc((4 - (text.length % 4)) % 4, 0x20)]);
-  const chunk = (type, data) => {
-    const head = Buffer.alloc(8);
-    head.writeUInt32LE(data.length, 0);
-    head.write(type, 4, 'latin1');
-    return Buffer.concat([head, data]);
-  };
-  const header = Buffer.alloc(12);
-  header.write('glTF', 0, 'latin1');
-  header.writeUInt32LE(2, 4);
-  header.writeUInt32LE(12 + 8 + json.length + 8 + bin.length, 8);
-  writeFileSync(join(MODELS, file), Buffer.concat([header, chunk('JSON', json), chunk('BIN\0', bin)]));
+  writeFileSync(join(making, file), glbBytes(g, bin.bytes()));
 }
 
 // ---- Textures ------------------------------------------------------------------------
@@ -996,18 +883,6 @@ function rug() {
   writeModel('rug.glb', box([-1.2, 0, -0.85], [1.2, 0.012, 0.85], 'Wool', { skip: ['bottom'] }));
 }
 
-/** A seeded random number generator, so the books come out the same every time. */
-function random(seed) {
-  let s = seed >>> 0;
-  return () => {
-    s = (s + 0x6d2b79f5) >>> 0;
-    let t = s;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
 /** Cloth bindings in quiet colours. */
 const BINDINGS = {
   Navy: { color: '#27344a', rough: 0.8 },
@@ -1315,28 +1190,6 @@ function light() {
   writeFileSync(join(site, 'light', 'sky.jpg'), sky.toJPEG(84));
 }
 
-const RATE = 22050;
-
-/** 16-bit mono WAV from samples between -1 and 1. */
-function wav(samples) {
-  const data = Buffer.alloc(samples.length * 2);
-  samples.forEach((v, i) => data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, v)) * 32767), i * 2));
-  const head = Buffer.alloc(44);
-  head.write('RIFF', 0, 'ascii');
-  head.writeUInt32LE(36 + data.length, 4);
-  head.write('WAVEfmt ', 8, 'ascii');
-  head.writeUInt32LE(16, 16);
-  head.writeUInt16LE(1, 20);
-  head.writeUInt16LE(1, 22);
-  head.writeUInt32LE(RATE, 24);
-  head.writeUInt32LE(RATE * 2, 28);
-  head.writeUInt16LE(2, 32);
-  head.writeUInt16LE(16, 34);
-  head.write('data', 36, 'ascii');
-  head.writeUInt32LE(data.length, 40);
-  return Buffer.concat([head, data]);
-}
-
 /** A click: a short knock of noise through a ringing filter, at `at` seconds, into `out`. */
 function click(out, at, { freq, ring, loud, rand }) {
   const start = Math.round(at * RATE);
@@ -1393,7 +1246,7 @@ function credits() {
   const list = JSON.parse(readFileSync(join(cache, 'credits.json'), 'utf8'));
   const line = (c) => `- **${c.name}** (${c.kind}) by ${c.authors.join(', ')}: ${c.page}`;
   writeFileSync(
-    join(MODELS, 'CREDITS.md'),
+    join(making, 'CREDITS.md'),
     `# Credits for Harbour Loft's models, textures, and light
 
 All from **Poly Haven** (https://polyhaven.com), under Creative Commons
@@ -1419,8 +1272,9 @@ sounds are made there too, under the repository's licence (Apache 2.0).
 // Not awaited at the top: Electron fires "ready" only once this module has loaded.
 void app.whenReady().then(async () => {
   try {
-    rmSync(MODELS, { recursive: true, force: true });
-    mkdirSync(MODELS, { recursive: true });
+    const problem = cacheProblem(cache, ['credits.json', 'models', 'textures', 'light'], 'examples/harbour-loft/tools/download.mjs');
+    if (problem) throw new Error(problem);
+    making = makingFolder(cache, 'models');
     textures();
     copies();
     wall();
@@ -1453,11 +1307,13 @@ void app.whenReady().then(async () => {
     credits();
     page();
     await plan();
+    putInPlace(making, MODELS);
     console.log('done');
   } catch (e) {
     console.error(e);
-    process.exitCode = 1;
-  } finally {
-    app.quit();
+    // Ended with 1, so that whatever ran the tool knows it failed (app.quit() would end with 0).
+    app.exit(1);
+    return;
   }
+  app.quit();
 });

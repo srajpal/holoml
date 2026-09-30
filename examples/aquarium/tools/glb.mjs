@@ -4,6 +4,7 @@
 // pictures after it.
 
 import { readFileSync } from 'node:fs';
+import { Chunk, glbBytes } from '../../tools/shapes.mjs';
 
 const COMPONENTS = { 5120: Int8Array, 5121: Uint8Array, 5122: Int16Array, 5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array };
 const SIZES = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 };
@@ -66,21 +67,13 @@ export class GlbWriter {
     this.json = json;
     this.json.bufferViews = [];
     this.json.accessors = [];
-    this.chunks = [];
-    this.length = 0;
+    this.chunk = new Chunk();
   }
 
   /** Raw bytes as a buffer view; its index. */
   bytes(data, target) {
-    const pad = (4 - (this.length % 4)) % 4;
-    if (pad) {
-      this.chunks.push(Buffer.alloc(pad));
-      this.length += pad;
-    }
     const buf = Buffer.from(data.buffer ?? data, data.byteOffset ?? 0, data.byteLength ?? data.length);
-    this.json.bufferViews.push({ buffer: 0, byteOffset: this.length, byteLength: buf.length, ...(target ? { target } : {}) });
-    this.chunks.push(buf);
-    this.length += buf.length;
+    this.json.bufferViews.push({ buffer: 0, byteOffset: this.chunk.append(buf), byteLength: buf.length, ...(target ? { target } : {}) });
     return this.json.bufferViews.length - 1;
   }
 
@@ -105,22 +98,7 @@ export class GlbWriter {
 
   /** The .glb file's bytes. */
   write() {
-    const tail = (4 - (this.length % 4)) % 4;
-    const bin = Buffer.concat([...this.chunks, Buffer.alloc(tail)]);
-    this.json.buffers = [{ byteLength: bin.length }];
-    const text = Buffer.from(JSON.stringify(this.json));
-    const json = Buffer.concat([text, Buffer.alloc((4 - (text.length % 4)) % 4, 0x20)]);
-    const chunk = (type, data) => {
-      const head = Buffer.alloc(8);
-      head.writeUInt32LE(data.length, 0);
-      head.write(type, 4, 'latin1');
-      return Buffer.concat([head, data]);
-    };
-    const header = Buffer.alloc(12);
-    header.write('glTF', 0, 'latin1');
-    header.writeUInt32LE(2, 4);
-    header.writeUInt32LE(12 + 8 + json.length + 8 + bin.length, 8);
-    return Buffer.concat([header, chunk('JSON', json), chunk('BIN\0', bin)]);
+    return glbBytes(this.json, this.chunk.bytes());
   }
 }
 
