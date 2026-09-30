@@ -7,8 +7,29 @@
  * version="0.1" may use only what 0.1 has (SPEC.md, "Versions").
  */
 import type { Attribute, ElementNode, HoloDocument, Position } from '@holoml/parser';
-import { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast, type Version, type ValueKind } from './rules.ts';
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, INDEFINITE, NUMBER_PATTERN, endsWithExtension, notInAddress, whole } from './patterns.ts';
+import {
+  ANIMATABLE,
+  ANIMATION_VALUES,
+  CLICKABLE,
+  COLOR_PATTERN,
+  COUNT_PATTERN,
+  DURATION_PATTERN,
+  ELEMENTS,
+  FILE_EXTENSIONS,
+  ID_PATTERN,
+  INDEFINITE,
+  LIGHT_ONLY,
+  NUMBER_PATTERN,
+  ROOT,
+  VERSION,
+  VERSIONS,
+  atLeast,
+  endsWithExtension,
+  notInAddress,
+  whole,
+  type Version,
+  type ValueKind,
+} from './rules.ts';
 
 export { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast } from './rules.ts';
 export type { AttributeRule, ElementRule, ValueKind, Version } from './rules.ts';
@@ -53,7 +74,7 @@ export interface Problem {
   column: number;
 }
 
-// The patterns are written once, in patterns.ts; the RELAX NG schema is made from the same texts.
+// The patterns are written once, in rules.ts; the RELAX NG schema is made from the same texts.
 const NUMBER = whole(NUMBER_PATTERN);
 const COLOR = whole(COLOR_PATTERN);
 const DURATION = whole(DURATION_PATTERN);

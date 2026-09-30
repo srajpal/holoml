@@ -1,5 +1,20 @@
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN } from './patterns.ts';
-import { ELEMENTS, VERSION, VERSIONS, type AttributeRule, type ElementRule, type ValueKind } from './rules.ts';
+import {
+  COLOR_PATTERN,
+  COUNT_PATTERN,
+  DURATION_PATTERN,
+  ELEMENTS,
+  FILE_EXTENSIONS,
+  ID_PATTERN,
+  IDREF_PATTERN,
+  INDEFINITE,
+  NOT_IN_ADDRESS_RNC,
+  NUMBER_PATTERN,
+  VERSION,
+  VERSIONS,
+  type AttributeRule,
+  type ElementRule,
+  type ValueKind,
+} from './rules.ts';
 
 /**
  * The structure of a HoloML page as a RELAX NG schema in its compact
@@ -17,7 +32,7 @@ export function relaxNg(): string {
   const lines = [
     `# HoloML ${VERSION}: the structure of a page, in RELAX NG's compact syntax`,
     '# (ISO/IEC 19757-2). Made from the checker\'s table and its patterns',
-    '# (rules.ts and patterns.ts in packages/schema/src) by relaxng.ts there:',
+    '# (packages/schema/src/rules.ts) by packages/schema/src/relaxng.ts:',
     '# do not edit; run `pnpm grammar:update`. Informative: SPEC.md and the',
     '# checker say what a page may be, and more than a schema can (unique',
     '# ids, targets that exist, values that depend on one another). A page',

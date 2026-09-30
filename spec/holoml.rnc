@@ -1,6 +1,6 @@
 # HoloML 0.2: the structure of a page, in RELAX NG's compact syntax
 # (ISO/IEC 19757-2). Made from the checker's table and its patterns
-# (rules.ts and patterns.ts in packages/schema/src) by relaxng.ts there:
+# (packages/schema/src/rules.ts) by packages/schema/src/relaxng.ts:
 # do not edit; run `pnpm grammar:update`. Informative: SPEC.md and the
 # checker say what a page may be, and more than a schema can (unique
 # ids, targets that exist, values that depend on one another). A page

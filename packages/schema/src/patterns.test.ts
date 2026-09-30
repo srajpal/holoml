@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from '@holoml/parser';
 import { check } from './index.ts';
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN, whole } from './patterns.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN, whole } from './rules.ts';
 import { relaxNg } from './relaxng.ts';
 
 const scene = (inner: string, version = '0.2') => `<holoml version="${version}"><scene>${inner}</scene></holoml>`;
