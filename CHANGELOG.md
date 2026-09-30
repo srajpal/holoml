@@ -82,7 +82,7 @@ Reported differently, in pages that already had a mistake:
   click does, and, in the scene API, what `holoml.add` takes, the space
   of a hit, that hidden things take no clicks, and how `dt` is bounded.
   Appendix C lists every change.
-- 58 conformance samples: 7 valid, 29 syntax errors, and 22 problems;
+- 44 conformance samples: 6 valid, 23 syntax errors, and 15 problems;
   among them character references in values, numbers in every form,
   line ends of every kind, the byte order mark, and the end of the text
   in every part of a tag.

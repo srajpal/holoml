@@ -17,6 +17,7 @@ HyperSpace 3D, the first renderer, for one page.
 | A picture's width and height | 4096 pixels each |
 | Triangles, in all the page's models | 2 million, each model counted as it is drawn |
 | One file's loading (a model with the files it names, or a sound) | 30 seconds |
+| A text that a script sets (a label's, a panel's, or one on the screen) | 10,000 characters |
 
 ## What happens at a limit
 
@@ -32,6 +33,8 @@ HyperSpace 3D, the first renderer, for one page.
   loads by area lets its models go, their bytes and triangles stop
   counting, and a model in such a group that had to wait for room can
   load ([Build a big site that loads as the viewer walks](../how-to/big-sites.md)).
+- (0.2) Of a text that a script sets, the first 10,000 characters are
+  kept ([section 10, "Things"](../../SPEC.md#things)).
 - (0.2) What a script adds with `holoml.add` counts as well. What would
   cross a limit is left out, and the console says why
   ([section 10, "Limits for scripts"](../../SPEC.md#limits-for-scripts)).
