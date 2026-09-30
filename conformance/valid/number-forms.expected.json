@@ -1,0 +1,274 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "meta",
+            "at": "3:5",
+            "attributes": [
+              [
+                "name",
+                "note",
+                "3:11"
+              ],
+              [
+                "content",
+                "",
+                "3:23"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "5:3",
+        "attributes": [
+          [
+            "background",
+            "#0B0f1E",
+            "5:10"
+          ]
+        ],
+        "children": [
+          {
+            "element": "group",
+            "at": "6:5",
+            "attributes": [
+              [
+                "id",
+                "g",
+                "6:12"
+              ],
+              [
+                "position",
+                "1. .5 1e3",
+                "6:19"
+              ],
+              [
+                "rotation",
+                "-0 -.5e1 2.5E-1",
+                "6:40"
+              ],
+              [
+                "scale",
+                " 2 ",
+                "6:67"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "model",
+            "at": "7:5",
+            "attributes": [
+              [
+                "id",
+                "m",
+                "7:12"
+              ],
+              [
+                "src",
+                "  models/car.GLB?v=1.2#body  ",
+                "7:19"
+              ],
+              [
+                "position",
+                "\t1\n2  3\t",
+                "7:55"
+              ],
+              [
+                "scale",
+                "1e0 1E+0 1.0e-0",
+                "8:8"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "9:5",
+            "attributes": [
+              [
+                "type",
+                "point",
+                "9:12"
+              ],
+              [
+                "intensity",
+                "007",
+                "9:25"
+              ],
+              [
+                "range",
+                "0",
+                "9:41"
+              ],
+              [
+                "position",
+                "-1.5 1e-999 0.0",
+                "9:51"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "light",
+            "at": "10:5",
+            "attributes": [
+              [
+                "type",
+                "spot",
+                "10:12"
+              ],
+              [
+                "intensity",
+                "1.e1",
+                "10:24"
+              ],
+              [
+                "angle",
+                "0.0e0",
+                "10:41"
+              ],
+              [
+                "color",
+                " #FFF ",
+                "10:55"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "label",
+            "at": "11:5",
+            "attributes": [
+              [
+                "size",
+                ".2",
+                "11:12"
+              ],
+              [
+                "position",
+                "0 2 0",
+                "11:22"
+              ]
+            ],
+            "children": [
+              {
+                "text": "Numbers",
+                "at": "11:39"
+              }
+            ]
+          },
+          {
+            "element": "animate",
+            "at": "12:5",
+            "attributes": [
+              [
+                "target",
+                "#g",
+                "12:14"
+              ],
+              [
+                "attribute",
+                "position",
+                "12:26"
+              ],
+              [
+                "to",
+                "0 1 0",
+                "12:47"
+              ],
+              [
+                "duration",
+                "1.s",
+                "12:58"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "13:5",
+            "attributes": [
+              [
+                "target",
+                "#g",
+                "13:14"
+              ],
+              [
+                "attribute",
+                "rotation",
+                "13:26"
+              ],
+              [
+                "to",
+                "0 90 0",
+                "13:47"
+              ],
+              [
+                "duration",
+                "1e3ms",
+                "13:59"
+              ],
+              [
+                "repeat",
+                " 02 ",
+                "13:76"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "animate",
+            "at": "14:5",
+            "attributes": [
+              [
+                "target",
+                "#m",
+                "14:14"
+              ],
+              [
+                "attribute",
+                "scale",
+                "14:26"
+              ],
+              [
+                "to",
+                "2 2 2",
+                "14:44"
+              ],
+              [
+                "duration",
+                " .5e1s ",
+                "14:55"
+              ],
+              [
+                "repeat",
+                " indefinite ",
+                "14:74"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

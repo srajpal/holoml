@@ -1,0 +1,13 @@
+<holoml version="0.1">
+  <head>
+    <title>Fish &amp; chips</title>
+    <meta name="description" content="&quot;Fish &amp; chips&quot;, &lt;fried&gt; &apos;fresh&apos; at the caf&#233; &#x2013; &#x1F41F;" />
+    <meta name='quotes' content='&apos;single&apos; and "double" quotes' />
+  </head>
+  <scene>
+    <model src="models/fish&amp;chips.glb?size=1&amp;v=2" animation="Swim &#38; turn" />
+    <a href="menu.holoml?dish=fish&amp;side=chips&#x23;specials">
+      <label>Menu</label>
+    </a>
+  </scene>
+</holoml>

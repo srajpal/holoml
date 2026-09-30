@@ -24,15 +24,26 @@
 //
 //   electron examples/sneaker-store/tools/prepare.mjs
 import { app, nativeImage } from 'electron';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cacheProblem, makingFolder, putInPlace } from '../../tools/cache.mjs';
+import { Chunk, add3, boxFaces, cross, ellipsoid as roundShape, glbBytes, len, linear, luminance, merge, rgb, sub, unit } from '../../tools/shapes.mjs';
+import { RATE, wav } from '../../tools/sound.mjs';
 import { COLOURWAYS, SHOE } from '../colourways.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
 const site = join(here, '..');
 const MODELS = join(site, 'models');
+const COLOURS = join(site, 'colours');
+/**
+ * Where the models and the colours' pictures are made: folders in the
+ * cache, put in MODELS' and COLOURS' places only when everything is made,
+ * so that a run that fails (or finds no cache) leaves the committed files
+ * as they were.
+ */
+let making = { models: MODELS, colours: COLOURS };
 const SHOE_DIR = join(cache, 'shoe', 'glTF');
 
 // ---- Pictures ------------------------------------------------------------------------
@@ -50,13 +61,6 @@ const jpeg = (picture, quality) => nativeImage.createFromBitmap(picture.data, { 
 function resized(picture, size) {
   const image = nativeImage.createFromBitmap(picture.data, { width: picture.width, height: picture.height }).resize({ width: size, height: size, quality: 'best' });
   return { width: size, height: size, data: Buffer.from(image.toBitmap()) };
-}
-
-const luminance = (r, g, b) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-function rgb(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  return [n >> 16, (n >> 8) & 255, n & 255];
 }
 
 /**
@@ -92,7 +96,7 @@ function paintOutMark(picture, kind) {
     for (let x = MARK.x0; x < MARK.x1; x++) {
       const i = y * width + x;
       const l = luminance(picture.data[i * 4 + 2], picture.data[i * 4 + 1], picture.data[i * 4]);
-      if (!kind[i] && l < 40) black.push(i);
+      if (!kind[i] && l < 40 / 255) black.push(i);
     }
   }
   if (black.length < 50) throw new Error('the heel tab was not where it was expected');
@@ -177,7 +181,7 @@ function recolour(midnight, kind, upper, trim) {
     for (let i = 0; i < kind.length; i++) {
       if (kind[i] !== which) continue;
       const l = luminance(midnight.data[i * 4 + 2], midnight.data[i * 4 + 1], midnight.data[i * 4]);
-      const t = Math.min(1, Math.max(0, (l - lo) / Math.max(1, hi - lo)));
+      const t = Math.min(1, Math.max(0, (l - lo) / Math.max(1 / 255, hi - lo)));
       out.data[i * 4 + 2] = Math.round(dark[0] + (light[0] - dark[0]) * t);
       out.data[i * 4 + 1] = Math.round(dark[1] + (light[1] - dark[1]) * t);
       out.data[i * 4] = Math.round(dark[2] + (light[2] - dark[2]) * t);
@@ -308,14 +312,6 @@ const PALETTE = {
   Plinth: { color: '#fafaf8', rough: 0.35 },
 };
 
-/** A colour from "#rrggbb" to glTF's linear red, green, and blue. */
-function linear(hex) {
-  return rgb(hex).map((c) => {
-    const v = c / 255;
-    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-  });
-}
-
 function gltfMaterial(name, spec) {
   const m = {
     name,
@@ -328,15 +324,6 @@ function gltfMaterial(name, spec) {
 
 // ---- Geometry ------------------------------------------------------------------------
 
-const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const len = (a) => Math.hypot(a[0], a[1], a[2]);
-const unit = (a) => {
-  const l = len(a);
-  return [a[0] / l, a[1] / l, a[2] / l];
-};
-
 /** A flat rectangle: its corner, two edges (its front is where u × v points), and its material. */
 function quad(origin, u, v, material) {
   const n = cross(u, v);
@@ -348,20 +335,7 @@ function quad(origin, u, v, material) {
 
 /** A box between two corners, its faces outward; `skip` leaves out faces ("top", "bottom", "left", "right", "front", "back"). */
 function box(min, max, material, { skip = [] } = {}) {
-  const [x0, y0, z0] = min;
-  const [x1, y1, z1] = max;
-  const [w, h, d] = [x1 - x0, y1 - y0, z1 - z0];
-  const faces = {
-    right: [[x1, y0, z1], [0, 0, -d], [0, h, 0]],
-    left: [[x0, y0, z0], [0, 0, d], [0, h, 0]],
-    top: [[x0, y1, z1], [w, 0, 0], [0, 0, -d]],
-    bottom: [[x0, y0, z0], [w, 0, 0], [0, 0, d]],
-    front: [[x0, y0, z1], [w, 0, 0], [0, h, 0]],
-    back: [[x1, y0, z0], [-w, 0, 0], [0, h, 0]],
-  };
-  return Object.entries(faces)
-    .filter(([k]) => !skip.includes(k))
-    .flatMap(([, [o, u, v]]) => quad(o, u, v, material));
+  return boxFaces(min, max, skip).flatMap(([o, u, v]) => quad(o, u, v, material));
 }
 
 /** An upright cylinder standing on `base`, with its top and bottom. */
@@ -405,69 +379,17 @@ function cylinder(base, radius, height, material, { segments = 32, top = true, b
 
 /** An ellipsoid: a plant's leaves, as a soft round mass. */
 function ellipsoid(centre, radii, material, { segments = 20, rings = 12 } = {}) {
-  const positions = [];
-  const normals = [];
-  const uvs = [];
-  const indices = [];
-  for (let j = 0; j <= rings; j++) {
-    const phi = (j / rings) * Math.PI;
-    for (let i = 0; i <= segments; i++) {
-      const th = (i / segments) * 2 * Math.PI;
-      const d = [Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)];
-      positions.push(centre[0] + radii[0] * d[0], centre[1] + radii[1] * d[1], centre[2] + radii[2] * d[2]);
-      normals.push(...unit([d[0] / radii[0], d[1] / radii[1], d[2] / radii[2]]));
-      uvs.push(i / segments, j / rings);
-    }
-  }
-  for (let j = 0; j < rings; j++) {
-    for (let i = 0; i < segments; i++) {
-      const a = j * (segments + 1) + i;
-      const b = a + segments + 1;
-      indices.push(a, a + 1, b, a + 1, b + 1, b);
-    }
-  }
-  return [{ positions, normals, uvs, indices, material }];
+  return roundShape(centre, radii, material, { segments, rings });
 }
-
-/** Joins the parts of each material into one. */
-function merge(parts) {
-  const byMaterial = new Map();
-  for (const p of parts) byMaterial.set(p.material, [...(byMaterial.get(p.material) ?? []), p]);
-  return [...byMaterial.entries()].map(([material, list]) => {
-    const indices = [];
-    let base = 0;
-    for (const p of list) {
-      for (const i of p.indices) indices.push(i + base);
-      base += p.positions.length / 3;
-    }
-    return {
-      positions: new Float32Array(list.flatMap((p) => p.positions)),
-      normals: new Float32Array(list.flatMap((p) => p.normals)),
-      uvs: new Float32Array(list.flatMap((p) => p.uvs)),
-      indices: base > 65535 ? new Uint32Array(indices) : new Uint16Array(indices),
-      material,
-    };
-  });
-}
-
-// ---- Writing models ------------------------------------------------------------------
 
 /** The glTF of some primitives (each with its material, as glTF), their buffer, and the pictures (JPEG bytes) the materials name by index. */
 function gltfOf(name, prims) {
-  const chunks = [];
-  let length = 0;
+  const data = new Chunk();
   const views = [];
   const accessors = [];
   const add = (array, type, target, bounds) => {
     const bytes = Buffer.from(array.buffer, array.byteOffset, array.byteLength);
-    const pad = (4 - (length % 4)) % 4;
-    if (pad) {
-      chunks.push(Buffer.alloc(pad));
-      length += pad;
-    }
-    views.push({ buffer: 0, byteOffset: length, byteLength: bytes.length, target });
-    chunks.push(bytes);
-    length += bytes.length;
+    views.push({ buffer: 0, byteOffset: data.append(bytes), byteLength: bytes.length, target });
     const componentType = array instanceof Float32Array ? 5126 : array instanceof Uint32Array ? 5125 : 5123;
     const size = { SCALAR: 1, VEC2: 2, VEC3: 3 }[type];
     accessors.push({ bufferView: views.length - 1, componentType, count: array.length / size, type, ...bounds });
@@ -504,11 +426,11 @@ function gltfOf(name, prims) {
     nodes: [{ name, mesh: 0 }],
     meshes: [{ name, primitives }],
     materials,
-    buffers: [{ byteLength: length }],
+    buffers: [{ byteLength: data.length }],
     bufferViews: views,
     accessors,
   };
-  return { gltf, buffer: Buffer.concat(chunks) };
+  return { gltf, buffer: Buffer.concat(data.pieces) };
 }
 
 /**
@@ -517,46 +439,18 @@ function gltfOf(name, prims) {
  * order) in the one binary chunk.
  */
 function writeGlb(file, g, buffer, pictures = []) {
-  const chunks = [];
-  let length = 0;
-  const append = (bytes) => {
-    const pad = (4 - (length % 4)) % 4;
-    if (pad) {
-      chunks.push(Buffer.alloc(pad));
-      length += pad;
-    }
-    const at = length;
-    chunks.push(bytes);
-    length += bytes.length;
-    return at;
-  };
-  append(buffer);
+  const bin = new Chunk();
+  bin.append(buffer);
   if (pictures.length) {
     g.images = pictures.map((p) => {
-      g.bufferViews.push({ buffer: 0, byteOffset: append(p.bytes), byteLength: p.bytes.length });
+      g.bufferViews.push({ buffer: 0, byteOffset: bin.append(p.bytes), byteLength: p.bytes.length });
       return { name: p.name, mimeType: 'image/jpeg', bufferView: g.bufferViews.length - 1 };
     });
     g.textures = pictures.map((_, i) => ({ source: i, sampler: 0 }));
     g.samplers = [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }];
   }
-  const tail = (4 - (length % 4)) % 4;
-  if (tail) chunks.push(Buffer.alloc(tail));
-  const bin = Buffer.concat(chunks);
-  g.buffers = [{ byteLength: bin.length }];
-  const text = Buffer.from(JSON.stringify(g));
-  const json = Buffer.concat([text, Buffer.alloc((4 - (text.length % 4)) % 4, 0x20)]);
-  const chunk = (type, data) => {
-    const head = Buffer.alloc(8);
-    head.writeUInt32LE(data.length, 0);
-    head.write(type, 4, 'latin1');
-    return Buffer.concat([head, data]);
-  };
-  const header = Buffer.alloc(12);
-  header.write('glTF', 0, 'latin1');
-  header.writeUInt32LE(2, 4);
-  header.writeUInt32LE(12 + 8 + json.length + 8 + bin.length, 8);
-  const whole = Buffer.concat([header, chunk('JSON', json), chunk('BIN\0', bin)]);
-  writeFileSync(join(MODELS, file), whole);
+  const whole = glbBytes(g, bin.bytes());
+  writeFileSync(join(making.models, file), whole);
   return whole.length;
 }
 
@@ -801,28 +695,6 @@ function shoePage() {
 
 // ---- The sound and the credits -----------------------------------------------------------
 
-const RATE = 22050;
-
-/** 16-bit mono WAV from samples between -1 and 1. */
-function wav(samples) {
-  const data = Buffer.alloc(samples.length * 2);
-  samples.forEach((v, i) => data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, v)) * 32767), i * 2));
-  const head = Buffer.alloc(44);
-  head.write('RIFF', 0, 'ascii');
-  head.writeUInt32LE(36 + data.length, 4);
-  head.write('WAVEfmt ', 8, 'ascii');
-  head.writeUInt32LE(16, 16);
-  head.writeUInt16LE(1, 20);
-  head.writeUInt16LE(1, 22);
-  head.writeUInt32LE(RATE, 24);
-  head.writeUInt32LE(RATE * 2, 28);
-  head.writeUInt16LE(2, 32);
-  head.writeUInt16LE(16, 34);
-  head.write('data', 36, 'ascii');
-  head.writeUInt32LE(data.length, 40);
-  return Buffer.concat([head, data]);
-}
-
 /** Added to the cart: two soft chimes, a fifth apart. */
 function chime() {
   const out = new Float32Array(Math.round(0.7 * RATE));
@@ -842,7 +714,7 @@ function chime() {
 function credits(sizes) {
   const list = COLOURWAYS.map((c) => c.name).join(', ');
   writeFileSync(
-    join(MODELS, 'CREDITS.md'),
+    join(making.models, 'CREDITS.md'),
     `# Credits for the sneaker store's models
 
 ## The shoe
@@ -884,10 +756,9 @@ repository's licence (Apache 2.0).
 // Not awaited at the top: Electron fires "ready" only once this module has loaded.
 void app.whenReady().then(() => {
   try {
-    rmSync(MODELS, { recursive: true, force: true });
-    rmSync(join(site, 'colours'), { recursive: true, force: true });
-    mkdirSync(MODELS, { recursive: true });
-    mkdirSync(join(site, 'colours'), { recursive: true });
+    const problem = cacheProblem(cache, ['shoe'], 'examples/sneaker-store/tools/download.mjs');
+    if (problem) throw new Error(problem);
+    making = { models: makingFolder(cache, 'models'), colours: makingFolder(cache, 'colours') };
     mkdirSync(join(site, 'sounds'), { recursive: true });
     const { colours, normal, orm } = pictures();
     const mesh = shoeMesh();
@@ -898,7 +769,7 @@ void app.whenReady().then(() => {
     let total = 0;
     for (const c of COLOURWAYS) {
       const picture = colours.get(c.id);
-      writeFileSync(join(site, 'colours', `${c.id}.jpg`), jpeg(picture, 86));
+      writeFileSync(join(making.colours, `${c.id}.jpg`), jpeg(picture, 86));
       total += writeShoe(`shoe-${c.id}.glb`, mesh, small(picture), normal512, orm512);
       total += writeStandIn(`shoe-${c.id}-far.glb`, far, jpeg(resized(picture, 64), 85));
     }
@@ -918,12 +789,15 @@ void app.whenReady().then(() => {
     credits(sizes);
     storePage();
     shoePage();
+    putInPlace(making.models, MODELS);
+    putInPlace(making.colours, COLOURS);
     console.log(`the shoe: ${sizes.triangles} triangles, its stand-in ${sizes.standInTriangles}; the colourways' models ${(total / 1048576).toFixed(1)} MB`);
     console.log('done');
   } catch (e) {
     console.error(e);
-    process.exitCode = 1;
-  } finally {
-    app.quit();
+    // Ended with 1, so that whatever ran the tool knows it failed (app.quit() would end with 0).
+    app.exit(1);
+    return;
   }
+  app.quit();
 });

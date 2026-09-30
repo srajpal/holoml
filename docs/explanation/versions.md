@@ -2,7 +2,7 @@
 
 This page explains HoloML's versions: what 0.1 and 0.2 hold, how a page
 says which one it is written for, why a reader refuses a version it does
-not know, what the second edition of 0.2 changed, and what 0.3 plans.
+not know, what the editions of 0.2 changed, and what 0.3 plans.
 The rules are in the specification's
 [section 11](../../SPEC.md#11-versions).
 
@@ -64,10 +64,18 @@ as `holoml.version`.
 
 ## A version the reader does not know
 
-A reader must refuse a version it does not know, rather than guess. A
+A reader refuses a version it does not know, rather than guess. A
 reader that knows only 0.1 refuses a 0.2 page with the problem
 `unsupported-version`, and a reader that knows 0.1 and 0.2 refuses a
 page that says `version="0.3"` in the same way.
+
+What refusing is depends on the reader. A checker reports
+`unsupported-version` and then checks the rest of the page by the
+newest version it knows, so that the author sees the page's other
+mistakes in the same pass. A renderer does not draw the page at all,
+neither as the version it names nor as another, and tells the viewer
+why. A page that declares no version is treated in the same way: there
+is nothing to read it by but a guess.
 
 A page written for a later version may hold elements, attributes, or
 values whose meaning an older reader cannot know. A reader that guessed
@@ -97,12 +105,19 @@ each addition "(0.2)". In all:
   `trigger`, `toggle`).
 - Loading by area (`load`, `near`, and stand-ins).
 
-## The second edition of 0.2
+## The editions of 0.2
 
-The specification of 0.2 has a second edition, of 2026-09-29. The
-language is the same: no page changes its meaning, and every page valid
-in the first edition is valid in the second. What changed is the
-document, now written in the form of W3C specifications. It has an
+A version's specification can have more than one edition. An edition
+changes the document, not the language: it says what was left unsaid,
+and corrects what was wrong. The releases of HoloML's parser and
+checker are numbered with it: 0.2.0 came with the first edition of 0.2,
+0.2.1 with the second, and 0.2.2 with the third. The
+[change log](../../CHANGELOG.md) lists what each release changed.
+
+The second edition, of 2026-09-29, has the same language: no page
+changes its meaning, and every page valid in the first edition is valid
+in the second. What changed is the document, now written in the form of
+W3C specifications. It has an
 abstract and a status; conformance classes, which say what a page, a
 checker, and a renderer each have to do; requirement words in capitals,
 as BCP 14 (the IETF's rules for those words) defines them; terminology;
@@ -120,6 +135,26 @@ it, and marks it as a clarification:
 - Which glTF extensions a renderer reads.
 - Every event's `type`, and the key event's `repeat`.
 - The renderer's limits, which moved to the processing model.
+
+The third edition, of 2026-09-30, followed a review of the
+specification against itself, against the checker, and against
+HyperSpace 3D. It corrects the places where they disagreed, and says
+exactly which mistake a reader reports and at which character, so that
+a second reader can give the same results from the text alone. Most of
+it changes nothing for a page. Two corrections make the checker
+stricter:
+
+- Whitespace in a value is the space, the tab, the line feed, and the
+  carriage return, and nothing else. A vector whose numbers are
+  separated by no-break spaces was taken before, and is now a
+  `bad-value`.
+- An address with a control character, or with a space of any kind, is
+  a `bad-value`. Before, a control character could hide a scheme such
+  as `javascript:` from the checker.
+
+A few make it looser: a time may be written with any form of number
+(`1e3ms`), and the `content` of a `meta` may be empty. No page that is
+valid in the third edition means anything other than it did.
 
 The first edition stays at the tag
 [v0.2.0](https://github.com/srajpal/holoml/blob/v0.2.0/SPEC.md). Before

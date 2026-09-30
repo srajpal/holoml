@@ -74,7 +74,7 @@ A named piece of information about the page, as in HTML. [In the specification](
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
 | `name` | text (required) |  | What it is, for example `description` or `author` |
-| `content` | text (required) |  | Its value |
+| `content` | text, which may be empty (required) |  | Its value |
 
 ## `script`
 
@@ -235,7 +235,7 @@ Text in the scene. [In the specification](../../SPEC.md#label).
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `id` | id | none | A name, for `animate` and scripts |
+| `id` | id | none | A name, for a click action's `trigger` and for scripts |
 | `position` | vector | `"0 0 0"` | Where its centre is |
 | `rotation` | vector | `"0 0 0"` | How it is turned; unturned, its face looks along z, toward a viewer at a larger z |
 | `width` | number, more than 0 | `1` | How wide it is, in metres; its lines wrap to this |
@@ -368,7 +368,7 @@ Changes the position, rotation, or scale of an element over time, starting when 
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `id` | id | none | A name, for scripts |
+| `id` | id | none | A name. Nothing in 0.2 uses it: a plan is not one of the kinds of thing a script can find (section 10) |
 | `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-right` | Where on the screen |
 | `src` | address (required) |  | The picture: a PNG, JPEG, or WebP file from the page's own site |
 | `area` | area (required) |  | The rectangle of the ground the picture shows |

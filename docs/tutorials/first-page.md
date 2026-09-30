@@ -78,8 +78,9 @@ walk instead of circling. A flag is an attribute written alone, with no
 value: `solid` means that you cannot walk through the car.
 
 Open the page again. You stand a few metres in front of the car and to
-one side, with your eyes 1.6 metres above the floor. Walk with the
-arrow keys or W, A, S, D, and drag to look around. Walk round the car:
+one side, with your eyes 1.6 metres above the floor. Walk with W, A, S,
+D or the arrow keys (the left and right arrows turn), and drag to look
+around. Walk round the car:
 when you walk into it, it stops you.
 
 ## Step 3: light

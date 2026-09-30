@@ -1,0 +1,22 @@
+<holoml version="0.2">
+  <scene>
+    <model id="car" src="models/car.glb">
+      <label id="sign">A label may not be inside a model</label>
+    </model>
+    <cube id="box" />
+    <cube>
+      <group id="inner" />
+    </cube>
+    <animate target="#sign" attribute="position" to="0 1 0" duration="1s" />
+    <animate target="#inner" attribute="position" to="0 1 0" duration="1s" />
+    <animate target="#box" attribute="position" to="0 1 0" duration="1s" />
+    <animate target="#car" attribute="rotation" to="0 90 0" duration="1s" begin="click" trigger="#box" />
+    <choice target="#box" material="Paint">
+      <option>Red</option>
+    </choice>
+    <animate target="#no such" attribute="position" to="0 1 0" duration="1s" />
+    <animate target="#nothing" attribute="position" to="0 1 0" duration="1s" />
+    <group id="sign" />
+    <group id="inner" />
+  </scene>
+</holoml>

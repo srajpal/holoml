@@ -1,0 +1,11 @@
+<holoml version="0.2">
+  <scene>
+    <model id="sofa" src="models/sofa.glb" />
+    <choice material="Fabric">
+      <option>Linen</option>
+    </choice>
+    <choice target="#sofa">
+      <option>Velvet</option>
+    </choice>
+  </scene>
+</holoml>

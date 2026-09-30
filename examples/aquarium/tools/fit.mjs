@@ -9,7 +9,6 @@
 //   length, and centred on its middle, by a new root node;
 // - its swimming clip is kept as "Swim" (moving on the spot: the skeleton's
 //   root does not travel) and its other clips are dropped;
-// - a turtle's skeleton gets a swim: its flippers beat like wings;
 // - a file more detailed than the tank needs is made lighter, to at most
 //   `triangles` for the whole fish (shapes.mjs thinTo), keeping each
 //   vertex's joints and weights.
@@ -17,7 +16,7 @@
 // The binary chunk is packed again with only what is kept, and pictures
 // come from the caller (resized there).
 
-import { GlbWriter, axisAngle, invert, multiply, nodeMatrix, quatMultiply, readAccessor, transformDirection, transformPoint } from './glb.mjs';
+import { GlbWriter, multiply, nodeMatrix, readAccessor, transformPoint } from './glb.mjs';
 import { budgetShares, thinTo } from './shapes.mjs';
 
 const TURN = {
@@ -117,19 +116,6 @@ function poseBox(g, bin, clip) {
   return { min, max };
 }
 
-/** The turtle's swim: its front flippers beat like wings, the back ones paddle a little, and its head nods (joint names from its skeleton). */
-const TURTLE_STROKE = [
-  { joint: 'shoulder_L_body_rig', axis: [0, 0, 1], degrees: 32, lag: 0 },
-  { joint: 'shoulder_R_body_rig', axis: [0, 0, -1], degrees: 32, lag: 0 },
-  { joint: 'ulna_L_body_rig', axis: [0, 0, 1], degrees: 14, lag: 0.7 },
-  { joint: 'ulna_R_body_rig', axis: [0, 0, -1], degrees: 14, lag: 0.7 },
-  { joint: 'wrist_L_body_rig', axis: [0, 0, 1], degrees: 10, lag: 1.2 },
-  { joint: 'wrist_R_body_rig', axis: [0, 0, -1], degrees: 10, lag: 1.2 },
-  { joint: 'thigh_L_body_rig', axis: [0, 0, 1], degrees: 8, lag: 2.2 },
-  { joint: 'thigh_R_body_rig', axis: [0, 0, -1], degrees: 8, lag: 2.2 },
-  { joint: 'head_body_rig', axis: [1, 0, 0], degrees: 3, lag: 0.4 },
-];
-
 /**
  * The fish's file, fitted: its glTF and a GlbWriter with its data (the
  * caller adds the pictures with images()). `pictures(index)` gives the
@@ -156,8 +142,7 @@ function primitiveMesh(g, bin, p) {
   return { positions, normals: normals ? Float32Array.from(normals) : null, uvs: uvs ? Float32Array.from(uvs) : null, indices, extra, material: p.material };
 }
 
-export function fitFish(name, g, bin, { forward, length, clip, turtle = false, beat = 2.6, triangles }, pictures) {
-  const world = worldMatrices(g);
+export function fitFish(name, g, bin, { forward, length, clip, triangles }, pictures) {
   const turn = TURN[forward];
   const box = poseBox(g, bin, clip);
   const turned = [0, 1, 2].map(() => [Infinity, -Infinity]);
@@ -246,31 +231,6 @@ export function fitFish(name, g, bin, { forward, length, clip, turtle = false, b
       return { input, output: copy(s.output), interpolation: s.interpolation ?? 'LINEAR' };
     });
     json.animations.push({ name: 'Swim', channels: a.channels.map((c) => ({ ...c, target: { ...c.target } })), samplers });
-  } else if (turtle) {
-    const steps = 48;
-    const times = Float32Array.from({ length: steps + 1 }, (_, i) => (beat * i) / steps);
-    const input = w.accessor(times, 'SCALAR', { bounds: true });
-    const channels = [];
-    const samplers = [];
-    const parentOf = new Map();
-    g.nodes.forEach((n, i) => (n.children ?? []).forEach((c) => parentOf.set(c, i)));
-    for (const s of TURTLE_STROKE) {
-      const node = g.nodes.findIndex((n) => n.name === s.joint);
-      if (node < 0) throw new Error(`${name}: no joint named ${s.joint}`);
-      const parent = parentOf.has(node) ? world[parentOf.get(node)] : [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-      // The axis in the parent's frame, so the joint turns about it where it is.
-      const axis = transformDirection(invert(parent), s.axis);
-      if (g.nodes[node].matrix) throw new Error(`${name}: the joint ${s.joint} has a matrix, and cannot be animated`);
-      const rest = g.nodes[node].rotation ?? [0, 0, 0, 1];
-      const quats = new Float32Array((steps + 1) * 4);
-      for (let i = 0; i <= steps; i++) {
-        const angle = ((s.degrees * Math.PI) / 180) * Math.sin((2 * Math.PI * i) / steps - s.lag);
-        quats.set(quatMultiply(axisAngle(axis, angle), rest), i * 4);
-      }
-      samplers.push({ input, output: w.accessor(quats, 'VEC4'), interpolation: 'LINEAR' });
-      channels.push({ sampler: samplers.length - 1, target: { node, path: 'rotation' } });
-    }
-    json.animations.push({ name: 'Swim', channels, samplers });
   }
   if (!json.animations.length) delete json.animations;
   if (g.images) {

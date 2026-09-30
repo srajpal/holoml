@@ -8,6 +8,10 @@
 // the two bones nearest it along the body, and the head stays stiff.
 // "Swim" bends the body in a wave that runs from head to tail and
 // repeats, as a fish's does: small at the head, most at the tail.
+//
+// A sea turtle does not bend: its shell stays stiff, and riggedTurtle
+// gives it bones for its flippers and its head, and a swim in which the
+// front flippers beat like wings.
 
 import { GlbWriter, axisAngle, multiply, nodeMatrix, readAccessor, transformDirection, transformPoint } from './glb.mjs';
 
@@ -209,6 +213,134 @@ export function riggedFish(name, prims, { materials, length, bones = 6, beat = 1
     for (let i = 0; i <= steps; i++) quats.set(axisAngle([0, 1, 0], amplitude * Math.sin((2 * Math.PI * i) / steps - lag)), i * 4);
     samplers.push({ input, output: w.accessor(quats, 'VEC4'), interpolation: 'LINEAR' });
     channels.push({ sampler: k, target: { node: 2 + k, path: 'rotation' } });
+  }
+  json.animations.push({ name: 'Swim', channels, samplers });
+  return { json, writer: w };
+}
+
+/**
+ * Where a sea turtle's parts are, as fractions of its length from its
+ * middle (x to its left, y up, z ahead), measured on the hawksbill
+ * fish.mjs lists: its front flippers leave the body under the shell's
+ * rim and reach out to the sides, its hind flippers trail behind the
+ * shell, and its neck comes out in front. Each part's vertices follow
+ * its bone more the further past `from` they are, and wholly past `to`;
+ * `below` keeps the shell's rim, which lies above the flippers, still.
+ */
+const TURTLE = {
+  shoulder: { at: [0.18, -0.09, 0.18], from: 0.155, to: 0.23, ahead: [0, 0.045], below: [-0.077, -0.055] },
+  wrist: { at: [0.33, -0.095, 0.17], from: 0.27, to: 0.4 },
+  hip: { at: [0.09, -0.08, -0.36], behind: [-0.33, -0.4], below: [-0.068, -0.045] },
+  neck: { at: [0, 0, 0.29], from: 0.29, to: 0.36 },
+};
+
+/** A turtle's swim: its front flippers beat like wings, their ends a little after, the hind ones paddle a little, and its head nods. */
+const TURTLE_STROKE = [
+  { joint: 'flipper-left', axis: [0, 0, 1], degrees: 30, lag: 0 },
+  { joint: 'flipper-right', axis: [0, 0, -1], degrees: 30, lag: 0 },
+  { joint: 'flipper-end-left', axis: [0, 0, 1], degrees: 16, lag: 0.9 },
+  { joint: 'flipper-end-right', axis: [0, 0, -1], degrees: 16, lag: 0.9 },
+  { joint: 'hind-left', axis: [0, 0, 1], degrees: 8, lag: 2.2 },
+  { joint: 'hind-right', axis: [0, 0, -1], degrees: 8, lag: 2.2 },
+  { joint: 'head', axis: [1, 0, 0], degrees: 3, lag: 0.4 },
+];
+
+/** 0 up to `a`, 1 from `b` on, and smooth between (`a` may be the greater, for a fall). */
+function ease(a, b, v) {
+  const t = Math.min(1, Math.max(0, (v - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+}
+
+/**
+ * Writes a sea turtle with a skeleton and "Swim" into a glTF (JSON and a
+ * GlbWriter), as riggedFish does a fish: from placedFish's primitives and
+ * the file's own materials, for a turtle whose file has no skeleton. Its
+ * shell is one stiff body; each front flipper has a bone at the shoulder
+ * and one halfway along, each hind flipper one, and the head one.
+ *
+ *   beat    how long one beat of the flippers takes, in seconds (default 2.6)
+ */
+export function riggedTurtle(name, prims, { materials, length, beat = 2.6 }) {
+  const at = (p, side = 1) => [p[0] * side * length, p[1] * length, p[2] * length];
+  // The bones: the body, then each side's shoulder, flipper's end (a child of the shoulder), and hip, then the head.
+  const bones = [{ name: 'body', at: [0, 0, 0], parent: null }];
+  for (const [side, word] of [[1, 'left'], [-1, 'right']]) {
+    bones.push({ name: `flipper-${word}`, at: at(TURTLE.shoulder.at, side), parent: 0 });
+    bones.push({ name: `flipper-end-${word}`, at: at(TURTLE.wrist.at, side), parent: bones.length - 1 });
+    bones.push({ name: `hind-${word}`, at: at(TURTLE.hip.at, side), parent: 0 });
+  }
+  bones.push({ name: 'head', at: at(TURTLE.neck.at), parent: 0 });
+  const index = (word) => bones.findIndex((b) => b.name === word);
+  const first = 2; // the first bone's node: after the root and the mesh
+  const json = {
+    asset: { version: '2.0', generator: 'HoloML examples/aquarium/tools/prepare.mjs' },
+    scene: 0,
+    scenes: [{ name, nodes: [0] }],
+    nodes: [
+      { name, children: [1, first] },
+      { name: `${name}-body`, mesh: 0, skin: 0 },
+      ...bones.map((b, k) => {
+        const from = b.parent === null ? [0, 0, 0] : bones[b.parent].at;
+        const children = bones.flatMap((c, i) => (c.parent === k ? [first + i] : []));
+        return { name: `${name}-${b.name}`, translation: [b.at[0] - from[0], b.at[1] - from[1], b.at[2] - from[2]], ...(children.length ? { children } : {}) };
+      }),
+    ],
+    materials,
+    meshes: [{ name: `${name}-body`, primitives: [] }],
+    skins: [{ name: `${name}-skeleton`, joints: bones.map((_, k) => first + k), skeleton: first }],
+    animations: [],
+  };
+  const w = new GlbWriter(json);
+  const { shoulder, wrist, hip, neck } = TURTLE;
+  for (const p of prims) {
+    const count = p.positions.length / 3;
+    const joints = new Uint8Array(count * 4);
+    const weights = new Float32Array(count * 4);
+    for (let i = 0; i < count; i++) {
+      const [x, y, z] = [p.positions[i * 3] / length, p.positions[i * 3 + 1] / length, p.positions[i * 3 + 2] / length];
+      const word = x >= 0 ? 'left' : 'right';
+      const out = Math.abs(x);
+      // How much of the vertex is front flipper (and how much of that its end), hind flipper, and head: one of the three at most.
+      const flipper = ease(shoulder.from, shoulder.to, out) * ease(...shoulder.ahead, z) * ease(shoulder.below[1], shoulder.below[0], y);
+      const end = flipper * ease(wrist.from, wrist.to, out);
+      const hind = flipper ? 0 : ease(...hip.behind, z) * ease(hip.below[1], hip.below[0], y);
+      const head = flipper || hind ? 0 : ease(neck.from, neck.to, z);
+      const shares = [
+        [0, 1 - flipper - hind - head],
+        [index(`flipper-${word}`), flipper - end],
+        [index(`flipper-end-${word}`), end],
+        [hind ? index(`hind-${word}`) : index('head'), hind || head],
+      ];
+      joints.set(shares.map(([j, share]) => (share > 0 ? j : 0)), i * 4);
+      weights.set(shares.map(([, share]) => Math.max(0, share)), i * 4);
+    }
+    json.meshes[0].primitives.push({
+      attributes: {
+        POSITION: w.accessor(p.positions, 'VEC3', { target: 34962, bounds: true }),
+        ...(p.normals ? { NORMAL: w.accessor(p.normals, 'VEC3', { target: 34962 }) } : {}),
+        ...(p.uvs ? { TEXCOORD_0: w.accessor(p.uvs, 'VEC2', { target: 34962 }) } : {}),
+        JOINTS_0: w.accessor(joints, 'VEC4', { target: 34962 }),
+        WEIGHTS_0: w.accessor(weights, 'VEC4', { target: 34962 }),
+      },
+      indices: w.accessor(p.indices, 'SCALAR', { target: 34963 }),
+      ...(p.material !== undefined ? { material: p.material } : {}),
+    });
+  }
+  // Each bone's inverse bind matrix: its place in the body, undone.
+  const ibm = new Float32Array(bones.length * 16);
+  bones.forEach((b, k) => ibm.set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -b.at[0], -b.at[1], -b.at[2], 1], k * 16));
+  json.skins[0].inverseBindMatrices = w.accessor(ibm, 'MAT4');
+  // Swim: each bone of the stroke turns about its axis where it is, and back, once a beat.
+  const steps = 48;
+  const times = Float32Array.from({ length: steps + 1 }, (_, i) => (beat * i) / steps);
+  const input = w.accessor(times, 'SCALAR', { bounds: true });
+  const channels = [];
+  const samplers = [];
+  for (const s of TURTLE_STROKE) {
+    const quats = new Float32Array((steps + 1) * 4);
+    for (let i = 0; i <= steps; i++) quats.set(axisAngle(s.axis, ((s.degrees * Math.PI) / 180) * Math.sin((2 * Math.PI * i) / steps - s.lag)), i * 4);
+    samplers.push({ input, output: w.accessor(quats, 'VEC4'), interpolation: 'LINEAR' });
+    channels.push({ sampler: samplers.length - 1, target: { node: first + index(s.joint), path: 'rotation' } });
   }
   json.animations.push({ name: 'Swim', channels, samplers });
   return { json, writer: w };

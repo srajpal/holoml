@@ -1,0 +1,116 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Fish & chips",
+                "at": "3:12"
+              }
+            ]
+          },
+          {
+            "element": "meta",
+            "at": "4:5",
+            "attributes": [
+              [
+                "name",
+                "description",
+                "4:11"
+              ],
+              [
+                "content",
+                "\"Fish & chips\", <fried> 'fresh' at the café – 🐟",
+                "4:30"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "meta",
+            "at": "5:5",
+            "attributes": [
+              [
+                "name",
+                "quotes",
+                "5:11"
+              ],
+              [
+                "content",
+                "'single' and \"double\" quotes",
+                "5:25"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "7:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "model",
+            "at": "8:5",
+            "attributes": [
+              [
+                "src",
+                "models/fish&chips.glb?size=1&v=2",
+                "8:12"
+              ],
+              [
+                "animation",
+                "Swim & turn",
+                "8:59"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "a",
+            "at": "9:5",
+            "attributes": [
+              [
+                "href",
+                "menu.holoml?dish=fish&side=chips#specials",
+                "9:8"
+              ]
+            ],
+            "children": [
+              {
+                "element": "label",
+                "at": "10:7",
+                "attributes": [],
+                "children": [
+                  {
+                    "text": "Menu",
+                    "at": "10:14"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

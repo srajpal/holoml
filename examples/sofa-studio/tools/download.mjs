@@ -4,34 +4,32 @@
 // the repository root:
 //
 //   node examples/sofa-studio/tools/download.mjs
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+//
+// Every file is checked against the SHA-256 recorded for it in
+// checksums.json: Poly Haven serves the newest version of an asset, and a
+// file that has changed stops the tool instead of changing the site. To
+// take a new or changed file on purpose, run with --record, look at the
+// file, and commit checksums.json.
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fetchJson, keeper, readSums, writeSums } from '../../tools/cache.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
 const API = 'https://api.polyhaven.com';
-const HEADERS = { 'User-Agent': 'HoloML examples (https://github.com/srajpal/holoml)' };
+const CHECKSUMS = join(here, 'checksums.json');
+const record = process.argv.includes('--record');
+const sums = readSums(CHECKSUMS);
 
 /** Models (glTF), textures (colour, normal, and roughness pictures), and the light (an HDR panorama). */
 export const MODELS = ['Sofa_01', 'modern_coffee_table_01', 'side_table_01', 'industrial_pipe_lamp', 'potted_plant_02', 'ceramic_vase_01'];
 export const TEXTURES = ['rough_linen', 'velour_velvet', 'wool_boucle', 'brown_leather', 'quatrefoil_jacquard_fabric', 'brown_planks_05'];
 export const LIGHT = 'brown_photostudio_02';
 
-async function get(path) {
-  const r = await fetch(`${API}${path}`, { headers: HEADERS });
-  if (!r.ok) throw new Error(`${path}: ${r.status}`);
-  return r.json();
-}
-
-async function save(url, file) {
-  if (existsSync(file)) return;
-  const r = await fetch(url, { headers: HEADERS });
-  if (!r.ok) throw new Error(`${url}: ${r.status}`);
-  mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, Buffer.from(await r.arrayBuffer()));
-  console.log(`saved ${file.slice(cache.length + 1)}`);
-}
+// Every request gives up after a while (a minute for Poly Haven's lists, five for a file), instead of waiting for ever.
+const get = (path) => fetchJson(`${API}${path}`);
+const save = keeper({ cache, sums, record });
 
 const credits = [];
 const note = async (id, kind) => {
@@ -52,5 +50,7 @@ for (const id of TEXTURES) {
 }
 await save((await get(`/files/${LIGHT}`)).hdri['1k'].hdr.url, join(cache, 'light', `${LIGHT}.hdr`));
 await note(LIGHT, 'HDRI');
+mkdirSync(cache, { recursive: true });
 writeFileSync(join(cache, 'credits.json'), JSON.stringify(credits, null, 2));
-console.log(`${credits.length} assets in ${cache}`);
+if (record) writeSums(CHECKSUMS, sums);
+console.log(`${credits.length} assets in ${cache}, each file as its checksum says`);

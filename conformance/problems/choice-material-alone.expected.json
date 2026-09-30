@@ -1,0 +1,14 @@
+{
+  "problems": [
+    {
+      "code": "missing-attribute",
+      "line": 4,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 7,
+      "column": 5
+    }
+  ]
+}

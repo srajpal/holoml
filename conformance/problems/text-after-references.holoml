@@ -1,0 +1,7 @@
+<holoml version="0.1">
+  <scene>&#10;&#10;Text after two line feeds written as references
+    <group>
+      &#32;A space written as a reference, after whitespace
+    </group>
+  </scene>
+</holoml>

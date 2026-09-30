@@ -1,0 +1,16 @@
+<holoml version="0.1">
+  <head>
+    <title>	Tabs and line ends	</title>
+    <meta name="description" content="Line one
+	line two" />
+  </head>
+  <scene>
+    <label>
+      Two lines,
+	the second after a tab
+    </label>
+    <group position="0
+      1
+      2" />
+  </scene>
+</holoml>

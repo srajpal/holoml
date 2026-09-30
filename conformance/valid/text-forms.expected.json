@@ -1,0 +1,89 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": " Spaces kept\t",
+                "at": "3:12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "5:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "label",
+            "at": "6:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "one",
+                "at": "6:12"
+              },
+              {
+                "text": "two",
+                "at": "6:51"
+              }
+            ]
+          },
+          {
+            "element": "label",
+            "at": "7:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": " ",
+                "at": "7:12"
+              }
+            ]
+          },
+          {
+            "element": "label",
+            "at": "8:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "\n\rafter a line feed and a carriage return",
+                "at": "8:12"
+              }
+            ]
+          },
+          {
+            "element": "label",
+            "at": "9:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": " kept, with its space",
+                "at": "9:49"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

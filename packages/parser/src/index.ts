@@ -7,7 +7,12 @@
  * No dependencies, so any renderer or tool can use it.
  */
 
-/** A place in the text. Lines and columns start at 1; columns count UTF-16 code units, as most editors do. */
+/**
+ * A place in the text. Lines and columns start at 1; columns count UTF-16
+ * code units, as most editors do. A byte order mark at the start is not
+ * part of line 1: the character after it is at column 1. The offset
+ * counts from the start of the text as it was given, the mark included.
+ */
 export interface Position {
   line: number;
   column: number;
@@ -34,6 +39,12 @@ export interface TextNode {
   /** The text with character references replaced; whitespace as written. */
   value: string;
   start: Position;
+  /**
+   * Where its first character that is not whitespace is written. A
+   * character reference counts as one, whatever it stands for: "&#32;"
+   * is not whitespace in the text of a page.
+   */
+  visible: Position;
 }
 
 export type HoloNode = ElementNode | TextNode;
@@ -116,7 +127,12 @@ class Parser {
       if (c === 0x0a) this.lineStarts.push(k + 1);
       else if (c === 0x0d && s.charCodeAt(k + 1) !== 0x0a) this.lineStarts.push(k + 1);
     }
-    if (s.charCodeAt(0) === 0xfeff) this.i = 1; // a byte order mark is allowed and ignored
+    // A byte order mark is allowed and ignored: line 1 starts after it, so
+    // that its columns are those an editor shows (review 134, L7).
+    if (s.charCodeAt(0) === 0xfeff) {
+      this.i = 1;
+      this.lineStarts[0] = 1;
+    }
   }
 
   document(): HoloDocument {
@@ -150,6 +166,9 @@ class Parser {
 
   private elementBody(startOffset: number): ElementNode {
     this.i += 1; // <
+    // Where the text ends inside a tag, the tag is what is wrong, whatever was
+    // to come next: a name, a value, or the ">" after a "/" (SPEC.md section 5).
+    if (this.i >= this.s.length) throw this.error('unexpected-end', 'A tag is not finished', startOffset);
     const c = this.s.charCodeAt(this.i);
     if (c === 0x21 /* ! */ || c === 0x3f /* ? */) {
       throw this.error('unsupported-markup', 'Declarations and processing instructions are not part of HoloML', startOffset);
@@ -166,6 +185,7 @@ class Parser {
         break;
       }
       if (ch === 0x2f /* / */) {
+        if (this.i + 1 >= this.s.length) throw this.error('unexpected-end', `The <${name}> tag is not finished`, startOffset);
         if (this.s.charCodeAt(this.i + 1) !== 0x3e) throw this.error('stray-slash', 'A "/" in a tag must be followed by ">"', this.i);
         this.i += 2;
         return node;
@@ -181,6 +201,7 @@ class Parser {
       if (this.s.charCodeAt(this.i) === 0x3d /* = */) {
         this.i += 1;
         this.skipSpace();
+        if (this.i >= this.s.length) throw this.error('unexpected-end', `The <${name}> tag is not finished`, startOffset);
         value = this.quoted(attrName);
       } else {
         this.i = afterName;
@@ -198,8 +219,10 @@ class Parser {
         if (this.s.charCodeAt(this.i + 1) === 0x2f) {
           const endStart = this.i;
           this.i += 2;
+          if (this.i >= this.s.length) throw this.error('unexpected-end', 'An end tag is not finished', endStart);
           const endName = this.name('element');
           this.skipSpace();
+          // An end tag holds its name and nothing more: anything else before its ">" leaves it unfinished.
           if (this.s.charCodeAt(this.i) !== 0x3e) throw this.error('unexpected-end', `The </${endName}> tag is not finished`, endStart);
           this.i += 1;
           if (endName !== name) {
@@ -220,22 +243,22 @@ class Parser {
     const start = this.i;
     let out = '';
     let run = start;
-    let blank = true;
+    // Where the first character that is not whitespace is; none yet.
+    let visible = -1;
     while (this.i < this.s.length) {
       const c = this.s.charCodeAt(this.i);
       if (c === 0x3c) break;
       if (c === 0) throw this.error('null-character', 'A null character is not allowed', this.i);
+      if (!isSpace(c) && visible < 0) visible = this.i;
       if (c === 0x26 /* & */) {
         out += this.s.slice(run, this.i) + this.reference();
         run = this.i;
-        blank = false;
         continue;
       }
-      if (!isSpace(c)) blank = false;
       this.i += 1;
     }
     out += this.s.slice(run, this.i);
-    return blank ? null : { type: 'text', value: out, start: this.pos(start) };
+    return visible < 0 ? null : { type: 'text', value: out, start: this.pos(start), visible: this.pos(visible) };
   }
 
   private quoted(attrName: string): string {
@@ -251,7 +274,9 @@ class Parser {
       const c = this.s.charCodeAt(this.i);
       if (c === q) break;
       if (c === 0x3c) {
-        // A "<" after a line break almost always means the closing quote is missing.
+        // A "<" after a line end almost always means the closing quote is
+        // missing: the value is reported, where it opens, and not the "<"
+        // of the next tag (SPEC.md section 5 says so).
         if (/[\r\n]/.test(this.s.slice(open, this.i))) throw unclosed();
         throw this.error('less-than-in-value', `Write "&lt;" for "<" in the value of "${attrName}"`, this.i);
       }
@@ -351,39 +376,57 @@ function codePoint(n: number): string | undefined {
 /**
  * Writes a tree back out as HoloML text: two-space indentation, double
  * quotes, and elements without children closed with "/>". Parsing the
- * result gives the same tree (apart from positions).
+ * result gives the same tree (apart from positions): every text with
+ * its whitespace as it was, and as many texts.
+ *
+ * So an element that holds text is written without a character added:
+ * indenting it would put whitespace into its text. Two texts side by
+ * side, which a comment between them made, are written with an empty
+ * comment between them; and a text that is only whitespace, which came
+ * from a character reference, is written with one again, as whitespace
+ * alone would be dropped when read. A text that is empty is not written:
+ * no page gives one.
  */
 export function serialize(doc: HoloDocument): string {
+  const open = (node: ElementNode) =>
+    `<${node.name}${node.attributes.map((a) => (a.value === null ? ` ${a.name}` : ` ${a.name}="${escapeValue(a.value)}"`)).join('')}`;
+  /** An element and everything in it with nothing added between its children. */
+  const inline = (node: ElementNode): string => {
+    if (node.children.length === 0) return `${open(node)} />`;
+    let text = '';
+    let afterText = false;
+    for (const child of node.children) {
+      if (child.type === 'element') text += inline(child);
+      else if (child.value !== '') text += (afterText ? '<!---->' : '') + escapeText(child.value);
+      afterText = child.type === 'text' && child.value !== '';
+    }
+    return `${open(node)}>${text}</${node.name}>`;
+  };
   const out: string[] = [];
-  const write = (node: HoloNode, depth: number) => {
+  const write = (node: ElementNode, depth: number) => {
     const pad = '  '.repeat(depth);
-    if (node.type === 'text') {
-      out.push(pad + escapeText(node.value.trim()));
+    if (node.children.length === 0 || node.children.some((c) => c.type === 'text')) {
+      out.push(pad + inline(node));
       return;
     }
-    const attrs = node.attributes.map((a) => (a.value === null ? ` ${a.name}` : ` ${a.name}="${escapeValue(a.value)}"`)).join('');
-    if (node.children.length === 0) {
-      out.push(`${pad}<${node.name}${attrs} />`);
-      return;
-    }
-    // Text-only content stays on one line, as written in titles and labels.
-    const only = node.children[0];
-    if (node.children.length === 1 && only?.type === 'text') {
-      out.push(`${pad}<${node.name}${attrs}>${escapeText(only.value)}</${node.name}>`);
-      return;
-    }
-    out.push(`${pad}<${node.name}${attrs}>`);
-    for (const child of node.children) write(child, depth + 1);
+    out.push(`${pad}${open(node)}>`);
+    for (const child of node.children) if (child.type === 'element') write(child, depth + 1);
     out.push(`${pad}</${node.name}>`);
   };
   write(doc.root, 0);
   return out.join('\n') + '\n';
 }
 
-function escapeText(s: string): string {
+function escapeMarkup(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function escapeText(s: string): string {
+  // Whitespace alone would be dropped when read: its first character is written as a reference.
+  for (let k = 0; k < s.length; k++) if (!isSpace(s.charCodeAt(k))) return escapeMarkup(s);
+  return s === '' ? '' : `&#${s.charCodeAt(0)};${s.slice(1)}`;
+}
+
 function escapeValue(s: string): string {
-  return escapeText(s).replace(/"/g, '&quot;');
+  return escapeMarkup(s).replace(/"/g, '&quot;');
 }

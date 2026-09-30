@@ -8,8 +8,6 @@
 /** The ceiling's height. */
 export const H = 3.0;
 
-/** Inside the outer walls. */
-export const INSIDE = { x0: -6, x1: 6, z0: -3.75, z1: 3.75 };
 /** Outside the outer walls: the floor plan's area. */
 export const OUTSIDE = { x0: -6.2, x1: 6.2, z0: -3.95, z1: 3.95 };
 

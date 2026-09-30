@@ -1,0 +1,10 @@
+<holoml version="0.2">
+  <head>
+    <title>A <b>bold</b> title</title>
+  </head>
+  <scene>
+    <label>From <model src="models/coin.glb" /> 32,000</label>
+    <panel><label>A label in a panel</label></panel>
+    <hud><cube /></hud>
+  </scene>
+</holoml>

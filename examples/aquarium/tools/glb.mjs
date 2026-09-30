@@ -4,6 +4,7 @@
 // pictures after it.
 
 import { readFileSync } from 'node:fs';
+import { Chunk, glbBytes } from '../../tools/shapes.mjs';
 
 const COMPONENTS = { 5120: Int8Array, 5121: Uint8Array, 5122: Int16Array, 5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array };
 const SIZES = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 };
@@ -66,21 +67,13 @@ export class GlbWriter {
     this.json = json;
     this.json.bufferViews = [];
     this.json.accessors = [];
-    this.chunks = [];
-    this.length = 0;
+    this.chunk = new Chunk();
   }
 
   /** Raw bytes as a buffer view; its index. */
   bytes(data, target) {
-    const pad = (4 - (this.length % 4)) % 4;
-    if (pad) {
-      this.chunks.push(Buffer.alloc(pad));
-      this.length += pad;
-    }
     const buf = Buffer.from(data.buffer ?? data, data.byteOffset ?? 0, data.byteLength ?? data.length);
-    this.json.bufferViews.push({ buffer: 0, byteOffset: this.length, byteLength: buf.length, ...(target ? { target } : {}) });
-    this.chunks.push(buf);
-    this.length += buf.length;
+    this.json.bufferViews.push({ buffer: 0, byteOffset: this.chunk.append(buf), byteLength: buf.length, ...(target ? { target } : {}) });
     return this.json.bufferViews.length - 1;
   }
 
@@ -105,28 +98,11 @@ export class GlbWriter {
 
   /** The .glb file's bytes. */
   write() {
-    const tail = (4 - (this.length % 4)) % 4;
-    const bin = Buffer.concat([...this.chunks, Buffer.alloc(tail)]);
-    this.json.buffers = [{ byteLength: bin.length }];
-    const text = Buffer.from(JSON.stringify(this.json));
-    const json = Buffer.concat([text, Buffer.alloc((4 - (text.length % 4)) % 4, 0x20)]);
-    const chunk = (type, data) => {
-      const head = Buffer.alloc(8);
-      head.writeUInt32LE(data.length, 0);
-      head.write(type, 4, 'latin1');
-      return Buffer.concat([head, data]);
-    };
-    const header = Buffer.alloc(12);
-    header.write('glTF', 0, 'latin1');
-    header.writeUInt32LE(2, 4);
-    header.writeUInt32LE(12 + 8 + json.length + 8 + bin.length, 8);
-    return Buffer.concat([header, chunk('JSON', json), chunk('BIN\0', bin)]);
+    return glbBytes(this.json, this.chunk.bytes());
   }
 }
 
 // ---- Small matrix and quaternion helpers (column-major, as glTF) ----------------------------
-
-export const identity = () => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
 export function multiply(a, b) {
   const out = new Array(16).fill(0);
@@ -158,36 +134,8 @@ export function transformDirection(m, d) {
   return v.map((x) => x / l);
 }
 
-/** The inverse of an affine matrix. */
-export function invert(m) {
-  const [a00, a01, a02, , a10, a11, a12, , a20, a21, a22, , a30, a31, a32] = m;
-  const b01 = a22 * a11 - a12 * a21;
-  const b11 = -a22 * a10 + a12 * a20;
-  const b21 = a21 * a10 - a11 * a20;
-  const det = a00 * b01 + a01 * b11 + a02 * b21;
-  if (!det) throw new Error('a matrix without an inverse');
-  const d = 1 / det;
-  const r = [
-    b01 * d, (-a22 * a01 + a02 * a21) * d, (a12 * a01 - a02 * a11) * d, 0,
-    b11 * d, (a22 * a00 - a02 * a20) * d, (-a12 * a00 + a02 * a10) * d, 0,
-    b21 * d, (-a21 * a00 + a01 * a20) * d, (a11 * a00 - a01 * a10) * d, 0,
-    0, 0, 0, 1,
-  ];
-  const t = transformPoint(r, [a30, a31, a32]);
-  r[12] = -t[0];
-  r[13] = -t[1];
-  r[14] = -t[2];
-  return r;
-}
-
 /** A quaternion (x, y, z, w) turning `angle` radians about the unit `axis`. */
 export function axisAngle(axis, angle) {
   const s = Math.sin(angle / 2);
   return [axis[0] * s, axis[1] * s, axis[2] * s, Math.cos(angle / 2)];
-}
-
-export function quatMultiply(a, b) {
-  const [ax, ay, az, aw] = a;
-  const [bx, by, bz, bw] = b;
-  return [aw * bx + ax * bw + ay * bz - az * by, aw * by - ax * bz + ay * bw + az * bx, aw * bz + ax * by - ay * bx + az * bw, aw * bw - ax * bx - ay * by - az * bz];
 }

@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "missing-space",
+    "line": 3,
+    "column": 10
+  }
+}

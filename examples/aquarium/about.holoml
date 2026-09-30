@@ -28,7 +28,7 @@
     <panel position="0.62 1.6 -0.7" width="1.1" size="0.031" color="#1f2328" background="#f4f7f8">
       Made with
 
-      The fish, under the Creative Commons Attribution 4.0 licence (CC BY 4.0) unless said: the great white shark and the grey snapper from the Babylon.js asset library, by the Babylon.js authors; from Sketchfab, as Objaverse copied them: the flatback sea turtle by DigitalLife3D, the gilt-head bream by BlueMesh, the Atlantic mackerel by Amy Scott-Murray, the tuna by GoldenZtuff, the clownfish by zixisun02, and the copperband butterflyfish by Dsanchez13; and the barramundi by Microsoft, from the Khronos glTF Sample Assets (CC0). Each is sized, and those that did not swim were given a swim.
+      The fish, under the Creative Commons Attribution 4.0 International licence (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/) unless said: the great white shark and the grey snapper from the Babylon.js asset library, by the Babylon.js authors; from Sketchfab, as Objaverse copied them: the hawksbill sea turtle by Bindestrek, the gilt-head bream by BlueMesh, the Atlantic mackerel by Amy Scott-Murray, the tuna by GoldenZtuff, the clownfish by zixisun02, and the copperband butterflyfish by Dsanchez13; and the barramundi by Microsoft, from the Khronos glTF Sample Assets (CC0). Each is sized, and those that did not swim were given a swim.
 
       The boulders, the log, the shell, and the sand are from Poly Haven (CC0). The tank, the tunnel, the plants, the bubbles, the food, and the sounds are made by the site's own script, tools/prepare.mjs. models/CREDITS.md has every name and address.
     </panel>

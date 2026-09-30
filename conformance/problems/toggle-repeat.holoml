@@ -1,0 +1,11 @@
+<holoml version="0.2">
+  <scene>
+    <model id="door" src="models/door.glb" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" toggle repeat="01" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" toggle repeat="3" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" toggle repeat="indefinite" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" toggle repeat="often" />
+    <slider min="low" max="1">Not a number</slider>
+    <slider min="2">The default max is 1</slider>
+  </scene>
+</holoml>

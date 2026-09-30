@@ -1,0 +1,19 @@
+<holoml version="0.2">
+  <scene>
+    <a href="&#1;javascript:alert(1)"><label>A control character before the scheme</label></a>
+    <a href="java&#9;script:alert(1)"><label>A tab inside the scheme</label></a>
+    <a href=" javascript:alert(1) "><label>Whitespace around it is ignored</label></a>
+    <a href="JavaScript:alert(1)"><label>A scheme in either case</label></a>
+    <a href="two words.holoml"><label>A space</label></a>
+    <a href=""><label>Empty</label></a>
+    <model src="&#1;data:model/gltf-binary;base64,AAAA.glb" />
+    <model src="models/car&#127;.glb" />
+    <model src="models/car&#133;.glb" />
+    <model src="&#160;models/car.glb" />
+    <model src="models/car.glb " />
+    <model src="models/car.glb&#8232;" />
+    <model src="&#65279;models/car.glb" />
+    <model src="models/car.glb?size=1&#12;" />
+    <sound src="sounds/door&#31;.ogg" />
+  </scene>
+</holoml>

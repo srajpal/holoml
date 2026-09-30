@@ -1,3 +1,16 @@
+# Text files have Unix line ends in the repository and in every working
+# copy, on Windows too, so that files made by the tools and files checked
+# byte for byte are the same everywhere (review 134, H8).
+* text=auto eol=lf
+# Models, pictures, and sounds are never text, whatever their first bytes
+# look like.
+*.glb binary
+*.bin binary
+*.jpg binary
+*.png binary
+*.hdr binary
+*.wav binary
+*.ogg binary
 # HoloML documents are tested byte for byte, line ends included
 # (conformance/valid/syntax-forms.holoml uses Windows line ends on
 # purpose), so Git must never convert them.

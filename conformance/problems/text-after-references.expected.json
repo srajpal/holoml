@@ -1,0 +1,14 @@
+{
+  "problems": [
+    {
+      "code": "text-not-allowed",
+      "line": 2,
+      "column": 10
+    },
+    {
+      "code": "text-not-allowed",
+      "line": 4,
+      "column": 7
+    }
+  ]
+}

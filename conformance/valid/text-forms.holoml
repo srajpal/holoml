@@ -1,0 +1,11 @@
+<holoml version="0.1">
+  <head>
+    <title>&#32;Spaces kept&#9;</title>
+  </head>
+  <scene>
+    <label>one<!-- a comment parts text in two -->two</label>
+    <label>&#160;</label>
+    <label>&#10;&#13;after a line feed and a carriage return</label>
+    <label> <!-- whitespace alone is dropped --> kept, with its space</label>
+  </scene>
+</holoml>

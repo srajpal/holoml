@@ -34,9 +34,12 @@
       </section>
       <p class="total" id="total" hidden><span>Total</span><span id="sum"></span></p>
       <button class="place" id="place" type="button" hidden>Place order</button>
-      <p class="placed" id="placed" role="status" hidden>
-        This is an example store: nothing was ordered, and nothing was charged.
-      </p>
+      <!-- The status region is in the page from the start, so that screen readers say the note when it is shown. -->
+      <div role="status">
+        <p class="placed" id="placed" hidden>
+          This is an example store: nothing was ordered, and nothing was charged.
+        </p>
+      </div>
       <p id="empty">Your cart is empty: open a shoe in the store, choose its colour and size, and add it to the cart.</p>
       <p class="note">
         This is an example of a HoloML shop. There is no shop behind it, and nothing is asked for, sent, or paid.

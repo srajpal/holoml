@@ -7,9 +7,33 @@
  * version="0.1" may use only what 0.1 has (SPEC.md, "Versions").
  */
 import type { Attribute, ElementNode, HoloDocument, Position } from '@holoml/parser';
-import { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast, type Version, type ValueKind } from './rules.ts';
+import {
+  ANIMATABLE,
+  ANIMATION_VALUES,
+  CLICKABLE,
+  COLOR_PATTERN,
+  COUNT_PATTERN,
+  DURATION_PATTERN,
+  ELEMENTS,
+  FILE_EXTENSIONS,
+  ID_PATTERN,
+  INDEFINITE,
+  LIGHT_ONLY,
+  NUMBER_PATTERN,
+  ROOT,
+  VERSION,
+  VERSIONS,
+  atLeast,
+  endsWithExtension,
+  notInAddress,
+  whole,
+  type Version,
+  type ValueKind,
+} from './rules.ts';
 
 export { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast } from './rules.ts';
+// The patterns a value must match, for a renderer that reads values as the checker does (HyperSpace 3D's viewer).
+export { COUNT_PATTERN, DURATION_PATTERN, INDEFINITE, NUMBER_PATTERN, whole } from './rules.ts';
 export type { AttributeRule, ElementRule, ValueKind, Version } from './rules.ts';
 
 export interface CheckOptions {
@@ -52,17 +76,37 @@ export interface Problem {
   column: number;
 }
 
-const NUMBER = /^-?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/;
-const COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-const DURATION = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)$/;
-const ID = /^[A-Za-z][A-Za-z0-9_-]*$/;
-const MODEL_FILE = /\.(gltf|glb)$/i;
-const SCRIPT_FILE = /\.(js|mjs)$/i;
-const SOUND_FILE = /\.(ogg|mp3|wav)$/i;
-const PICTURE_FILE = /\.(png|jpe?g|webp)$/i;
-const ENVIRONMENT_FILE = /\.(hdr|png|jpe?g)$/i;
+// The patterns are written once, in rules.ts; the RELAX NG schema is made from the same texts.
+const NUMBER = whole(NUMBER_PATTERN);
+const COLOR = whole(COLOR_PATTERN);
+const DURATION = whole(DURATION_PATTERN);
+const ID = whole(ID_PATTERN);
+const COUNT = whole(COUNT_PATTERN);
+const MODEL_FILE = endsWithExtension(FILE_EXTENSIONS.model);
+const SCRIPT_FILE = endsWithExtension(FILE_EXTENSIONS.script);
+const SOUND_FILE = endsWithExtension(FILE_EXTENSIONS.sound);
+const PICTURE_FILE = endsWithExtension(FILE_EXTENSIONS.picture);
+const ENVIRONMENT_FILE = endsWithExtension(FILE_EXTENSIONS.environment);
 /** Schemes a link or model may use; anything else (javascript:, data:, file:) is refused. */
 const SAFE_SCHEMES = new Set(['http', 'https']);
+
+/**
+ * Whitespace in a value is the syntax's own (SPEC.md sections 5 and 6):
+ * the space, the tab, the line feed, and the carriage return. No other
+ * character separates numbers or is ignored around a value: a no-break
+ * space where a space is meant is a bad value (review 134, L5).
+ */
+const isSpace = (c: number) => c === 0x20 || c === 0x09 || c === 0x0a || c === 0x0d;
+const SPACES = /[ \t\n\r]+/;
+
+/** A value without the whitespace around it. */
+function trimSpace(s: string): string {
+  let start = 0;
+  let end = s.length;
+  while (start < end && isSpace(s.charCodeAt(start))) start += 1;
+  while (end > start && isSpace(s.charCodeAt(end - 1))) end -= 1;
+  return s.slice(start, end);
+}
 
 /** A dictionary's own entry, never an inherited one such as "constructor" (issue #1). */
 function own<T>(dictionary: Readonly<Record<string, T>>, key: string): T | undefined {
@@ -81,15 +125,41 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     return problems;
   }
 
-  // The version the page declares picks the rules; one this reader does not
-  // know is reported, and the page is checked against the newest rules.
+  // The version the page declares picks the rules. One this reader does not
+  // know is reported, and so is a page that declares none; the rest of the
+  // page is then checked by the newest version the reader knows, to find
+  // its other mistakes in the same pass (SPEC.md section 11).
   const known = options.versions ?? VERSIONS;
   const declared = attr(root, 'version')?.value;
-  const version: Version =
-    typeof declared === 'string' && known.includes(declared) && (VERSIONS as readonly string[]).includes(declared) ? (declared as Version) : VERSION;
+  const newest = [...VERSIONS].reverse().find((v) => known.includes(v)) ?? VERSION;
+  const version: Version = typeof declared === 'string' && known.includes(declared) && (VERSIONS as readonly string[]).includes(declared) ? (declared as Version) : newest;
   const ctx: Context = { version, known };
 
+  // Every id in the page, first, wherever its element stands: an element
+  // inside one that is unknown or misplaced is not checked further, but a
+  // reference to it still finds it, and is not reported as a second, false
+  // "no element has the id" (review 134, L6).
   const ids = new Map<string, ElementNode>();
+  const collect = (el: ElementNode) => {
+    const id = attr(el, 'id');
+    if (id?.value && ID.test(id.value)) {
+      if (ids.has(id.value)) report('duplicate-id', `The id "${id.value}" is used twice`, id.start);
+      else ids.set(id.value, el);
+    }
+    for (const child of el.children) if (child.type === 'element') collect(child);
+  };
+  collect(root);
+  /** The id a reference names; null when it is absent or not a reference (already reported as a bad value). */
+  const named = (reference: Attribute | undefined): string | null => {
+    const value = reference?.value;
+    return value?.startsWith('#') && ID.test(value.slice(1)) ? value.slice(1) : null;
+  };
+  /** Is this an element of the page's version? One that is not is already reported, and nothing more is said of it. */
+  const inVersion = (el: ElementNode): boolean => {
+    const rule = own(ELEMENTS, el.name);
+    return rule !== undefined && atLeast(version, rule.since);
+  };
+
   const animations: ElementNode[] = [];
   const choices: ElementNode[] = [];
   const sounds: ElementNode[] = [];
@@ -102,11 +172,6 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       return;
     }
     checkAttributes(el, report, ctx);
-    const id = attr(el, 'id');
-    if (id?.value && ID.test(id.value)) {
-      if (ids.has(id.value)) report('duplicate-id', `The id "${id.value}" is used twice`, id.start);
-      else ids.set(id.value, el);
-    }
     if (el.name === 'animate') animations.push(el);
     if (el.name === 'choice') choices.push(el);
     if (el.name === 'sound') sounds.push(el);
@@ -125,7 +190,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
         if (child.type === 'text') text += child.value;
         else report('child-not-allowed', `<${el.name}> holds only text, not <${child.name}>`, child.start);
       }
-      if (text.trim() === '' && !rule.emptyText) report('empty-text', `<${el.name}> needs some text`, el.start);
+      if (trimSpace(text) === '' && !rule.emptyText) report('empty-text', `<${el.name}> needs some text`, el.start);
       return;
     }
     const counts = new Map<string, number>();
@@ -136,7 +201,9 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
           el.name === 'script'
             ? 'A <script> holds no code: put the code in a file of its own, and name it in "src"'
             : `Text is not allowed directly inside <${el.name}>; put it in a <label>`,
-          firstVisible(child.value, child.start),
+          // Where the text's first character that is not whitespace is written: the parser knows, as the
+          // text itself no longer tells a character reference from the character (review 134, L7).
+          child.visible,
         );
         continue;
       }
@@ -173,13 +240,14 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     const target = attr(anim, 'target');
     const which = attr(anim, 'attribute')?.value ?? undefined;
     const usable = animatable(which, version);
-    if (!target?.value?.startsWith('#')) continue; // already reported as a bad value
-    const el = ids.get(target.value.slice(1));
+    const id = named(target);
+    if (!target || id === null) continue;
+    const el = ids.get(id);
     if (!el) {
-      report('unknown-target', `No element has the id "${target.value.slice(1)}"`, target.start);
+      report('unknown-target', `No element has the id "${id}"`, target.start);
       continue;
     }
-    if (!usable) continue;
+    if (!usable || !inVersion(el)) continue;
     const kinds = own(ANIMATABLE, which)?.filter((k) => atLeast(version, k.since)).map((k) => k.element) ?? [];
     if (!kinds.includes(el.name)) {
       report('bad-target', `The ${which} of a <${el.name}> cannot be animated`, target.start);
@@ -188,14 +256,15 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     }
   }
   // Click actions (0.2): what begins them, and what can be clicked.
-  const clickable = (trigger: ReturnType<typeof attr>, what: string): boolean => {
-    if (!trigger?.value?.startsWith('#')) return false; // absent, or already reported as a bad value
-    const el = ids.get(trigger.value.slice(1));
-    if (!el) report('unknown-target', `No element has the id "${trigger.value.slice(1)}"`, trigger.start);
-    else if (!CLICKABLE.includes(el.name)) report('bad-target', `${what} begins when its trigger is clicked, and a <${el.name}> cannot be clicked`, trigger.start);
-    return true;
+  const clickable = (trigger: Attribute, what: string): void => {
+    const id = named(trigger);
+    if (id === null) return;
+    const el = ids.get(id);
+    if (!el) report('unknown-target', `No element has the id "${id}"`, trigger.start);
+    else if (inVersion(el) && !CLICKABLE.includes(el.name)) report('bad-target', `${what} begins when its trigger is clicked, and a <${el.name}> cannot be clicked`, trigger.start);
   };
-  for (const anim of animations) {
+  // A 0.1 page has no click actions: what it writes of them is already reported as unknown (review 134, L6).
+  for (const anim of atLeast(version, '0.2') ? animations : []) {
     const onClick = attr(anim, 'begin')?.value === 'click';
     for (const name of ['trigger', 'toggle', 'label']) {
       const a = attr(anim, name);
@@ -206,12 +275,14 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     if (trigger) clickable(trigger, 'An <animate> with begin="click"');
     else {
       // Without a trigger, a click on the target begins it: the target must be something that can be clicked.
-      const target = attr(anim, 'target')?.value;
-      const el = target?.startsWith('#') ? ids.get(target.slice(1)) : undefined;
-      if (el && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
+      const target = named(attr(anim, 'target'));
+      const el = target === null ? undefined : ids.get(target);
+      if (el && inVersion(el) && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
     }
+    // A toggle runs once each way: a repeat other than 1 (one that is not a count is already reported).
     const repeat = attr(anim, 'repeat');
-    if (attr(anim, 'toggle') && repeat && repeat.value?.trim() !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
+    const runs = trimSpace(repeat?.value ?? '');
+    if (attr(anim, 'toggle') && repeat && (runs === INDEFINITE || (COUNT.test(runs) && Number.isSafeInteger(Number(runs)) && Number(runs) !== 1))) report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
   }
   for (const sound of sounds) {
     // Sounds from a place: how far one comes needs where it comes from.
@@ -241,16 +312,17 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     const material = attr(choice, 'material');
     if (target && !material) report('missing-attribute', '<choice> with a "target" needs the attribute "material"', choice.start);
     if (material && !target) report('missing-attribute', '<choice> with a "material" needs the attribute "target"', choice.start);
-    if (target?.value?.startsWith('#')) {
-      const el = ids.get(target.value.slice(1));
-      if (!el) report('unknown-target', `No element has the id "${target.value.slice(1)}"`, target.start);
-      else if (el.name !== 'model') report('bad-target', `A <choice> changes a <model>'s material, not a <${el.name}>`, target.start);
+    const id = named(target);
+    if (target && id !== null) {
+      const el = ids.get(id);
+      if (!el) report('unknown-target', `No element has the id "${id}"`, target.start);
+      else if (inVersion(el) && el.name !== 'model') report('bad-target', `A <choice> changes a <model>'s material, not a <${el.name}>`, target.start);
     }
     const values = new Set<string>();
     for (const option of choice.children) {
       if (option.type !== 'element' || option.name !== 'option') continue;
       const given = attr(option, 'value');
-      const text = option.children.map((c) => (c.type === 'text' ? c.value : '')).join('').replace(/\s+/g, ' ').trim();
+      const text = trimSpace(option.children.map((c) => (c.type === 'text' ? c.value : '')).join('')).split(SPACES).join(' ');
       const value = given?.value ?? text;
       if (values.has(value)) report('bad-value', `Two options of this <choice> have the value "${value}"`, given?.start ?? option.start);
       values.add(value);
@@ -273,24 +345,6 @@ interface Context {
 function animatable(which: string | undefined, version: Version): which is string {
   const choice = ELEMENTS['animate']!.attributes['attribute']!.value;
   return which !== undefined && choice.kind === 'choice' && choice.values.includes(which) && atLeast(version, choice.since?.[which]);
-}
-
-/** Where the first character that is not whitespace in a text node is. */
-function firstVisible(text: string, start: Position): Position {
-  let { line, column, offset } = start;
-  for (let k = 0; k < text.length; k++) {
-    const c = text[k]!;
-    if (c === '\n' || (c === '\r' && text[k + 1] !== '\n')) {
-      line += 1;
-      column = 1;
-    } else if (c === ' ' || c === '\t' || c === '\r') {
-      column += 1;
-    } else {
-      break;
-    }
-    offset += 1;
-  }
-  return { line, column, offset };
 }
 
 function finite(p: string): boolean {
@@ -329,7 +383,7 @@ function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: s
     const n = (name: string, fallback: number) => {
       const a = attr(el, name);
       if (!a) return { at: el.start, value: fallback, ok: true };
-      const v = a.value?.trim() ?? '';
+      const v = trimSpace(a.value ?? '');
       return { at: a.start, value: Number(v), ok: NUMBER.test(v) && Number.isFinite(Number(v)) };
     };
     const min = n('min', 0);
@@ -344,12 +398,13 @@ function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: s
     }
   }
   // Some light attributes belong to some types only; an unknown type is
-  // already reported as a bad value.
+  // already reported as a bad value, and so is an attribute the page's
+  // version does not have (a 0.1 light's `shadows`).
   const type = el.name === 'light' ? attr(el, 'type')?.value : undefined;
   if (type && ['ambient', 'directional', 'point', 'spot'].includes(type)) {
     for (const a of el.attributes) {
       const types = own(LIGHT_ONLY, a.name);
-      if (types && !types.includes(type)) report('attribute-not-for-type', `A ${type} light has no "${a.name}"`, a.start);
+      if (types && atLeast(ctx.version, own(rule.attributes, a.name)?.since) && !types.includes(type)) report('attribute-not-for-type', `A ${type} light has no "${a.name}"`, a.start);
     }
   }
 }
@@ -358,10 +413,10 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
   const bad = (why: string) => ({ code: 'bad-value' as const, message: `"${name}": ${why}` });
   if (kind.kind === 'flag') return value === null ? null : bad('written alone, without a value');
   if (value === null) return bad('needs a value');
-  const v = value.trim();
+  const v = trimSpace(value);
   switch (kind.kind) {
     case 'text':
-      return v === '' ? bad('cannot be empty') : null;
+      return v === '' && !kind.empty ? bad('cannot be empty') : null;
     case 'number': {
       if (!NUMBER.test(v)) return bad(`"${value}" is not a number`);
       const n = Number(v);
@@ -372,21 +427,20 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
       return null;
     }
     case 'vector3': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if (parts.length !== 3 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not three numbers, such as "0 1.5 -2"`);
       return parts.every(finite) ? null : bad(`"${value}" has a number too large`);
     }
     case 'scale': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if ((parts.length !== 1 && parts.length !== 3) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or three`);
       return parts.every(finite) ? null : bad(`"${value}" has a number too large`);
     }
     case 'color':
       return COLOR.test(v) ? null : bad(`"${value}" is not a colour such as "#c0182a" or "#fff"`);
     case 'duration': {
-      const m = DURATION.exec(v);
-      if (!m) return bad(`"${value}" is not a time such as "2s" or "500ms"`);
-      const n = Number(m[1]);
+      if (!DURATION.test(v)) return bad(`"${value}" is not a time such as "2s" or "500ms"`);
+      const n = Number(v.slice(0, v.endsWith('ms') ? -2 : -1));
       if (!Number.isFinite(n)) return bad(`"${value}" is too long a time`);
       return n > 0 ? null : bad(`"${value}" is not a time such as "2s" or "500ms"`);
     }
@@ -409,29 +463,30 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
     case 'animation-value':
       return null; // chosen by what is animated, in checkAttributes()
     case 'area': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if (parts.length !== 4 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not four numbers, such as "-6 -4 6 4"`);
       if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
       const [x0, z0, x1, z1] = parts.map(Number) as [number, number, number, number];
       return x1 > x0 && z1 > z0 ? null : bad('must be "x0 z0 x1 z1", with x1 more than x0 and z1 more than z0');
     }
     case 'size': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if (parts.length !== 3 || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not three numbers, such as "12 4 20"`);
       if (!parts.every(finite)) return bad(`"${value}" has a number too large`);
       return parts.every((p) => Number(p) > 0) ? null : bad('each of the three must be more than 0');
     }
     case 'tiling': {
-      const parts = v.split(/\s+/);
+      const parts = v.split(SPACES);
       if ((parts.length !== 1 && parts.length !== 2) || !parts.every((p) => NUMBER.test(p))) return bad(`"${value}" is not one number or two, such as "3" or "3 2"`);
       return parts.every((p) => Number(p) > 0 && finite(p)) ? null : bad('must be more than 0');
     }
     case 'repeat':
-      if (v === 'indefinite') return null;
-      if (!/^\d+$/.test(v) || Number(v) < 1) return bad('must be a whole number of times, or "indefinite"');
+      if (v === INDEFINITE) return null;
+      if (!COUNT.test(v)) return bad('must be a whole number of times, or "indefinite"');
       return Number.isSafeInteger(Number(v)) ? null : bad(`"${value}" is too many times`);
     case 'url': {
-      if (v === '' || /\s/.test(v)) return bad('must be an address without spaces');
+      // Spaces and control characters: a URL parser drops or rewrites them, so the scheme test below could be fooled.
+      if (v === '' || notInAddress.test(v)) return bad('must be an address, without spaces or control characters');
       const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(v)?.[1]?.toLowerCase();
       if (scheme !== undefined && !SAFE_SCHEMES.has(scheme)) {
         return { code: 'unsafe-link', message: `"${name}": "${scheme}:" addresses are not allowed; use http, https, or a relative address` };

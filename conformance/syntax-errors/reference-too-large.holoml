@@ -1,0 +1,5 @@
+<holoml version="0.1">
+  <scene>
+    <label>Past the last character: &#x110000;</label>
+  </scene>
+</holoml>

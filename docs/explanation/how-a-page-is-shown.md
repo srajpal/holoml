@@ -27,7 +27,8 @@ and where it is instead.
 Next the tree is checked against the version the page declares, and
 against the rules for each element: where it may stand, which
 attributes it takes, and what values they may have. A version the
-reader does not know is refused. Each problem is reported with its
+reader does not know is refused: a checker reports it, and a renderer
+does not draw the page. Each problem is reported with its
 place, but a problem does not stop the page as a syntax error does: the
 renderer shows the scene as well as it can, and leaves out what it
 cannot show.
@@ -54,8 +55,8 @@ shown; a renderer should mark where a missing model would have been. So
 is a model whose glTF file needs an extension the renderer does not
 read. HyperSpace 3D, for one, does not yet read files that need
 compressed geometry or compressed pictures. The page is ready (for its
-scripts, `holoml.ready`) when every model and sound it loads with the
-page has loaded or been left out.
+scripts, `holoml.ready`) when every file it loads with the page (its
+models, sounds, and pictures) has loaded or been left out.
 
 A 0.2 page can also load by area: a `group` with `load="near"` loads
 its models only while the viewer is near it, and lets them go when the

@@ -1,0 +1,17 @@
+<holoml version="0.2">
+  <head>
+    <meta name="" content="" />
+    <meta name="  " content="Whitespace alone is empty" />
+  </head>
+  <scene>
+    <viewpoint id="hall" label="" />
+    <viewpoint id="kitchen" label=" " />
+    <model id="sofa" src="models/sofa.glb" animation="" />
+    <choice label="" target="#sofa" material="">
+      <option value="">Linen</option>
+    </choice>
+    <plan src="plans/loft.png" area="0 0 1 1" label="" />
+    <animate target="#sofa" attribute="rotation" to="0 90 0" duration="1s" begin="click" label="" />
+    <sound src="sounds/door.ogg" begin="click" trigger="#sofa" label="" />
+  </scene>
+</holoml>

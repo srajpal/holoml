@@ -1,8 +1,10 @@
 // HoloML 0.2: the scene API (SPEC.md section 10), in Web IDL. A page's
 // scripts reach it as the global `holoml`. Vectors are arrays of three
-// numbers: metres for positions, degrees for rotations. A thing has the
-// members of its kind's interface; any other member is undefined, and
-// setting it does nothing.
+// numbers: metres for positions, degrees for rotations. One that a
+// thing or the viewer gives is frozen (FrozenArray): a script sets the
+// member to a new array, and does not change the array it was given. A
+// thing has the members of its kind's interface; any other member is
+// undefined, and setting it does nothing and is not an error.
 
 [Exposed=Window]
 interface HoloML {
@@ -30,6 +32,8 @@ interface HoloMLViewer {
   attribute double turnSpeed;
 };
 
+// Where a click or the crosshair hit: `point` and `normal` are in the
+// scene's own space.
 dictionary HoloMLHit {
   Thing? thing;
   sequence<double>? point;
@@ -55,6 +59,7 @@ dictionary HoloMLEvent {
 interface Thing {
   readonly attribute DOMString? id;
   readonly attribute DOMString kind;
+  // The nearest group it is in; a link between them does not count.
   readonly attribute GroupThing? parent;
   undefined remove();
 };
@@ -113,6 +118,8 @@ interface PanelThing : Thing {
 
 [Exposed=Window]
 interface SoundThing : Thing {
+  // Null for a sound that has no place. Setting a place gives it one;
+  // setting null is an error (a TypeError).
   attribute FrozenArray<double>? position;
   undefined play();
   undefined stop();

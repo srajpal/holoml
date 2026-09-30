@@ -19,10 +19,12 @@
 // Electron (any recent version) from the repository root:
 //
 //   electron examples/sofa-studio/tools/prepare.mjs
-import { app, nativeImage } from 'electron';
+import { app } from 'electron';
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { decode, encode } from '../../tools/pictures.mjs';
+import { add3, luminance } from '../../tools/shapes.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
@@ -32,25 +34,11 @@ const TEXTURES = join(site, 'textures');
 
 // ---- Pictures ------------------------------------------------------------------
 
-/** A picture's pixels: width, height, and 4 bytes a pixel (blue, green, red, alpha). */
-function decode(file) {
-  const image = nativeImage.createFromPath(file);
-  if (image.isEmpty()) throw new Error(`${file}: not a picture Electron can read`);
-  const { width, height } = image.getSize();
-  return { width, height, data: image.toBitmap() };
-}
-
-function encode(picture, quality) {
-  return nativeImage.createFromBitmap(picture.data, { width: picture.width, height: picture.height }).toJPEG(quality);
-}
-
 /** A JPEG again at web quality (normal maps a little higher: their errors show as bumps). */
 function reencode(from, to, quality) {
   mkdirSync(dirname(to), { recursive: true });
   writeFileSync(to, encode(decode(from), quality));
 }
-
-const luminance = (r, g, b) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 
 /** Recolours a picture: each pixel's lightness picks a colour between `dark` and `light` (wood keeps its grain). */
 function tint(picture, dark, light) {
@@ -139,7 +127,6 @@ function quad(origin, u, v, normal, tiles, material) {
     material,
   };
 }
-const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 
 /** Joins primitives of the same material into one. */
 function merge(parts) {
@@ -370,8 +357,9 @@ void app.whenReady().then(() => {
     console.log('done');
   } catch (e) {
     console.error(e);
-    process.exitCode = 1;
-  } finally {
-    app.quit();
+    // Ended with 1, so that whatever ran the tool knows it failed (app.quit() would end with 0).
+    app.exit(1);
+    return;
   }
+  app.quit();
 });

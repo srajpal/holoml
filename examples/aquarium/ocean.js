@@ -90,14 +90,14 @@ export const KINDS = [
   },
   {
     kind: 'turtle',
-    about: 'the flatback sea turtle',
-    name: 'Flatback sea turtle',
+    about: 'the hawksbill sea turtle',
+    name: 'Hawksbill sea turtle',
     count: 1,
     speed: [0.35, 0.7],
     depth: [2.8, 5.8],
     school: false,
     clearance: 0.8,
-    text: 'Lives on the shallow sea floor around northern Australia, and lays its eggs only on Australian beaches. Named for its flat, smooth shell, it eats sea cucumbers, jellyfish, and soft corals, and comes up to breathe.',
+    text: 'Lives on coral reefs in warm seas all round the world. Named for its narrow, pointed beak, which picks sponges, its main food, out of cracks in the reef. Long hunted for its patterned shell, it is now critically endangered.',
   },
   {
     kind: 'tuna',
