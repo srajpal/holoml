@@ -7,7 +7,7 @@
   </head>
   <!-- A bright hall, 26 m long, with five bays on each wall. Each bay's
        shoe is in a group that loads by area: it loads when the viewer
-       comes within 7 m and is let go beyond 10.5 m, and a lighter
+       comes within 7.5 m and is let go beyond 11.25 m, and a lighter
        stand-in shows in its place until then. -->
   <scene background="#f1efeb">
     <viewpoint id="entrance" mode="walk" position="0 1.6 -1.6" look-at="0 1.4 -12" label="Entrance" />
