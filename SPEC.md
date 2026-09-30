@@ -228,13 +228,13 @@ place. The codes:
 | `no-root` | The document has no root element |
 | `text-outside-root` | Text before or after the root element |
 | `second-root` | A second root element |
-| `unexpected-end` | A tag is not finished before the end of the text |
+| `unexpected-end` | A tag that is not finished: the text ends inside it, or an end tag holds more than its name |
 | `invalid-name` | A name was expected (for example `< scene>`) |
 | `uppercase-name` | A name uses upper-case letters |
 | `unquoted-value` | An attribute value without quotes |
 | `unclosed-value` | An attribute value whose closing quote is missing |
 | `duplicate-attribute` | An attribute given twice on one element |
-| `missing-space` | Two attributes with no space between them |
+| `missing-space` | No whitespace where a tag needs it: two attributes with none between them, or a character a name cannot have |
 | `stray-slash` | A `/` in a tag that is not followed by `>` |
 | `unclosed-element` | An element still open at the end of the text |
 | `mismatched-end-tag` | An end tag that does not match the open element |
@@ -244,8 +244,89 @@ place. The codes:
 | `bad-comment` | A comment that contains `--` |
 | `unsupported-markup` | `<!...>` or `<?...?>` other than a comment |
 | `less-than-in-value` | A `<` inside an attribute value |
-| `null-character` | The null character |
+| `null-character` | The null character, in text, in a value, or in a comment |
 | `too-deep` | An element nested more than 256 deep |
+
+### Where a syntax error is reported
+
+A reader reads a page from its start, and the error it reports is the
+first rule below that the text breaks as it is read; its place is a
+line and a column, as above. The conformance samples hold readers to
+these places.
+
+Outside the root element, before it and after it:
+
+- An end tag (`</`) is a `stray-end-tag`, at its `<`.
+- After the root, another element is a `second-root`, at its `<`.
+- Anything else that is not whitespace or a comment is
+  `text-outside-root`, at its first character.
+- Where the text ends and there was no root, the error is `no-root`, at
+  the end of the text: the place after its last character.
+
+An element, from its `<`:
+
+- An element that would be the 257th deep is `too-deep`, at its `<`,
+  whatever follows.
+- `<!` that does not begin a comment (`<!--`), and `<?`, are
+  `unsupported-markup`, at the `<`.
+- Where a name begins (after `<`, after `</`, and where an attribute
+  begins), a character that is not a letter is an `invalid-name`, at
+  that character; a comment inside a tag is one, at its `<`. A name runs
+  to the first character that is not a letter, a digit, or `-`; a name
+  with an upper-case letter in it is an `uppercase-name`, at the name's
+  first character.
+- After the element's name, and after each attribute, come whitespace,
+  `>`, or `/`. Any other character is a `missing-space`, at that
+  character.
+- After whitespace comes an attribute: its name, and optionally `=` and
+  a value, with whitespace allowed on both sides of the `=`. A name the
+  tag already has is a `duplicate-attribute`, at the later name's first
+  character. After the `=`, a character that is not a quote is an
+  `unquoted-value`, at that character.
+- A `/` that is not followed at once by `>` is a `stray-slash`, at the
+  `/`.
+- Where the text ends inside a tag, the error is `unexpected-end`, at
+  the tag's `<`, whatever was to come next: a name, a value after `=`,
+  or the `>` after `/`. Inside a value it is `unclosed-value`, below.
+
+A value, from its opening quote to the same quote again:
+
+- A `<` is a `less-than-in-value`, at the `<`. But where a line end
+  stands between the opening quote and that `<`, the closing quote is
+  taken to be missing, which is what such a `<` nearly always means, and
+  the error is `unclosed-value`, at the opening quote. A line end
+  written as a character reference is not one.
+- Where the text ends before the closing quote, the error is
+  `unclosed-value`, at the opening quote.
+
+An end tag, `</` and a name, then optional whitespace, then `>`:
+
+- Anything else between the name and the `>`, the end of the text
+  included, is an `unexpected-end`, at the end tag's `<`.
+- Then, a name that is not the open element's is a
+  `mismatched-end-tag`, at the end tag's `<`.
+
+Content, text, and comments:
+
+- Where the text ends while an element is open, the error is
+  `unclosed-element`, at the `<` of the innermost element still open.
+- A character reference is `&`, then one of the five names, or `#` and 1
+  to 7 decimal digits, or `#x` and 1 to 6 hexadecimal digits, then `;`.
+  The number is a Unicode scalar value other than 0: 1 to D7FF or E000
+  to 10FFFF, in hexadecimal. Any other `&`, in text or in a value, is a
+  `bad-character-reference`, at the `&`.
+- A comment is `<!--`, its text, and the first `-->` after that. With no
+  `-->` it is an `unclosed-comment`; otherwise, with `--` in its text,
+  it is a `bad-comment`; both at the comment's `<`.
+- A null character in text, in a value, or in a comment (one that is
+  closed and has no `--`) is a `null-character`, at that character.
+  Anywhere else it is the error any other character would be in its
+  place: `text-outside-root`, `invalid-name`, or `missing-space`.
+
+In the tree a reader gives for a page that has no error, the place of
+an element is its `<`; of an attribute, the first character of its
+name; and of text, its first character, whitespace included: the one
+after the `>` or the `-->` before it.
 
 ## 6. Space, units, and values
 
@@ -1415,6 +1496,7 @@ start-tag      = "<" name *( 1*S attribute ) *S ">"
                  ; unexpected-end: the text ends inside a tag
                  ; missing-space: an attribute with no space before it
 end-tag        = "</" name *S ">"
+                 ; unexpected-end: more than the name before the ">"
                  ; mismatched-end-tag: the name of another element
                  ; stray-end-tag: an end tag with no element open
 content        = *( element / comment / text )
@@ -1429,7 +1511,8 @@ value          = DQUOTE *( dq-char / reference ) DQUOTE
                / "'" *( sq-char / reference ) "'"
                  ; unquoted-value: a value without quotes
                  ; unclosed-value: a value whose closing quote is missing
-                 ; less-than-in-value: a "<" in a value
+                 ; less-than-in-value: a "<" in a value (after a line
+                 ; end in the value, unclosed-value: section 5)
 dq-char        = %x01-21 / %x23-25 / %x27-3B / %x3D-10FFFF
                  ; any character but NUL, '"', "&", and "<"
 sq-char        = %x01-25 / %x28-3B / %x3D-10FFFF
@@ -1438,7 +1521,7 @@ sq-char        = %x01-25 / %x28-3B / %x3D-10FFFF
 text           = 1*( text-char / reference )
 text-char      = %x01-25 / %x27-3B / %x3D-10FFFF
                  ; any character but NUL, "&", and "<"
-                 ; null-character: NUL anywhere in a page
+                 ; null-character: NUL in text, a value, or a comment
 reference      = "&" ( %s"amp" / %s"lt" / %s"gt" / %s"quot" / %s"apos"
                      / "#" 1*7DIGIT / %s"#x" 1*6HEXDIG ) ";"
                  ; a number names a Unicode scalar value other than 0:

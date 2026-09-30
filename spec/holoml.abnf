@@ -23,6 +23,7 @@ start-tag      = "<" name *( 1*S attribute ) *S ">"
                  ; unexpected-end: the text ends inside a tag
                  ; missing-space: an attribute with no space before it
 end-tag        = "</" name *S ">"
+                 ; unexpected-end: more than the name before the ">"
                  ; mismatched-end-tag: the name of another element
                  ; stray-end-tag: an end tag with no element open
 content        = *( element / comment / text )
@@ -37,7 +38,8 @@ value          = DQUOTE *( dq-char / reference ) DQUOTE
                / "'" *( sq-char / reference ) "'"
                  ; unquoted-value: a value without quotes
                  ; unclosed-value: a value whose closing quote is missing
-                 ; less-than-in-value: a "<" in a value
+                 ; less-than-in-value: a "<" in a value (after a line
+                 ; end in the value, unclosed-value: section 5)
 dq-char        = %x01-21 / %x23-25 / %x27-3B / %x3D-10FFFF
                  ; any character but NUL, '"', "&", and "<"
 sq-char        = %x01-25 / %x28-3B / %x3D-10FFFF
@@ -46,7 +48,7 @@ sq-char        = %x01-25 / %x28-3B / %x3D-10FFFF
 text           = 1*( text-char / reference )
 text-char      = %x01-25 / %x27-3B / %x3D-10FFFF
                  ; any character but NUL, "&", and "<"
-                 ; null-character: NUL anywhere in a page
+                 ; null-character: NUL in text, a value, or a comment
 reference      = "&" ( %s"amp" / %s"lt" / %s"gt" / %s"quot" / %s"apos"
                      / "#" 1*7DIGIT / %s"#x" 1*6HEXDIG ) ";"
                  ; a number names a Unicode scalar value other than 0:

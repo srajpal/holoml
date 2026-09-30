@@ -16,25 +16,25 @@ This page is made by `pnpm reference:update`; do not edit it by hand.
 | Code | Meaning | Samples |
 |---|---|---|
 | `no-root` | The document has no root element | [no-root](../../conformance/syntax-errors/no-root.holoml) |
-| `text-outside-root` | Text before or after the root element | [text-outside-root](../../conformance/syntax-errors/text-outside-root.holoml) |
+| `text-outside-root` | Text before or after the root element | [text-after-root](../../conformance/syntax-errors/text-after-root.holoml), [text-outside-root](../../conformance/syntax-errors/text-outside-root.holoml) |
 | `second-root` | A second root element | [second-root](../../conformance/syntax-errors/second-root.holoml) |
-| `unexpected-end` | A tag is not finished before the end of the text | [unexpected-end](../../conformance/syntax-errors/unexpected-end.holoml) |
-| `invalid-name` | A name was expected (for example `< scene>`) | [invalid-name](../../conformance/syntax-errors/invalid-name.holoml) |
-| `uppercase-name` | A name uses upper-case letters | [after-byte-order-mark](../../conformance/syntax-errors/after-byte-order-mark.holoml), [uppercase-name](../../conformance/syntax-errors/uppercase-name.holoml) |
+| `unexpected-end` | A tag that is not finished: the text ends inside it, or an end tag holds more than its name | [end-tag-with-attribute](../../conformance/syntax-errors/end-tag-with-attribute.holoml), [unexpected-end-after-equals](../../conformance/syntax-errors/unexpected-end-after-equals.holoml), [unexpected-end-after-less-than](../../conformance/syntax-errors/unexpected-end-after-less-than.holoml), [unexpected-end-after-slash](../../conformance/syntax-errors/unexpected-end-after-slash.holoml), [unexpected-end-in-end-tag](../../conformance/syntax-errors/unexpected-end-in-end-tag.holoml), [unexpected-end](../../conformance/syntax-errors/unexpected-end.holoml) |
+| `invalid-name` | A name was expected (for example `< scene>`) | [comment-in-tag](../../conformance/syntax-errors/comment-in-tag.holoml), [invalid-name](../../conformance/syntax-errors/invalid-name.holoml), [null-in-tag](../../conformance/syntax-errors/null-in-tag.holoml), [value-without-name](../../conformance/syntax-errors/value-without-name.holoml) |
+| `uppercase-name` | A name uses upper-case letters | [after-byte-order-mark](../../conformance/syntax-errors/after-byte-order-mark.holoml), [uppercase-attribute](../../conformance/syntax-errors/uppercase-attribute.holoml), [uppercase-name](../../conformance/syntax-errors/uppercase-name.holoml) |
 | `unquoted-value` | An attribute value without quotes | [unquoted-value](../../conformance/syntax-errors/unquoted-value.holoml) |
-| `unclosed-value` | An attribute value whose closing quote is missing | [unclosed-value](../../conformance/syntax-errors/unclosed-value.holoml) |
+| `unclosed-value` | An attribute value whose closing quote is missing | [unclosed-value-at-end](../../conformance/syntax-errors/unclosed-value-at-end.holoml), [unclosed-value](../../conformance/syntax-errors/unclosed-value.holoml) |
 | `duplicate-attribute` | An attribute given twice on one element | [duplicate-attribute](../../conformance/syntax-errors/duplicate-attribute.holoml) |
-| `missing-space` | Two attributes with no space between them | [missing-space](../../conformance/syntax-errors/missing-space.holoml) |
+| `missing-space` | No whitespace where a tag needs it: two attributes with none between them, or a character a name cannot have | [missing-space](../../conformance/syntax-errors/missing-space.holoml), [underscore-in-name](../../conformance/syntax-errors/underscore-in-name.holoml) |
 | `stray-slash` | A `/` in a tag that is not followed by `>` | [stray-slash](../../conformance/syntax-errors/stray-slash.holoml) |
 | `unclosed-element` | An element still open at the end of the text | [unclosed-element](../../conformance/syntax-errors/unclosed-element.holoml) |
 | `mismatched-end-tag` | An end tag that does not match the open element | [mismatched-end-tag-nested](../../conformance/syntax-errors/mismatched-end-tag-nested.holoml), [mismatched-end-tag](../../conformance/syntax-errors/mismatched-end-tag.holoml) |
-| `stray-end-tag` | An end tag with no element open | [stray-end-tag](../../conformance/syntax-errors/stray-end-tag.holoml) |
-| `bad-character-reference` | An `&` that is not a known character reference | [bad-character-reference](../../conformance/syntax-errors/bad-character-reference.holoml), [bare-ampersand](../../conformance/syntax-errors/bare-ampersand.holoml), [inherited-reference](../../conformance/syntax-errors/inherited-reference.holoml) |
+| `stray-end-tag` | An end tag with no element open | [end-tag-after-root](../../conformance/syntax-errors/end-tag-after-root.holoml), [stray-end-tag](../../conformance/syntax-errors/stray-end-tag.holoml) |
+| `bad-character-reference` | An `&` that is not a known character reference | [bad-character-reference](../../conformance/syntax-errors/bad-character-reference.holoml), [bare-ampersand](../../conformance/syntax-errors/bare-ampersand.holoml), [inherited-reference](../../conformance/syntax-errors/inherited-reference.holoml), [reference-in-value](../../conformance/syntax-errors/reference-in-value.holoml), [reference-to-surrogate](../../conformance/syntax-errors/reference-to-surrogate.holoml), [reference-to-zero](../../conformance/syntax-errors/reference-to-zero.holoml), [reference-too-large](../../conformance/syntax-errors/reference-too-large.holoml), [reference-too-long](../../conformance/syntax-errors/reference-too-long.holoml), [reference-upper-case-x](../../conformance/syntax-errors/reference-upper-case-x.holoml) |
 | `unclosed-comment` | A comment with no `-->` | [unclosed-comment](../../conformance/syntax-errors/unclosed-comment.holoml) |
 | `bad-comment` | A comment that contains `--` | [bad-comment](../../conformance/syntax-errors/bad-comment.holoml) |
-| `unsupported-markup` | `<!...>` or `<?...?>` other than a comment | [unsupported-markup](../../conformance/syntax-errors/unsupported-markup.holoml) |
+| `unsupported-markup` | `<!...>` or `<?...?>` other than a comment | [cdata-section](../../conformance/syntax-errors/cdata-section.holoml), [processing-instruction](../../conformance/syntax-errors/processing-instruction.holoml), [unsupported-markup](../../conformance/syntax-errors/unsupported-markup.holoml) |
 | `less-than-in-value` | A `<` inside an attribute value | [less-than-in-value](../../conformance/syntax-errors/less-than-in-value.holoml) |
-| `null-character` | The null character | [null-character](../../conformance/syntax-errors/null-character.holoml), [null-in-comment](../../conformance/syntax-errors/null-in-comment.holoml) |
+| `null-character` | The null character, in text, in a value, or in a comment | [null-character](../../conformance/syntax-errors/null-character.holoml), [null-in-comment](../../conformance/syntax-errors/null-in-comment.holoml), [null-in-value](../../conformance/syntax-errors/null-in-value.holoml) |
 | `too-deep` | An element nested more than 256 deep | [too-deep](../../conformance/syntax-errors/too-deep.holoml) |
 
 ## Problems

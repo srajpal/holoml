@@ -35,6 +35,23 @@ describe('conformance samples (O2, O3, O4)', () => {
         'null-in-comment': 'null-character',
         // The third edition of 0.2 (review 134).
         'after-byte-order-mark': 'uppercase-name',
+        'reference-to-zero': 'bad-character-reference',
+        'reference-to-surrogate': 'bad-character-reference',
+        'reference-too-large': 'bad-character-reference',
+        'reference-too-long': 'bad-character-reference',
+        'reference-upper-case-x': 'bad-character-reference',
+        'reference-in-value': 'bad-character-reference',
+        'null-in-value': 'null-character',
+        'null-in-tag': 'invalid-name',
+        'end-tag-with-attribute': 'unexpected-end',
+        'comment-in-tag': 'invalid-name',
+        'value-without-name': 'invalid-name',
+        'uppercase-attribute': 'uppercase-name',
+        'underscore-in-name': 'missing-space',
+        'cdata-section': 'unsupported-markup',
+        'processing-instruction': 'unsupported-markup',
+        'end-tag-after-root': 'stray-end-tag',
+        'text-after-root': 'text-outside-root',
       };
       expect(code, s.name).toBe(variants[s.name]);
     }

@@ -166,6 +166,9 @@ class Parser {
 
   private elementBody(startOffset: number): ElementNode {
     this.i += 1; // <
+    // Where the text ends inside a tag, the tag is what is wrong, whatever was
+    // to come next: a name, a value, or the ">" after a "/" (SPEC.md section 5).
+    if (this.i >= this.s.length) throw this.error('unexpected-end', 'A tag is not finished', startOffset);
     const c = this.s.charCodeAt(this.i);
     if (c === 0x21 /* ! */ || c === 0x3f /* ? */) {
       throw this.error('unsupported-markup', 'Declarations and processing instructions are not part of HoloML', startOffset);
@@ -182,6 +185,7 @@ class Parser {
         break;
       }
       if (ch === 0x2f /* / */) {
+        if (this.i + 1 >= this.s.length) throw this.error('unexpected-end', `The <${name}> tag is not finished`, startOffset);
         if (this.s.charCodeAt(this.i + 1) !== 0x3e) throw this.error('stray-slash', 'A "/" in a tag must be followed by ">"', this.i);
         this.i += 2;
         return node;
@@ -197,6 +201,7 @@ class Parser {
       if (this.s.charCodeAt(this.i) === 0x3d /* = */) {
         this.i += 1;
         this.skipSpace();
+        if (this.i >= this.s.length) throw this.error('unexpected-end', `The <${name}> tag is not finished`, startOffset);
         value = this.quoted(attrName);
       } else {
         this.i = afterName;
@@ -214,8 +219,10 @@ class Parser {
         if (this.s.charCodeAt(this.i + 1) === 0x2f) {
           const endStart = this.i;
           this.i += 2;
+          if (this.i >= this.s.length) throw this.error('unexpected-end', 'An end tag is not finished', endStart);
           const endName = this.name('element');
           this.skipSpace();
+          // An end tag holds its name and nothing more: anything else before its ">" leaves it unfinished.
           if (this.s.charCodeAt(this.i) !== 0x3e) throw this.error('unexpected-end', `The </${endName}> tag is not finished`, endStart);
           this.i += 1;
           if (endName !== name) {
@@ -267,7 +274,9 @@ class Parser {
       const c = this.s.charCodeAt(this.i);
       if (c === q) break;
       if (c === 0x3c) {
-        // A "<" after a line break almost always means the closing quote is missing.
+        // A "<" after a line end almost always means the closing quote is
+        // missing: the value is reported, where it opens, and not the "<"
+        // of the next tag (SPEC.md section 5 says so).
         if (/[\r\n]/.test(this.s.slice(open, this.i))) throw unclosed();
         throw this.error('less-than-in-value', `Write "&lt;" for "<" in the value of "${attrName}"`, this.i);
       }

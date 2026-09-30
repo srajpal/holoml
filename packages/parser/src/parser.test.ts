@@ -170,17 +170,17 @@ describe('serialize', () => {
 
 describe('places (review 134, L7)', () => {
   it('after a byte order mark, line 1 counts its columns from the first character after the mark', () => {
-    expect(errorOf('﻿<A/>')).toBe('uppercase-name 1:2');
+    expect(errorOf('\uFEFF<A/>')).toBe('uppercase-name 1:2');
     expect(errorOf('<A/>')).toBe('uppercase-name 1:2');
-    expect(errorOf('﻿')).toBe('no-root 1:1');
-    expect(errorOf('﻿x')).toBe('text-outside-root 1:1');
-    const doc = parse('﻿<a b="1">\n  <c /></a>');
+    expect(errorOf('\uFEFF')).toBe('no-root 1:1');
+    expect(errorOf('\uFEFFx')).toBe('text-outside-root 1:1');
+    const doc = parse('\uFEFF<a b="1">\n  <c /></a>');
     expect(doc.root.start).toEqual({ line: 1, column: 1, offset: 1 });
     expect(doc.root.attributes[0]!.start).toEqual({ line: 1, column: 4, offset: 4 });
     // Later lines are as they were.
     expect((doc.root.children[0] as ElementNode).start).toEqual({ line: 2, column: 3, offset: 13 });
     // Only a mark at the very start is one: a second is text.
-    expect(errorOf('﻿﻿<a />')).toBe('text-outside-root 1:1');
+    expect(errorOf('\uFEFF\uFEFF<a />')).toBe('text-outside-root 1:1');
   });
 
   it('a text says where its first character that is not whitespace is written, a character reference counting as one', () => {
@@ -193,6 +193,113 @@ describe('places (review 134, L7)', () => {
     expect(text('<a>&#10;&#10;x</a>')).toMatchObject({ start: { line: 1, column: 4 }, visible: { line: 1, column: 4 } });
     expect(text('<a>  &#32;x</a>')).toMatchObject({ visible: { line: 1, column: 6 } });
     expect(text('<a>\n  &#32;</a>')).toMatchObject({ visible: { line: 2, column: 3 } });
+  });
+});
+
+describe('which error, and where (SPEC.md section 5, "What is reported, and where"; review 134, L3)', () => {
+  const NUL = String.fromCharCode(0);
+
+  it('the text ends inside a tag: unexpected-end at the tag, whatever was to come next', () => {
+    for (const text of ['<', '<a', '<a ', '<a b', '<a b=', '<a b= ', '<a b="1"', '<a b="1" ', '<a/', '<a /']) {
+      expect(errorOf(text), text).toBe('unexpected-end 1:1');
+    }
+    for (const text of ['<a><', '<a><b', '<a><b c=', '<a><b/', '<a></', '<a></a', '<a></a ']) {
+      expect(errorOf(text), text).toBe('unexpected-end 1:4');
+    }
+    // Inside a value that was opened, it is the value that is not closed.
+    expect(errorOf('<a b="1')).toBe('unclosed-value 1:6');
+    expect(errorOf("<a b='")).toBe('unclosed-value 1:6');
+  });
+
+  it('an end tag holds its name and nothing more: anything else before its ">" leaves it unfinished', () => {
+    expect(errorOf('<a></a b>')).toBe('unexpected-end 1:4');
+    expect(errorOf('<a></a/>')).toBe('unexpected-end 1:4');
+    expect(errorOf('<a>\n</a\n b="1">')).toBe('unexpected-end 2:1');
+    // Before its name is compared: an unfinished end tag of another name is unfinished first.
+    expect(errorOf('<a></b c>')).toBe('unexpected-end 1:4');
+    expect(errorOf('<a></b >')).toBe('mismatched-end-tag 1:4');
+    expect(errorOf('<a></ a>')).toBe('invalid-name 1:6');
+    expect(errorOf('<a></A>')).toBe('uppercase-name 1:6');
+  });
+
+  it('a "<" in a value is reported where it is, or, after a line end in the value, as a value that is not closed', () => {
+    expect(errorOf('<a b="1<2" />')).toBe('less-than-in-value 1:8');
+    expect(errorOf('<a b="1 <c d="2" />')).toBe('less-than-in-value 1:9');
+    expect(errorOf('<a b="1\n<c />')).toBe('unclosed-value 1:6');
+    expect(errorOf('<a b="1\r  <c />')).toBe('unclosed-value 1:6');
+    expect(errorOf('<a\n  b="1 />\n</a>')).toBe('unclosed-value 2:5');
+    // A line end written as a reference is not one.
+    expect(errorOf('<a b="1&#10;<c />')).toBe('less-than-in-value 1:13');
+    // Without a "<" the value runs to the next quote, or to the end of the text.
+    expect(errorOf('<a b="1 />\n')).toBe('unclosed-value 1:6');
+  });
+
+  it('in a tag: a name, a space, a value, a slash', () => {
+    expect(errorOf('< a />')).toBe('invalid-name 1:2');
+    expect(errorOf('<1a />')).toBe('invalid-name 1:2');
+    expect(errorOf('<a ="1" />')).toBe('invalid-name 1:4');
+    expect(errorOf('<a <!-- c --> />')).toBe('invalid-name 1:4');
+    expect(errorOf('<a B="1" />')).toBe('uppercase-name 1:4');
+    expect(errorOf('<aB />')).toBe('uppercase-name 1:2');
+    expect(errorOf('<a_b />')).toBe('missing-space 1:3');
+    expect(errorOf('<a"1" />')).toBe('missing-space 1:3');
+    expect(errorOf('<a b c="1"d />')).toBe('missing-space 1:11');
+    expect(errorOf('<a b = \t"1" c\n=\n\'2\' />')).toBe('no error');
+    expect(errorOf('<a b=1 />')).toBe('unquoted-value 1:6');
+    expect(errorOf('<a b= c="1" />')).toBe('unquoted-value 1:7');
+    expect(errorOf('<a b=>')).toBe('unquoted-value 1:6');
+    expect(errorOf('<a b c b />')).toBe('duplicate-attribute 1:8');
+    expect(errorOf('<a / >')).toBe('stray-slash 1:4');
+    expect(errorOf('<a /b>')).toBe('stray-slash 1:4');
+  });
+
+  it('a null character is reported as one in text, in a value, and in a comment; elsewhere as the mistake any character would be there', () => {
+    expect(errorOf(`<a>x${NUL}</a>`)).toBe('null-character 1:5');
+    expect(errorOf(`<a b="${NUL}" />`)).toBe('null-character 1:7');
+    expect(errorOf(`<a><!--${NUL}--></a>`)).toBe('null-character 1:8');
+    expect(errorOf(`${NUL}<a />`)).toBe('text-outside-root 1:1');
+    expect(errorOf(`<a ${NUL}/>`)).toBe('invalid-name 1:4');
+    expect(errorOf(`<a${NUL}/>`)).toBe('missing-space 1:3');
+  });
+
+  it('a comment: not closed, then "--" inside it, then a null character, in that order; all but the last at its "<"', () => {
+    expect(errorOf('<a><!-- x </a>')).toBe('unclosed-comment 1:4');
+    expect(errorOf('<a><!-->')).toBe('unclosed-comment 1:4');
+    expect(errorOf('<a><!-- x -- y --></a>')).toBe('bad-comment 1:4');
+    expect(errorOf(`<a><!-- ${NUL} -- --></a>`)).toBe('bad-comment 1:4');
+    expect(errorOf('<a><!----></a>')).toBe('no error');
+    expect(errorOf('<a><!-- x ---></a>')).toBe('no error');
+    expect(errorOf('<a><!- x -></a>')).toBe('unsupported-markup 1:4');
+    expect(errorOf('<a><![CDATA[x]]></a>')).toBe('unsupported-markup 1:4');
+  });
+
+  it('outside the root: an end tag, a second root, text, or no root at all', () => {
+    expect(errorOf('</a>')).toBe('stray-end-tag 1:1');
+    expect(errorOf('</')).toBe('stray-end-tag 1:1');
+    expect(errorOf('<a />\n</a>')).toBe('stray-end-tag 2:1');
+    expect(errorOf('<a />\n<!-- c --> <b />')).toBe('second-root 2:12');
+    expect(errorOf('<a /> x')).toBe('text-outside-root 1:7');
+    expect(errorOf('&amp;<a />')).toBe('text-outside-root 1:1');
+    // No root: at the end of the text, after what little there is.
+    expect(errorOf(' \n <!-- c -->\n')).toBe('no-root 3:1');
+    expect(errorOf('  ')).toBe('no-root 1:3');
+  });
+
+  it('a character reference: a name of the five, or a number that is a character', () => {
+    for (const ok of ['&amp;', '&lt;', '&gt;', '&quot;', '&apos;', '&#1;', '&#0000065;', '&#x41;', '&#xd7ff;', '&#xE000;', '&#x10FFFF;', '&#1114111;']) {
+      expect(errorOf(`<a>${ok}</a>`), ok).toBe('no error');
+      expect(errorOf(`<a b="${ok}" />`), ok).toBe('no error');
+    }
+    for (const bad of ['&', '&;', '&amp', '&AMP;', '&nbsp;', '&#;', '&#x;', '&#0;', '&#x0;', '&#xD800;', '&#xDFFF;', '&#55296;', '&#x110000;', '&#1114112;', '&#X41;', '&#00000065;', '&#x0000041;', '&# 65;', '&#6 5;', '&#-1;']) {
+      expect(errorOf(`<a>x${bad}</a>`), bad).toBe('bad-character-reference 1:5');
+      expect(errorOf(`<a b="${bad}" />`), bad).toBe('bad-character-reference 1:7');
+    }
+  });
+
+  it('elements: one too deep, not closed, closed by another name', () => {
+    expect(errorOf('<a>\n <b>\n  <c>')).toBe('unclosed-element 3:3');
+    expect(errorOf('<a>\n <b>\n  <c />')).toBe('unclosed-element 2:2');
+    expect(errorOf('<a>\n <b>\n </a>')).toBe('mismatched-end-tag 3:2');
   });
 });
 
