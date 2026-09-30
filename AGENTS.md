@@ -82,7 +82,7 @@ after they ran; on Windows and Linux in GitHub Actions,
 - Toolchain: Node 22.13 or newer; pnpm 12.4.1, pinned in package.json.
 - Install: `pnpm install --frozen-lockfile`
 - Unit, conformance, documentation, and site tests: `pnpm test` (Vitest;
-  362 tests passed on 2026-09-29)
+  505 tests passed on 2026-09-30)
 - Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
 - After adding or changing a sample: `pnpm conformance:update` writes
   its `.expected.json`; read every changed file before committing, since
