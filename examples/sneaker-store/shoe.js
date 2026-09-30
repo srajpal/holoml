@@ -24,7 +24,8 @@ holoml.on('change', (e) => {
 });
 // "Add to cart" is a click action's trigger: its chime plays, and scripts hear the click (from the mouse or the keyboard).
 holoml.on('click', (e) => {
-  if (e.thing?.id !== 'add') return;
+  // The first button only, as the chime: a right-click adds nothing.
+  if (e.button !== 'left' || e.thing?.id !== 'add') return;
   writeCart([...readCart(), { colour: colour.value, size: size.value }]);
   show();
 });

@@ -29,6 +29,9 @@ Published at https://srajpal.github.io/holoml/blockworld/ (open
   rest through the scene API (`holoml`, SPEC.md section 10): it adds the
   island's blocks with `holoml.add`, breaks them with `remove`, hears
   clicks and keys, and moves the sun, the light, and the sky every frame.
+- Eight torches give light at once. A ninth takes the light that has
+  burned longest, and the torch that lost it is lit again when another
+  torch is broken.
 - Walls and gravity: blocks are `solid`, and the viewpoint has
   `gravity`, `jump`, and a `crosshair`.
 - Speeds: the viewpoint's `speed` (4.3 metres a second) and `turn-speed`

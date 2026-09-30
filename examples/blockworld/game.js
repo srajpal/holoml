@@ -255,13 +255,21 @@ function placeAt(hit) {
   const eye = holoml.viewer.position;
   const feet = eye[1] - 1.6;
   if (nx < eye[0] + 0.3 && nx + 1 > eye[0] - 0.3 && nz < eye[2] + 0.3 && nz + 1 > eye[2] - 0.3 && ny < feet + 1.8 && ny + 1 > feet) return;
-  if (there === 'water') {
-    shown.get(k)?.remove();
-    shown.delete(k);
-  }
+  const water = there === 'water' ? shown.get(k) : undefined;
+  shown.delete(k);
   const kind = HAND[hand];
   world.set(k, kind);
   show([k]);
+  if (!shown.has(k)) {
+    // The page has no room for it (holoml.add left it out at a limit, and the console says why): the
+    // world stays as it was, so that no block is there that cannot be seen, broken, or built on.
+    if (there) world.set(k, there);
+    else world.delete(k);
+    if (water) shown.set(k, water);
+    say('There is no room for more blocks.');
+    return;
+  }
+  water?.remove();
   if (kind === 'torch') lightTorch(k);
   sound('place').play();
 }
@@ -283,23 +291,41 @@ function deposit() {
 }
 
 // ---- Torches: eight lights, moved to where torches are placed ---------------
+//
+// A ninth torch takes the light that has burned longest, and the torch
+// that lost it waits: it is lit again as soon as a torch is broken and
+// its light is free.
 
-const lights = Array.from({ length: 8 }, (_, i) => ({ light: holoml.find(`torch-${i + 1}`), at: null }));
-let nextLight = 0;
+const lights = Array.from({ length: 8 }, (_, i) => ({ light: holoml.find(`torch-${i + 1}`), at: null, since: 0 }));
+/** Torches without a light, the one that has waited longest first. */
+const unlit = [];
+let lightings = 0;
 function lightTorch(k) {
   const [x, y, z] = unkey(k);
-  const slot = lights.find((l) => l.at === null) ?? lights[nextLight++ % lights.length];
+  let slot = lights.find((l) => l.at === null);
+  if (!slot) {
+    slot = lights.reduce((a, b) => (a.since <= b.since ? a : b));
+    unlit.push(slot.at);
+  }
   slot.at = k;
+  slot.since = ++lightings;
   slot.light.position = [x + 0.5, y + 0.8, z + 0.5];
   slot.light.intensity = 0.9;
 }
 function freeTorch(k) {
+  const waiting = unlit.indexOf(k);
+  if (waiting >= 0) {
+    unlit.splice(waiting, 1);
+    return;
+  }
   for (const l of lights) {
     if (l.at !== k) continue;
     l.at = null;
     l.light.intensity = 0;
     l.light.position = [0, -50, 0];
   }
+  const next = unlit.shift();
+  if (next !== undefined) lightTorch(next);
 }
 
 // ---- Input ---------------------------------------------------------------------
