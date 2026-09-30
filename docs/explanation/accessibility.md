@@ -21,9 +21,10 @@ it holds, the renderer can make these itself.
 ## The keyboard
 
 Everything the mouse does, the keyboard can do. Walking and turning
-work from the keys: in HyperSpace 3D, the arrow keys or W, A, S, D walk,
-Page Up and Page Down look up and down, Shift runs, and Space jumps
-where the page allows it.
+work from the keys: in HyperSpace 3D, W and S or the up and down arrows
+walk, A and D step to the side, the left and right arrows turn, Page Up
+and Page Down look up and down, Shift runs, and Space jumps where the
+page allows it.
 
 Through the outline, the keyboard reaches the page's links, its click
 actions (a door, a lamp), and its places, and it reaches the sliders and
@@ -53,8 +54,10 @@ accessible web pages, apply to them as to any web page.
 
 Some people ask their computer for less movement, a setting that web
 pages see as `prefers-reduced-motion`. With it, a click action shows its
-end at once, so a door is simply open; a fade between pages becomes a
-cut; the water's moving light holds still; and scripts are told
+end at once, so a door is simply open; an animation that begins with
+the page shows its end; a model's own animation holds at its first
+frame; a fade between pages becomes a cut; the water's moving light
+holds still; and scripts are told
 (`holoml.reducedMotion`), so that they can keep still what would only
 move for effect. With reduced motion, Blockworld's clock stands still,
 and in the ocean tunnel the fish, the bubbles, and the light hold

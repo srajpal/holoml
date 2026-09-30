@@ -1,7 +1,7 @@
 {
   "name": "holoml",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "HoloML: an open markup language for fully 3D websites.",
   "license": "Apache-2.0",
   "type": "module",

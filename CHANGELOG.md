@@ -30,7 +30,25 @@ specification, and the conformance samples (HyperSpace 3D's prompt 134).
   from `unsafe-link`: `href="&#1;javascript:alert(1)"` was valid. An
   address with a control character is now a `bad-value` (below).
 
+- The example sites' tools stop when a model's own licence stamp
+  disagrees with its credit, or is not CC BY 4.0 or CC0
+  (examples/aquarium/tools/licence.mjs); the downloads of Harbour Loft
+  and the sofa studio are checked against recorded SHA-256 sums.
+- The site's builder refuses to empty a folder it did not make
+  (`node site/build.mjs .` removed the working tree).
+- The site is published only after lint, the type check, and the tests
+  pass; the job that publishes holds the two permissions that needs and
+  runs nothing else; every action is named by its commit.
+
 ### Changed
+
+- **The aquarium's turtle is replaced.** The flatback sea turtle's file
+  was licensed CC BY-NC 4.0 (non-commercial), though its record said
+  CC BY and it was credited so. It is now a hawksbill sea turtle by
+  Bindestrek, CC BY 4.0 by its record and its own stamp, with its
+  board's text about the hawksbill. The shark's and the snapper's
+  licence (CC BY 4.0, from the Babylon.js asset library's own
+  statement) is recorded.
 
 Stricter: a page that was valid can now have a problem.
 
@@ -92,9 +110,22 @@ Reported differently, in pages that already had a mistake:
   conformance sample; no sample depends on the order of problems at one
   place; the RELAX NG schema and the checker take and refuse the same
   values.
-- This change log.
+- This change log, a code of conduct, issue and pull request templates,
+  Dependabot, and line-end and editor settings.
 
 ### Fixed
+
+- The aquarium: feeding no longer breaks when reduced motion is
+  switched during a feed; only the main button feeds and adds to the
+  cart (the sneaker store's too); the fish's script makes no garbage
+  each frame. Blockworld: a torch gets its light back when one frees,
+  and a block the limits leave out is no longer kept unseen.
+- The examples' tools build into a separate folder and swap at the end,
+  after checking their downloads are there; their shared code is in
+  examples/tools/.
+- The site: a code block takes the keyboard only when it scrolls (the
+  specification's page had over a hundred Tab stops); the booking and
+  checkout pages' status lines and focus ring.
 
 - `serialize()` writes a tree that reads back the same: text beside a
   comment or an element, whitespace at the ends of text, and text that

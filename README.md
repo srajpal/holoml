@@ -76,7 +76,8 @@ several people.
 
 ```
 holoml/
-  SPEC.md            the language: versions 0.1 and 0.2 (0.2's second edition)
+  SPEC.md            the language: versions 0.1 and 0.2 (0.2's third edition)
+  CHANGELOG.md       what changed with each release
   spec/              its grammar: the syntax in ABNF, the structure in RELAX NG, the scene API in Web IDL
   docs/              the guides: tutorials, how-to guides, reference, and explanation
   site/              makes the published site from SPEC.md, docs/, and examples/ (pnpm site:build)
