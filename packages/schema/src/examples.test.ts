@@ -262,7 +262,7 @@ describe('examples', () => {
     const dir = join(EXAMPLES, 'aquarium');
     const credits = readFileSync(join(dir, 'models/CREDITS.md'), 'utf8');
     const about = readFileSync(join(dir, 'about.holoml'), 'utf8');
-    for (const who of ['Babylon.js', 'DigitalLife3D', 'BlueMesh', 'Amy Scott-Murray', 'GoldenZtuff', 'zixisun02', 'Dsanchez13', 'Microsoft']) {
+    for (const who of ['Babylon.js', 'Bindestrek', 'BlueMesh', 'Amy Scott-Murray', 'GoldenZtuff', 'zixisun02', 'Dsanchez13', 'Microsoft']) {
       expect(credits).toContain(who);
       expect(about).toContain(who);
     }
@@ -271,6 +271,17 @@ describe('examples', () => {
     // No licence that is not CC BY 4.0 or CC0 (the file has Windows line ends where Git converts them, as on
     // GitHub's Windows machines).
     for (const line of credits.split(/\r?\n/).filter((l) => /^- [a-z-]+\.glb, /.test(l))) expect(line).toMatch(/CC BY 4\.0\.$|CC0 1\.0\.$/);
+    // The turtle credited CC BY 4.0 while its file said non-commercial (review 134, E1) is gone from every
+    // place it was named, and CC BY 4.0's address is given wherever the fish are credited.
+    const places = { credits, about, readme: readFileSync(join(dir, 'README.md'), 'utf8'), notice: readFileSync(join(EXAMPLES, '../NOTICE'), 'utf8') };
+    for (const [place, text] of Object.entries(places)) {
+      expect(text, place).not.toMatch(/DigitalLife3D|flatback/i);
+      expect(text, place).toContain('https://creativecommons.org/licenses/by/4.0/');
+    }
+    expect(places.notice).toContain('the hawksbill sea turtle by Bindestrek');
+    expect(credits).toContain('- turtle.glb, Hawksbill sea turtle: "Hawksbill Turtle" by Bindestrek, https://sketchfab.com/3d-models/bd6c9327fd52469782f055a182659bd2, CC BY 4.0.');
+    // Where the licence of the two files without a stamp of their own is stated.
+    expect(credits).toMatch(/Babylon\.js\s+asset library \(github\.com\/BabylonJS\/Assets, at commit [0-9a-f]{7}\)/);
   });
 
   it("the aquarium's water, bubbling from its air stones, and Feed button", () => {

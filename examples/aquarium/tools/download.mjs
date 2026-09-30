@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FISH } from './fish.mjs';
+import { checkLicence } from './licence.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, 'cache');
@@ -44,11 +45,16 @@ async function save(file, { url, md5: sum }) {
 mkdirSync(cache, { recursive: true });
 for (const f of FISH) {
   const file = join(cache, `${f.id}.glb`);
-  if (existsSync(file) && sha256(readFileSync(file)) === f.sha256) continue;
+  if (existsSync(file) && sha256(readFileSync(file)) === f.sha256) {
+    checkLicence(f, readFileSync(file));
+    continue;
+  }
   const r = await fetch(f.url, { headers: HEADERS, signal: AbortSignal.timeout(300_000) });
   if (!r.ok) throw new Error(`${f.url}: ${r.status}`);
   const bytes = Buffer.from(await r.arrayBuffer());
   if (sha256(bytes) !== f.sha256) throw new Error(`${f.url}: not the file expected (its checksum differs)`);
+  // The file's own licence stamp agrees with its credit, or it is not saved (licence.mjs).
+  checkLicence(f, bytes);
   writeFileSync(file, bytes);
   console.log(`saved ${f.id}.glb (${(bytes.length / 1e6).toFixed(1)} MB)`);
 }

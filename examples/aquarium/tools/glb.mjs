@@ -126,8 +126,6 @@ export class GlbWriter {
 
 // ---- Small matrix and quaternion helpers (column-major, as glTF) ----------------------------
 
-export const identity = () => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-
 export function multiply(a, b) {
   const out = new Array(16).fill(0);
   for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) out[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
@@ -158,36 +156,8 @@ export function transformDirection(m, d) {
   return v.map((x) => x / l);
 }
 
-/** The inverse of an affine matrix. */
-export function invert(m) {
-  const [a00, a01, a02, , a10, a11, a12, , a20, a21, a22, , a30, a31, a32] = m;
-  const b01 = a22 * a11 - a12 * a21;
-  const b11 = -a22 * a10 + a12 * a20;
-  const b21 = a21 * a10 - a11 * a20;
-  const det = a00 * b01 + a01 * b11 + a02 * b21;
-  if (!det) throw new Error('a matrix without an inverse');
-  const d = 1 / det;
-  const r = [
-    b01 * d, (-a22 * a01 + a02 * a21) * d, (a12 * a01 - a02 * a11) * d, 0,
-    b11 * d, (a22 * a00 - a02 * a20) * d, (-a12 * a00 + a02 * a10) * d, 0,
-    b21 * d, (-a21 * a00 + a01 * a20) * d, (a11 * a00 - a01 * a10) * d, 0,
-    0, 0, 0, 1,
-  ];
-  const t = transformPoint(r, [a30, a31, a32]);
-  r[12] = -t[0];
-  r[13] = -t[1];
-  r[14] = -t[2];
-  return r;
-}
-
 /** A quaternion (x, y, z, w) turning `angle` radians about the unit `axis`. */
 export function axisAngle(axis, angle) {
   const s = Math.sin(angle / 2);
   return [axis[0] * s, axis[1] * s, axis[2] * s, Math.cos(angle / 2)];
-}
-
-export function quatMultiply(a, b) {
-  const [ax, ay, az, aw] = a;
-  const [bx, by, bz, bw] = b;
-  return [aw * bx + ax * bw + ay * bz - az * by, aw * by - ax * bz + ay * bw + az * bx, aw * bz + ax * by - ay * bx + az * bw, aw * bw - ax * bx - ay * by - az * bz];
 }

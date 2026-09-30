@@ -2,7 +2,7 @@
 
 An aquarium to walk through, in HoloML 0.2: a glass tunnel along the
 floor of a tank 24 m wide, 34 m long, and 6.5 m deep. Great white
-sharks, a flatback sea turtle, tuna, barramundi, and schools of bream,
+sharks, a hawksbill sea turtle, tuna, barramundi, and schools of bream,
 mackerel, snapper, clownfish, and copperband butterflyfish swim over
 and around you, among rocks, plants that sway, and bubbles rising from
 air stones, with light from the surface playing over the sand. Feed the
@@ -60,8 +60,10 @@ Published at https://srajpal.github.io/holoml/aquarium/ (open
   shell, and sand (checked against their checksums) into `tools/cache/`
   (not committed); `prepare.mjs` makes everything else from them and
   from `ocean.js`, with `fish.mjs` (the fish's sources and credits),
-  `fit.mjs` and `rig.mjs` (fitting a fish for the tank, and giving a
-  swim to one that has none), `shapes.mjs`, and `glb.mjs`:
+  `licence.mjs` (both tools stop when a file's own licence stamp is not
+  the licence its credit gives, or is not CC BY 4.0 or CC0), `fit.mjs`
+  and `rig.mjs` (fitting a fish for the tank, and giving a swim to a
+  fish or a turtle that has none), `shapes.mjs`, and `glb.mjs`:
 
   ```
   node examples/aquarium/tools/download.mjs
@@ -74,8 +76,10 @@ Published at https://srajpal.github.io/holoml/aquarium/ (open
 
 ## Credits
 
-The fish are under the Creative Commons Attribution 4.0 licence (CC BY
-4.0), except the barramundi (CC0): see `models/CREDITS.md` for each
-author and source. The boulders, the log, the shell, and the sand are
+The fish are under the Creative Commons Attribution 4.0 International
+licence (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/),
+except the barramundi (CC0): see `models/CREDITS.md` for each author
+and source, and for what was changed in each. None is under a
+"non-commercial", "no derivatives", or "share alike" licence. The boulders, the log, the shell, and the sand are
 from Poly Haven (CC0). Everything else is made by `tools/prepare.mjs`,
 under the repository's licence.

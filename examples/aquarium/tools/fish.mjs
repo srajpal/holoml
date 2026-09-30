@@ -6,11 +6,25 @@
 // Every one is CC BY 4.0 or CC0 (owner, prompt 122, Q1 a); none is
 // "non-commercial", "no derivatives", or "share alike". The Sketchfab
 // models come from Objaverse, the Allen Institute for AI's copy of
-// Sketchfab's free models on Hugging Face, whose records give each one's
-// author and licence when it was copied (2022).
+// Sketchfab's free models on Hugging Face. Its records give each one's
+// author and licence, and each file carries its own stamp from Sketchfab
+// (asset.extras: author, license, source, title). The two can disagree
+// (the record of a turtle used here before said CC BY, its file
+// CC BY-NC), and the file's stamp is the one to believe: licence.mjs
+// stops download.mjs and prepare.mjs when a stamp and the credit below
+// differ, or when either is not CC BY 4.0 or CC0.
+//
+// The shark and the snapper come from the Babylon.js asset library
+// (github.com/BabylonJS/Assets), and their files carry no stamp. The
+// library's README, at the commit below, says: "This work is licensed
+// under a Creative Commons Attribution 4.0 International License (Unless
+// specified otherwise in the asset folder)"; its LICENSE file is that
+// licence's text; and neither file's folder (meshes/ and
+// meshes/Demos/UnderWaterScene/fish/) has a file that says otherwise
+// (read 2026-09-30).
 
 const OBJAVERSE_REVISION = '21e4e142159e2153706c23a3a02e55cec5591cea';
-const BABYLON_COMMIT = 'ddad48e7c2dfdaf1d09f53263f3f4116537e73bf';
+export const BABYLON_COMMIT = 'ddad48e7c2dfdaf1d09f53263f3f4116537e73bf';
 const KHRONOS_COMMIT = 'f36bfdabd1031c3cf6689a50570b8cdf3678b49c';
 
 const objaverse = (folder, uid) => `https://huggingface.co/datasets/allenai/objaverse/resolve/${OBJAVERSE_REVISION}/glbs/${folder}/${uid}.glb`;
@@ -24,9 +38,11 @@ const sketchfab = (uid) => `https://sketchfab.com/3d-models/${uid}`;
  * forward  which way its head faces in the file (+x, -x, +z, -z)
  * clip     its own swimming clip, kept as "Swim" (others are dropped); without one, rig.mjs makes "Swim"
  * rig      how rig.mjs makes its swim, when it has no clip (riggedFish's options: beat, sway, bend)
+ * turtle   a sea turtle without a clip: rig.mjs gives it a turtle's skeleton and swim (riggedTurtle)
  * triangles  at most this many for the whole fish: a more detailed file is made lighter (shapes.mjs thinTo); the
  *          tank has many fish, and drawn in software (a computer without a graphics card) each triangle counts
- * credit   for the about page and models/CREDITS.md
+ * credit   for the about page and models/CREDITS.md: the licence is 'CC BY 4.0' or 'CC0 1.0' (licence.mjs checks it
+ *          against the file's own stamp)
  */
 export const FISH = [
   {
@@ -47,15 +63,14 @@ export const FISH = [
   },
   {
     id: 'turtle',
-    name: 'Flatback sea turtle',
-    url: objaverse('000-155', '442372b7f02b4730882d41d959726156'),
-    sha256: '5b643add05f222fb960b42471545f76ded782f960dcb6cbbc9084fb2115e03b5',
+    name: 'Hawksbill sea turtle',
+    url: objaverse('000-028', 'bd6c9327fd52469782f055a182659bd2'),
+    sha256: 'f4de0797735d6ee724bbae3db057974308f32dc65b89e44f523f164040f85c45',
     length: 1.1,
     forward: '+z',
     clip: null,
     turtle: true,
-    triangles: 14000,
-    credit: { title: 'Model 53A - Flatback sea turtle', author: 'DigitalLife3D', source: sketchfab('442372b7f02b4730882d41d959726156'), licence: 'CC BY 4.0' },
+    credit: { title: 'Hawksbill Turtle', author: 'Bindestrek', source: sketchfab('bd6c9327fd52469782f055a182659bd2'), licence: 'CC BY 4.0' },
   },
   {
     id: 'bream',
