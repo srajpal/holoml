@@ -1,14 +1,23 @@
-# Publishes examples/ with GitHub Pages, so the showroom is at
-# https://srajpal.github.io/holoml/showroom/ (browser milestone 16, owner
-# prompt 81, Q1 a), Blockworld at .../blockworld/ (milestone 17), and the
-# sofa studio at .../sofa-studio/ (milestone 18).
-# Static files only; nothing is built.
+# Publishes the HoloML site with GitHub Pages (browser milestone 22, owner
+# prompt 128, Q3 a and Q7 a): the home page at https://srajpal.github.io/holoml/,
+# the specification at /spec/, and the guides under /docs/, made by
+# site/build.mjs, with the example sites at their addresses as before
+# (the showroom at /showroom/ since milestone 16, and each other site
+# since its own milestone), without the scripts that make them.
 name: Pages
 
 on:
   push:
     branches: [main]
-    paths: [examples/**, .github/workflows/pages.yml]
+    paths:
+      - SPEC.md
+      - docs/**
+      - examples/**
+      - site/**
+      - spec/**
+      - package.json
+      - pnpm-lock.yaml
+      - .github/workflows/pages.yml
   workflow_dispatch:
 
 permissions:
@@ -30,12 +39,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: The sites (without the scripts that make them)
-        run: |
-          mkdir -p _site
-          cp -r examples/. _site/
-          find _site -type d -name tools -prune -exec rm -rf {} +
-          touch _site/.nojekyll
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: The site
+        run: pnpm site:build
 
       - uses: actions/upload-pages-artifact@v3
         with:

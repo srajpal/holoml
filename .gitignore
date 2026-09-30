@@ -37,3 +37,6 @@ CLAUDE.local.md
 
 # Downloads for the example sites' tools (made again by their download scripts)
 examples/*/tools/cache/
+
+# The site, made by pnpm site:build
+_site/

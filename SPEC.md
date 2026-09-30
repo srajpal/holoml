@@ -1252,7 +1252,8 @@ web page opens. A renderer's limits (section 9) keep a heavy or hostile
 page from exhausting the viewer's memory or freezing the renderer.
 
 *Note (non-normative):* HyperSpace 3D, opening a page from the
-computer, lets it load files only from its own folder.
+computer, lets it load files only from its own folder and the folders
+inside it.
 
 ## 13. Privacy considerations
 
@@ -1886,6 +1887,132 @@ Change controller: The HoloML Authors
   written exactly, the null character in comments), and comments read
   in time that grows with their length only.
 - 0.1 (2026-09-26): the first version.
+
+## Index
+
+*This section is non-normative.*
+
+<!-- index -->
+<!-- Made from the checker's table, the codes, and the terms above by pnpm reference:update; do not edit by hand. -->
+
+### Elements
+
+[`a`](#a), [`animate`](#animate), [`choice`](#choice),
+[`group`](#group), [`head`](#head), [`holoml`](#holoml), [`hud`](#hud),
+[`label`](#label), [`light`](#light), [`material`](#material),
+[`meta`](#meta), [`model`](#model), [`option`](#option),
+[`panel`](#panel), [`plan`](#plan), [`scene`](#scene),
+[`script`](#script), [`slider`](#slider), [`sound`](#sound),
+[`title`](#title), [`viewpoint`](#viewpoint), [`water`](#water)
+
+### Attributes
+
+- `angle`: [`light`](#light)
+- `animation`: [`model`](#model)
+- `area`: [`plan`](#plan)
+- `attribute`: [`animate`](#animate)
+- `autoplay`: [`model`](#model), [`sound`](#sound)
+- `background`: [`panel`](#panel), [`scene`](#scene)
+- `begin`: [`animate`](#animate), [`sound`](#sound)
+- `caustics`: [`water`](#water)
+- `clarity`: [`water`](#water)
+- `color`: [`hud`](#hud), [`label`](#label), [`light`](#light), [`material`](#material), [`option`](#option), [`panel`](#panel), [`water`](#water)
+- `content`: [`meta`](#meta)
+- `corner`: [`choice`](#choice), [`hud`](#hud), [`plan`](#plan), [`slider`](#slider)
+- `crosshair`: [`viewpoint`](#viewpoint)
+- `duration`: [`animate`](#animate)
+- `environment`: [`scene`](#scene)
+- `from`: [`animate`](#animate)
+- `gravity`: [`viewpoint`](#viewpoint)
+- `href`: [`a`](#a)
+- `id`: [`choice`](#choice), [`group`](#group), [`hud`](#hud), [`label`](#label), [`light`](#light), [`model`](#model), [`panel`](#panel), [`plan`](#plan), [`scene`](#scene), [`slider`](#slider), [`sound`](#sound), [`viewpoint`](#viewpoint)
+- `intensity`: [`light`](#light)
+- `jump`: [`viewpoint`](#viewpoint)
+- `label`: [`animate`](#animate), [`choice`](#choice), [`plan`](#plan), [`sound`](#sound), [`viewpoint`](#viewpoint)
+- `load`: [`group`](#group)
+- `look-at`: [`light`](#light), [`viewpoint`](#viewpoint)
+- `loop`: [`sound`](#sound)
+- `map`: [`material`](#material), [`option`](#option)
+- `material`: [`choice`](#choice)
+- `max`: [`slider`](#slider)
+- `metalness`: [`material`](#material), [`option`](#option)
+- `min`: [`slider`](#slider)
+- `mode`: [`viewpoint`](#viewpoint)
+- `name`: [`material`](#material), [`meta`](#meta)
+- `near`: [`group`](#group)
+- `normal-map`: [`material`](#material), [`option`](#option)
+- `opacity`: [`material`](#material), [`option`](#option)
+- `position`: [`group`](#group), [`label`](#label), [`light`](#light), [`model`](#model), [`panel`](#panel), [`sound`](#sound), [`viewpoint`](#viewpoint), [`water`](#water)
+- `range`: [`light`](#light), [`sound`](#sound)
+- `repeat`: [`animate`](#animate), [`material`](#material), [`option`](#option)
+- `rotation`: [`group`](#group), [`model`](#model), [`panel`](#panel)
+- `roughness`: [`material`](#material), [`option`](#option)
+- `roughness-map`: [`material`](#material), [`option`](#option)
+- `scale`: [`group`](#group), [`model`](#model)
+- `shadows`: [`group`](#group), [`light`](#light), [`model`](#model)
+- `size`: [`hud`](#hud), [`label`](#label), [`panel`](#panel), [`water`](#water)
+- `sky`: [`scene`](#scene)
+- `solid`: [`group`](#group), [`model`](#model)
+- `speed`: [`viewpoint`](#viewpoint)
+- `src`: [`model`](#model), [`plan`](#plan), [`script`](#script), [`sound`](#sound)
+- `stand-in`: [`model`](#model)
+- `step`: [`slider`](#slider)
+- `target`: [`animate`](#animate), [`choice`](#choice)
+- `to`: [`animate`](#animate)
+- `toggle`: [`animate`](#animate)
+- `trigger`: [`animate`](#animate), [`sound`](#sound)
+- `turn-speed`: [`viewpoint`](#viewpoint)
+- `type`: [`light`](#light)
+- `value`: [`choice`](#choice), [`option`](#option), [`slider`](#slider)
+- `version`: [`holoml`](#holoml)
+- `volume`: [`sound`](#sound)
+- `width`: [`panel`](#panel), [`plan`](#plan)
+
+### Terms
+
+[address](#3-terminology), [attribute](#3-terminology),
+[checker](#3-terminology), [click action](#3-terminology), [conforming
+checker](#conformance-classes), [conforming page](#conformance-classes),
+[conforming renderer](#conformance-classes), [element](#3-terminology),
+[left out](#3-terminology), [outline](#3-terminology),
+[page](#3-terminology), [place](#3-terminology),
+[reader](#3-terminology), [reduced motion](#3-terminology),
+[renderer](#3-terminology), [scene](#3-terminology),
+[text](#3-terminology), [text view](#3-terminology), [the page's own
+site](#3-terminology), [thing](#3-terminology),
+[trigger](#3-terminology), [viewer](#3-terminology)
+
+### Syntax error codes
+
+[`bad-character-reference`](#syntax-errors),
+[`bad-comment`](#syntax-errors),
+[`duplicate-attribute`](#syntax-errors),
+[`invalid-name`](#syntax-errors),
+[`less-than-in-value`](#syntax-errors),
+[`mismatched-end-tag`](#syntax-errors),
+[`missing-space`](#syntax-errors), [`no-root`](#syntax-errors),
+[`null-character`](#syntax-errors), [`second-root`](#syntax-errors),
+[`stray-end-tag`](#syntax-errors), [`stray-slash`](#syntax-errors),
+[`text-outside-root`](#syntax-errors), [`too-deep`](#syntax-errors),
+[`unclosed-comment`](#syntax-errors),
+[`unclosed-element`](#syntax-errors),
+[`unclosed-value`](#syntax-errors), [`unexpected-end`](#syntax-errors),
+[`unquoted-value`](#syntax-errors),
+[`unsupported-markup`](#syntax-errors),
+[`uppercase-name`](#syntax-errors)
+
+### Problem codes
+
+[`attribute-not-for-type`](#8-checking), [`bad-target`](#8-checking),
+[`bad-value`](#8-checking), [`child-not-allowed`](#8-checking),
+[`duplicate-id`](#8-checking), [`empty-text`](#8-checking),
+[`missing-attribute`](#8-checking), [`missing-child`](#8-checking),
+[`nested-link`](#8-checking), [`text-not-allowed`](#8-checking),
+[`too-many`](#8-checking), [`unknown-attribute`](#8-checking),
+[`unknown-element`](#8-checking), [`unknown-target`](#8-checking),
+[`unsafe-link`](#8-checking), [`unsupported-version`](#8-checking),
+[`wrong-order`](#8-checking), [`wrong-root`](#8-checking)
+<!-- /index -->
 
 ## References
 

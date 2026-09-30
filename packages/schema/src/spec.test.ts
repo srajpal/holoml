@@ -79,6 +79,7 @@ describe('Y1: the specification in the form of W3C specifications (browser miles
       '## Appendix A. The formal grammar',
       '## Appendix B. IANA considerations',
       '## Appendix C. Changes',
+      '## Index',
       '## References',
       '### Normative references',
       '### Informative references',
