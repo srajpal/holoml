@@ -67,7 +67,9 @@ CLAUDE.local.md, which is gitignored.
 
 Where tests live:
 - Unit tests next to the code: `*.test.ts` in packages/parser/src and
-  packages/schema/src.
+  packages/schema/src; the site's in site/site.test.ts.
+- The guides: docs/, organised as tutorials, how-to guides, reference,
+  and explanation; docs.test.ts checks every HoloML example in them.
 - Conformance samples: conformance/valid, conformance/syntax-errors, and
   conformance/problems, each `.holoml` with a `.expected.json`
   (SPEC.md section 8), usable by any renderer.
@@ -78,12 +80,20 @@ after they ran; on Windows and Linux in GitHub Actions,
 .github/workflows/ci.yml):
 - Toolchain: Node 22.13 or newer; pnpm 12.4.1, pinned in package.json.
 - Install: `pnpm install --frozen-lockfile`
-- Unit and conformance tests: `pnpm test` (Vitest; 121 tests passed on
-  2026-09-27)
+- Unit, conformance, documentation, and site tests: `pnpm test` (Vitest;
+  361 tests passed on 2026-09-29)
 - Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
 - After adding or changing a sample: `pnpm conformance:update` writes
   its `.expected.json`; read every changed file before committing, since
   the expected results are the specification's.
+- After changing the checker's table, a code, the Web IDL, or a table of
+  the scene API in SPEC.md: `pnpm grammar:update` (spec/holoml.rnc and
+  SPEC.md's copies of the grammar files) and `pnpm reference:update`
+  (docs/reference/elements.md, api.md, and codes.md, and SPEC.md's
+  index). The tests fail until they are run.
+- The site: `pnpm site:build` makes it in `_site/` (first run
+  2026-09-29), checking every link within it; the Pages workflow builds
+  it the same way on main (browser milestone 22).
 
 What to recheck after any change: all of the above (browser milestone
 13 checks O1 to O8 in the browser repository's TODO.md). The tests hold
