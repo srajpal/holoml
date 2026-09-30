@@ -35,6 +35,9 @@ userData/
 # Owner-only Claude Code automation; recreate from HANDOFF.md on a new machine
 CLAUDE.local.md
 
+# Agent sessions' own folders (their working copies of this repository)
+.claude/
+
 # Downloads for the example sites' tools (made again by their download scripts)
 examples/*/tools/cache/
 
