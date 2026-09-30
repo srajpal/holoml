@@ -1,0 +1,12 @@
+<holoml version="0.2">
+  <head>
+    <title>&#32;</title>
+  </head>
+  <scene>
+    <label>&#9;&#10;</label>
+    <label> <!-- a comment is not text --> </label>
+    <panel>
+    </panel>
+    <hud>&#32;</hud>
+  </scene>
+</holoml>

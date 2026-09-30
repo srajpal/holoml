@@ -1,0 +1,24 @@
+{
+  "problems": [
+    {
+      "code": "empty-text",
+      "line": 3,
+      "column": 5
+    },
+    {
+      "code": "empty-text",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "code": "empty-text",
+      "line": 7,
+      "column": 5
+    },
+    {
+      "code": "empty-text",
+      "line": 8,
+      "column": 5
+    }
+  ]
+}

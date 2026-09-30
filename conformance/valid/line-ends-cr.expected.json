@@ -1,0 +1,75 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "Lines that end with a carriage return alone",
+                "at": "3:12"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "5:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "label",
+            "at": "6:5",
+            "attributes": [
+              [
+                "position",
+                "0 1 0",
+                "6:12"
+              ]
+            ],
+            "children": [
+              {
+                "text": "\r      Two lines\r      of text\r    ",
+                "at": "6:29"
+              }
+            ]
+          },
+          {
+            "element": "model",
+            "at": "10:5",
+            "attributes": [
+              [
+                "src",
+                "a.glb",
+                "10:12"
+              ],
+              [
+                "id",
+                "a",
+                "11:12"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

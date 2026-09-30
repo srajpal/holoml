@@ -1,0 +1,81 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.1",
+        "1:9"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "\tTabs and line ends\t",
+                "at": "3:12"
+              }
+            ]
+          },
+          {
+            "element": "meta",
+            "at": "4:5",
+            "attributes": [
+              [
+                "name",
+                "description",
+                "4:11"
+              ],
+              [
+                "content",
+                "Line one\r\n\tline two",
+                "4:30"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "7:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "label",
+            "at": "8:5",
+            "attributes": [],
+            "children": [
+              {
+                "text": "\r\n      Two lines,\r\n\tthe second after a tab\r\n    ",
+                "at": "8:12"
+              }
+            ]
+          },
+          {
+            "element": "group",
+            "at": "12:5",
+            "attributes": [
+              [
+                "position",
+                "0\r\n      1\r\n      2",
+                "12:12"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

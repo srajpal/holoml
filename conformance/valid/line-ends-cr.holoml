@@ -1,0 +1,1 @@
+<holoml version="0.1">  <head>    <title>Lines that end with a carriage return alone</title>  </head>  <scene>    <label position="0 1 0">      Two lines      of text    </label>    <model src="a.glb"           id="a" />  </scene></holoml>

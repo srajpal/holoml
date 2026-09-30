@@ -197,7 +197,9 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
           el.name === 'script'
             ? 'A <script> holds no code: put the code in a file of its own, and name it in "src"'
             : `Text is not allowed directly inside <${el.name}>; put it in a <label>`,
-          firstVisible(child.value, child.start),
+          // Where the text's first character that is not whitespace is written: the parser knows, as the
+          // text itself no longer tells a character reference from the character (review 134, L7).
+          child.visible,
         );
         continue;
       }
@@ -337,24 +339,6 @@ interface Context {
 function animatable(which: string | undefined, version: Version): which is string {
   const choice = ELEMENTS['animate']!.attributes['attribute']!.value;
   return which !== undefined && choice.kind === 'choice' && choice.values.includes(which) && atLeast(version, choice.since?.[which]);
-}
-
-/** Where the first character that is not whitespace in a text node is. */
-function firstVisible(text: string, start: Position): Position {
-  let { line, column, offset } = start;
-  for (let k = 0; k < text.length; k++) {
-    const c = text[k]!;
-    if (c === '\n' || (c === '\r' && text[k + 1] !== '\n')) {
-      line += 1;
-      column = 1;
-    } else if (c === ' ' || c === '\t' || c === '\r') {
-      column += 1;
-    } else {
-      break;
-    }
-    offset += 1;
-  }
-  return { line, column, offset };
 }
 
 function finite(p: string): boolean {

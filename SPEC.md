@@ -197,7 +197,10 @@ what was meant. Appendix A gives the same syntax as a grammar.
 - An attribute MUST NOT be given twice on one element, and attributes
   MUST be separated from the name and from each other by whitespace.
 - Text is anything between tags. Text that is only whitespace is
-  ignored. In `title` and `label`, runs of whitespace show as one space,
+  ignored; a character reference is not whitespace, whatever it stands
+  for, so `&#32;` alone is text. A reader keeps text as it is written,
+  with its whitespace and its line ends. A comment inside text parts it
+  in two. In `title` and `label`, runs of whitespace show as one space,
   and whitespace at the start and end is dropped, as in HTML. (0.2) In
   `hud`, each line of text is a line on the screen: within a line, runs
   of whitespace show as one space; empty lines are not shown.
@@ -212,7 +215,8 @@ what was meant. Appendix A gives the same syntax as a grammar.
   reader MUST stop a deeper document with `too-deep`, rather than fail
   in some other way.
 - Lines MAY end with `\n`, `\r\n`, or `\r`. Columns count UTF-16 code
-  units, as most editors do.
+  units, as most editors do. A byte order mark is not part of line 1:
+  the first character after it is at line 1, column 1.
 
 ### Syntax errors
 

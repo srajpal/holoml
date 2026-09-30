@@ -12,9 +12,9 @@ function errorOf(text: string): string {
   return 'no error';
 }
 
-/** A tree without positions, for comparing. */
+/** A tree without positions, for comparing: every text exactly as it is, whitespace included. */
 function shape(node: HoloNode): unknown {
-  if (node.type === 'text') return node.value.replace(/\s+/g, ' ').trim();
+  if (node.type === 'text') return node.value;
   return [node.name, node.attributes.map((a) => [a.name, a.value]), node.children.map(shape)];
 }
 
@@ -29,7 +29,9 @@ describe('parse', () => {
     const label = scene.children[0] as ElementNode;
     expect(label.start).toMatchObject({ line: 3, column: 5 });
     expect(label.attributes).toEqual([{ name: 'size', value: '0.2', start: { line: 3, column: 12, offset: 44 } }]);
-    expect(label.children).toEqual([{ type: 'text', value: 'Hi & bye', start: { line: 3, column: 23, offset: 55 } }]);
+    expect(label.children).toEqual([
+      { type: 'text', value: 'Hi & bye', start: { line: 3, column: 23, offset: 55 }, visible: { line: 3, column: 23, offset: 55 } },
+    ]);
   });
 
   it('keeps an attribute written alone as a null value, and drops whitespace-only text and comments', () => {
@@ -128,6 +130,69 @@ describe('serialize', () => {
       ].join('\n'),
     );
     expect(shape(parse(out).root)).toEqual(shape(doc.root));
+  });
+
+  it('writes every text back exactly: its whitespace, its parts around a comment, and whitespace from references (review 134, L7)', () => {
+    for (const text of [
+      // A comment parts text in two; read again, it is two texts still, not one with a space.
+      '<label>a<!-- c -->b</label>',
+      '<label>a<!-- c --> b<!-- d -->c </label>',
+      // Whitespace at the start and end, written as itself and as references.
+      '<label>  two spaces each side  </label>',
+      '<label>&#32;x&#32;</label>',
+      '<label>&#10;&#13;&#9;x</label>',
+      '<label>\n      Whitespace   kept,\r\n\tline by line\r    </label>',
+      // Whitespace alone, which only a reference can make.
+      '<label>&#32;</label>',
+      '<label> &#9; </label>',
+      '<label>&#10;<!-- c -->&#13;&#10;</label>',
+      // Text beside elements, where indenting would add to the text.
+      '<scene>Loose <model src="a.glb" /> text<group><label> x </label></group>\n</scene>',
+      '<scene><group />tail</scene>',
+      // Values keep their whitespace and line ends too.
+      '<meta name=" a " content="one&#10;two&#13;&#10;three&#9;" />',
+      '<a b="&lt;&amp;&gt;&quot;\'" c=\'"\' d="" e />',
+    ]) {
+      const doc = parse(text);
+      const again = parse(serialize(doc));
+      expect(shape(again.root), text).toEqual(shape(doc.root));
+      // And what is written is stable: writing it again gives the same text.
+      expect(serialize(again), text).toBe(serialize(doc));
+    }
+  });
+
+  it('writes an element without text in lines, and one with text as it is', () => {
+    expect(serialize(parse('<scene><group><model src="a.glb" /></group><label> a <!-- c -->b</label></scene>'))).toBe(
+      ['<scene>', '  <group>', '    <model src="a.glb" />', '  </group>', '  <label> a <!---->b</label>', '</scene>', ''].join('\n'),
+    );
+  });
+});
+
+describe('places (review 134, L7)', () => {
+  it('after a byte order mark, line 1 counts its columns from the first character after the mark', () => {
+    expect(errorOf('﻿<A/>')).toBe('uppercase-name 1:2');
+    expect(errorOf('<A/>')).toBe('uppercase-name 1:2');
+    expect(errorOf('﻿')).toBe('no-root 1:1');
+    expect(errorOf('﻿x')).toBe('text-outside-root 1:1');
+    const doc = parse('﻿<a b="1">\n  <c /></a>');
+    expect(doc.root.start).toEqual({ line: 1, column: 1, offset: 1 });
+    expect(doc.root.attributes[0]!.start).toEqual({ line: 1, column: 4, offset: 4 });
+    // Later lines are as they were.
+    expect((doc.root.children[0] as ElementNode).start).toEqual({ line: 2, column: 3, offset: 13 });
+    // Only a mark at the very start is one: a second is text.
+    expect(errorOf('﻿﻿<a />')).toBe('text-outside-root 1:1');
+  });
+
+  it('a text says where its first character that is not whitespace is written, a character reference counting as one', () => {
+    const text = (source: string) => parse(source).root.children[0] as { start: unknown; visible: unknown };
+    expect(text('<a>x</a>')).toMatchObject({ start: { line: 1, column: 4 }, visible: { line: 1, column: 4 } });
+    expect(text('<a>\n   x</a>')).toMatchObject({ start: { line: 1, column: 4 }, visible: { line: 2, column: 4 } });
+    expect(text('<a>\r\n\t x</a>')).toMatchObject({ start: { line: 1, column: 4 }, visible: { line: 2, column: 3 } });
+    expect(text('<a>\r \r x</a>')).toMatchObject({ visible: { line: 3, column: 2 } });
+    // A reference to whitespace is written with "&", which is not whitespace.
+    expect(text('<a>&#10;&#10;x</a>')).toMatchObject({ start: { line: 1, column: 4 }, visible: { line: 1, column: 4 } });
+    expect(text('<a>  &#32;x</a>')).toMatchObject({ visible: { line: 1, column: 6 } });
+    expect(text('<a>\n  &#32;</a>')).toMatchObject({ visible: { line: 2, column: 3 } });
   });
 });
 

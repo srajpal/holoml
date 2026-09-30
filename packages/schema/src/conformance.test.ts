@@ -33,6 +33,8 @@ describe('conformance samples (O2, O3, O4)', () => {
         'bare-ampersand': 'bad-character-reference',
         'inherited-reference': 'bad-character-reference',
         'null-in-comment': 'null-character',
+        // The third edition of 0.2 (review 134).
+        'after-byte-order-mark': 'uppercase-name',
       };
       expect(code, s.name).toBe(variants[s.name]);
     }
@@ -70,6 +72,9 @@ describe('conformance samples (O2, O3, O4)', () => {
         // Versions and ids.
         'not-in-older-version': 'unknown-attribute',
         'ids-in-misplaced-elements': 'child-not-allowed',
+        // Text.
+        'text-after-references': 'text-not-allowed',
+        'whitespace-text': 'empty-text',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }
@@ -98,10 +103,9 @@ describe('O5: every element and attribute has a valid sample', () => {
 });
 
 describe('O6: round trip', () => {
+  // Exactly: every text with its whitespace as it was, and as many texts (review 134, L7).
   const shape = (node: HoloNode): unknown =>
-    node.type === 'text'
-      ? node.value.replace(/\s+/g, ' ').trim()
-      : [node.name, node.attributes.map((a) => [a.name, a.value]), node.children.map(shape)];
+    node.type === 'text' ? node.value : [node.name, node.attributes.map((a) => [a.name, a.value]), node.children.map(shape)];
 
   for (const s of all.filter((x) => x.group === 'valid')) {
     it(`valid/${s.name} writes out and reads back the same`, () => {
