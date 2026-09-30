@@ -8,6 +8,7 @@
  */
 import type { Attribute, ElementNode, HoloDocument, Position } from '@holoml/parser';
 import { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast, type Version, type ValueKind } from './rules.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, INDEFINITE, NUMBER_PATTERN, endsWithExtension, whole } from './patterns.ts';
 
 export { ANIMATABLE, ANIMATION_VALUES, CLICKABLE, ELEMENTS, LIGHT_ONLY, ROOT, VERSION, VERSIONS, atLeast } from './rules.ts';
 export type { AttributeRule, ElementRule, ValueKind, Version } from './rules.ts';
@@ -52,15 +53,17 @@ export interface Problem {
   column: number;
 }
 
-const NUMBER = /^-?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/;
-const COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-const DURATION = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)$/;
-const ID = /^[A-Za-z][A-Za-z0-9_-]*$/;
-const MODEL_FILE = /\.(gltf|glb)$/i;
-const SCRIPT_FILE = /\.(js|mjs)$/i;
-const SOUND_FILE = /\.(ogg|mp3|wav)$/i;
-const PICTURE_FILE = /\.(png|jpe?g|webp)$/i;
-const ENVIRONMENT_FILE = /\.(hdr|png|jpe?g)$/i;
+// The patterns are written once, in patterns.ts; the RELAX NG schema is made from the same texts.
+const NUMBER = whole(NUMBER_PATTERN);
+const COLOR = whole(COLOR_PATTERN);
+const DURATION = whole(DURATION_PATTERN);
+const ID = whole(ID_PATTERN);
+const COUNT = whole(COUNT_PATTERN);
+const MODEL_FILE = endsWithExtension(FILE_EXTENSIONS.model);
+const SCRIPT_FILE = endsWithExtension(FILE_EXTENSIONS.script);
+const SOUND_FILE = endsWithExtension(FILE_EXTENSIONS.sound);
+const PICTURE_FILE = endsWithExtension(FILE_EXTENSIONS.picture);
+const ENVIRONMENT_FILE = endsWithExtension(FILE_EXTENSIONS.environment);
 /** Schemes a link or model may use; anything else (javascript:, data:, file:) is refused. */
 const SAFE_SCHEMES = new Set(['http', 'https']);
 
@@ -384,9 +387,8 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
     case 'color':
       return COLOR.test(v) ? null : bad(`"${value}" is not a colour such as "#c0182a" or "#fff"`);
     case 'duration': {
-      const m = DURATION.exec(v);
-      if (!m) return bad(`"${value}" is not a time such as "2s" or "500ms"`);
-      const n = Number(m[1]);
+      if (!DURATION.test(v)) return bad(`"${value}" is not a time such as "2s" or "500ms"`);
+      const n = Number(v.slice(0, v.endsWith('ms') ? -2 : -1));
       if (!Number.isFinite(n)) return bad(`"${value}" is too long a time`);
       return n > 0 ? null : bad(`"${value}" is not a time such as "2s" or "500ms"`);
     }
@@ -427,8 +429,8 @@ function valueProblem(kind: ValueKind, value: string | null, name: string, ctx: 
       return parts.every((p) => Number(p) > 0 && finite(p)) ? null : bad('must be more than 0');
     }
     case 'repeat':
-      if (v === 'indefinite') return null;
-      if (!/^\d+$/.test(v) || Number(v) < 1) return bad('must be a whole number of times, or "indefinite"');
+      if (v === INDEFINITE) return null;
+      if (!COUNT.test(v)) return bad('must be a whole number of times, or "indefinite"');
       return Number.isSafeInteger(Number(v)) ? null : bad(`"${value}" is too many times`);
     case 'url': {
       if (v === '' || /\s/.test(v)) return bad('must be an address without spaces');

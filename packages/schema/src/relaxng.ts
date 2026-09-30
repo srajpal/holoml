@@ -1,4 +1,5 @@
-import { ELEMENTS, VERSION, type AttributeRule, type ElementRule, type ValueKind } from './rules.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, FILE_EXTENSIONS, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NUMBER_PATTERN } from './patterns.ts';
+import { ELEMENTS, VERSION, VERSIONS, type AttributeRule, type ElementRule, type ValueKind } from './rules.ts';
 
 /**
  * The structure of a HoloML page as a RELAX NG schema in its compact
@@ -15,8 +16,8 @@ import { ELEMENTS, VERSION, type AttributeRule, type ElementRule, type ValueKind
 export function relaxNg(): string {
   const lines = [
     `# HoloML ${VERSION}: the structure of a page, in RELAX NG's compact syntax`,
-    '# (ISO/IEC 19757-2). Made from the checker\'s table',
-    '# (packages/schema/src/rules.ts) by packages/schema/src/relaxng.ts:',
+    '# (ISO/IEC 19757-2). Made from the checker\'s table and its patterns',
+    '# (rules.ts and patterns.ts in packages/schema/src) by relaxng.ts there:',
     '# do not edit; run `pnpm grammar:update`. Informative: SPEC.md and the',
     '# checker say what a page may be, and more than a schema can (unique',
     '# ids, targets that exist, values that depend on one another). A page',
@@ -39,8 +40,8 @@ export function relaxNg(): string {
     '# Values',
     '',
     '# A number: a decimal number, optionally with an exponent; never INF or NaN.',
-    'number = xsd:double { pattern = "-?([0-9]+\\.?[0-9]*|\\.[0-9]+)([eE][+\\-]?[0-9]+)?" }',
-    'more-than-0 = xsd:double { pattern = "-?([0-9]+\\.?[0-9]*|\\.[0-9]+)([eE][+\\-]?[0-9]+)?" minExclusive = "0" }',
+    `number = xsd:double { pattern = "${NUMBER_PATTERN}" }`,
+    `more-than-0 = xsd:double { pattern = "${NUMBER_PATTERN}" minExclusive = "0" }`,
     '# A flag, written alone in HoloML.',
     'flag = string ""',
     '',
@@ -75,25 +76,20 @@ function value(kind: ValueKind): string {
       if (kind.min !== undefined) facets.push(`minInclusive = "${kind.min}"`);
       if (kind.max !== undefined) facets.push(`maxInclusive = "${kind.max}"`);
       if (!facets.length) return 'number';
-      return `xsd:double { pattern = "-?([0-9]+\\.?[0-9]*|\\.[0-9]+)([eE][+\\-]?[0-9]+)?" ${facets.join(' ')} }`;
+      return `xsd:double { pattern = "${NUMBER_PATTERN}" ${facets.join(' ')} }`;
     }
     case 'vector3':
       return 'list { number, number, number }';
     case 'scale':
       return 'list { number } | list { number, number, number }';
     case 'color':
-      return 'xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" }';
+      return `xsd:token { pattern = "${COLOR_PATTERN}" }`;
     case 'duration':
-      return 'xsd:token { pattern = "([0-9]+(\\.[0-9]+)?|\\.[0-9]+)(ms|s)" }';
+      return `xsd:token { pattern = "${DURATION_PATTERN}" }`;
     case 'url': {
-      const ext = { model: 'gltf|glb', script: 'js|mjs', sound: 'ogg|mp3|wav', picture: 'png|jpe?g|webp', environment: 'hdr|png|jpe?g' }[
-        kind.for as Exclude<typeof kind.for, 'link'>
-      ];
-      if (!ext) return 'xsd:token { pattern = "[^\\s]+" }';
-      const anyCase = ext
-        .split('|')
-        .map((e) => e.replace(/[a-z]/g, (c) => `[${c}${c.toUpperCase()}]`))
-        .join('|');
+      if (kind.for === 'link') return 'xsd:token { pattern = "[^\\s]+" }';
+      // A page may write an extension in either case; XML Schema's patterns have no switch for that.
+      const anyCase = FILE_EXTENSIONS[kind.for].map((e) => e.replace(/[a-z]/g, (c) => `[${c}${c.toUpperCase()}]`)).join('|');
       return `xsd:token { pattern = "[^\\s?#]*\\.(${anyCase})([?#][^\\s]*)?" }`;
     }
     case 'tiling':
@@ -103,17 +99,17 @@ function value(kind: ValueKind): string {
     case 'size':
       return 'list { more-than-0, more-than-0, more-than-0 }';
     case 'id':
-      return 'xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\\-]*" }';
+      return `xsd:string { pattern = "${ID_PATTERN}" }`;
     case 'idref':
-      return 'xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\\-]*" }';
+      return `xsd:string { pattern = "${IDREF_PATTERN}" }`;
     case 'choice':
       return kind.values.map((v) => `string "${v}"`).join(' | ');
     case 'flag':
       return 'flag';
     case 'version':
-      return 'string "0.1" | string "0.2"';
+      return VERSIONS.map((v) => `string "${v}"`).join(' | ');
     case 'repeat':
-      return 'xsd:token { pattern = "[0-9]*[1-9][0-9]*|indefinite" }';
+      return `xsd:token { pattern = "${COUNT_PATTERN}|${INDEFINITE}" }`;
     case 'animation-value':
       return 'text';
   }
