@@ -60,3 +60,34 @@ describe('every id counts, wherever its element stands (review 134, L6)', () => 
     expect(problems(scene('0.1', '<group id="a" />\n<group id="a" />\n<group id="a" />'))).toEqual(['duplicate-id 3:8', 'duplicate-id 4:8']);
   });
 });
+
+describe('a version the reader does not know (SPEC.md section 11; review 134, L8)', () => {
+  const page = (version: string) => `<holoml${version}>\n<scene>\n<hud>Score</hud>\n<cube />\n</scene>\n</holoml>`;
+
+  it('is reported, and the rest of the page is checked by the newest version the reader knows', () => {
+    expect(problems(page(' version="0.3"'))).toEqual(['unsupported-version 1:9', 'unknown-element 4:1']);
+    expect(problems(page(' version="0.2 "'))).toEqual(['unsupported-version 1:9', 'unknown-element 4:1']);
+    // A reader that knows only 0.1 goes by 0.1, where a hud is unknown too.
+    const older = check(parse(page(' version="0.2"')), { versions: ['0.1'] }).map((p) => `${p.code} ${p.line}:${p.column}`);
+    expect(older).toEqual(['unsupported-version 1:9', 'unknown-element 3:1', 'unknown-element 4:1']);
+  });
+
+  it('a page that declares no version is checked in the same way', () => {
+    expect(problems(page(''))).toEqual(['missing-attribute 1:1', 'unknown-element 4:1']);
+    const older = check(parse(page('')), { versions: ['0.1'] }).map((p) => `${p.code} ${p.line}:${p.column}`);
+    expect(older).toEqual(['missing-attribute 1:1', 'unknown-element 3:1', 'unknown-element 4:1']);
+  });
+});
+
+describe('rules between attributes leave alone a value that is already reported (SPEC.md section 8)', () => {
+  const toggle = (repeat: string) =>
+    scene('0.2', `<model id="m" src="m.glb" />\n<animate target="#m" attribute="rotation" to="0 9 0" duration="1s" begin="click" toggle repeat="${repeat}" />`);
+
+  it("a toggle's repeat is 1, however it is written; a repeat that is not a count is reported once", () => {
+    expect(problems(toggle('1'))).toEqual([]);
+    expect(problems(toggle(' 01 '))).toEqual([]);
+    expect(problems(toggle('2'))).toEqual(['bad-value 3:89']);
+    expect(problems(toggle('indefinite'))).toEqual(['bad-value 3:89']);
+    expect(problems(toggle('often'))).toEqual(['bad-value 3:89']);
+  });
+});

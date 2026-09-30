@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { parse, serialize, type HoloNode } from '@holoml/parser';
+import { PARSE_ERROR_CODES, parse, serialize, type HoloNode } from '@holoml/parser';
 import { actual, expectedFor, samples } from './conformance.ts';
+import { PROBLEM_CODES } from './index.ts';
 import { ELEMENTS } from './rules.ts';
 
 const all = samples();
@@ -92,8 +93,41 @@ describe('conformance samples (O2, O3, O4)', () => {
         // Text.
         'text-after-references': 'text-not-allowed',
         'whitespace-text': 'empty-text',
+        'element-in-text': 'child-not-allowed',
+        // What is there once, the version, and rules between attributes.
+        'choice-material-alone': 'missing-attribute',
+        'three-of-one': 'too-many',
+        'version-not-exact': 'unsupported-version',
+        'unsupported-version-and-more': 'unsupported-version',
+        'toggle-repeat': 'bad-value',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
+    }
+  });
+
+  it('every syntax error code and every problem code has a sample that gives it (review 134, L4)', () => {
+    const errors = new Set(all.filter((s) => s.group === 'syntax-errors').map((s) => s.expected?.error?.code));
+    expect(PARSE_ERROR_CODES.filter((code) => !errors.has(code))).toEqual([]);
+    const problems = new Set(all.filter((s) => s.group === 'problems').flatMap((s) => (s.expected?.problems ?? []).map((p) => p.code)));
+    expect(PROBLEM_CODES.filter((code) => !problems.has(code))).toEqual([]);
+  });
+
+  it('no sample has two codes at one place: the order of problems at one place is not defined (SPEC.md section 8)', () => {
+    for (const s of all) {
+      const at = new Map<string, string>();
+      for (const p of s.expected?.problems ?? []) {
+        const place = `${p.line}:${p.column}`;
+        expect(at.get(place) ?? p.code, `${s.group}/${s.name} at ${place}`).toBe(p.code);
+        at.set(place, p.code);
+      }
+    }
+  });
+
+  it("lists each sample's problems in the order of their places", () => {
+    for (const s of all) {
+      const places = (s.expected?.problems ?? []).map((p) => [p.line, p.column] as const);
+      const sorted = [...places].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      expect(places, `${s.group}/${s.name}`).toEqual(sorted);
     }
   });
 });

@@ -123,12 +123,14 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     return problems;
   }
 
-  // The version the page declares picks the rules; one this reader does not
-  // know is reported, and the page is checked against the newest rules.
+  // The version the page declares picks the rules. One this reader does not
+  // know is reported, and so is a page that declares none; the rest of the
+  // page is then checked by the newest version the reader knows, to find
+  // its other mistakes in the same pass (SPEC.md section 11).
   const known = options.versions ?? VERSIONS;
   const declared = attr(root, 'version')?.value;
-  const version: Version =
-    typeof declared === 'string' && known.includes(declared) && (VERSIONS as readonly string[]).includes(declared) ? (declared as Version) : VERSION;
+  const newest = [...VERSIONS].reverse().find((v) => known.includes(v)) ?? VERSION;
+  const version: Version = typeof declared === 'string' && known.includes(declared) && (VERSIONS as readonly string[]).includes(declared) ? (declared as Version) : newest;
   const ctx: Context = { version, known };
 
   // Every id in the page, first, wherever its element stands: an element
@@ -275,8 +277,10 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       const el = target === null ? undefined : ids.get(target);
       if (el && inVersion(el) && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
     }
+    // A toggle runs once each way: a repeat other than 1 (one that is not a count is already reported).
     const repeat = attr(anim, 'repeat');
-    if (attr(anim, 'toggle') && repeat && trimSpace(repeat.value ?? '') !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
+    const runs = trimSpace(repeat?.value ?? '');
+    if (attr(anim, 'toggle') && repeat && (runs === INDEFINITE || (COUNT.test(runs) && Number(runs) !== 1))) report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
   }
   for (const sound of sounds) {
     // Sounds from a place: how far one comes needs where it comes from.

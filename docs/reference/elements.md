@@ -235,7 +235,7 @@ Text in the scene. [In the specification](../../SPEC.md#label).
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `id` | id | none | A name, for `animate` and scripts |
+| `id` | id | none | A name, for a click action's `trigger` and for scripts |
 | `position` | vector | `"0 0 0"` | Where its centre is |
 | `rotation` | vector | `"0 0 0"` | How it is turned; unturned, its face looks along z, toward a viewer at a larger z |
 | `width` | number, more than 0 | `1` | How wide it is, in metres; its lines wrap to this |

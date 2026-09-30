@@ -7,28 +7,33 @@ import { relaxNg } from './relaxng.ts';
 const scene = (inner: string, version = '0.2') => `<holoml version="${version}"><scene>${inner}</scene></holoml>`;
 const codes = (text: string) => check(parse(text)).map((p) => p.code);
 
-/** How long the checker takes over a page, in milliseconds: the best of three runs, so that a busy computer does not decide. */
-function checkTime(text: string): number {
+/**
+ * What the checker finds in a page, and how long it takes, in
+ * milliseconds: the best of up to three runs, so that a busy computer
+ * does not decide, and one run where the first is fast.
+ */
+function timed(text: string): { codes: string[]; ms: number } {
   const doc = parse(text);
-  let best = Infinity;
-  for (let k = 0; k < 3; k++) {
+  let codes: string[] = [];
+  let ms = Infinity;
+  for (let k = 0; k < 3 && ms >= 20; k++) {
     const start = performance.now();
-    check(doc);
-    best = Math.min(best, performance.now() - start);
+    codes = check(doc).map((p) => p.code);
+    ms = Math.min(ms, performance.now() - start);
   }
-  return best;
+  return { codes, ms };
 }
 
 describe('the patterns of values take time that grows with the length only (review 134, L1)', () => {
   const digits = '1'.repeat(200_000);
 
   it('a 200,000-digit non-number is rejected in under 100 ms, alone and inside a vector', () => {
-    const alone = scene(`<light type="ambient" intensity="${digits}x" />`);
-    expect(codes(alone)).toEqual(['bad-value']);
-    expect(checkTime(alone)).toBeLessThan(100);
-    const vector = scene(`<group position="0 ${digits}x 0" />`);
-    expect(codes(vector)).toEqual(['bad-value']);
-    expect(checkTime(vector)).toBeLessThan(100);
+    const alone = timed(scene(`<light type="ambient" intensity="${digits}x" />`));
+    expect(alone.codes).toEqual(['bad-value']);
+    expect(alone.ms).toBeLessThan(100);
+    const vector = timed(scene(`<group position="0 ${digits}x 0" />`));
+    expect(vector.codes).toEqual(['bad-value']);
+    expect(vector.ms).toBeLessThan(100);
   });
 
   it('so is every other kind of value a long run of digits can come near', () => {
@@ -45,8 +50,9 @@ describe('the patterns of values take time that grows with the length only (revi
       'a slider': scene(`<slider min="${digits}x">x</slider>`),
     };
     for (const [kind, text] of Object.entries(near)) {
-      expect(codes(text), kind).toEqual(['bad-value']);
-      expect(checkTime(text), kind).toBeLessThan(100);
+      const result = timed(text);
+      expect(result.codes, kind).toEqual(['bad-value']);
+      expect(result.ms, kind).toBeLessThan(100);
     }
   });
 

@@ -1,0 +1,29 @@
+{
+  "problems": [
+    {
+      "code": "child-not-allowed",
+      "line": 3,
+      "column": 14
+    },
+    {
+      "code": "child-not-allowed",
+      "line": 6,
+      "column": 17
+    },
+    {
+      "code": "empty-text",
+      "line": 7,
+      "column": 5
+    },
+    {
+      "code": "child-not-allowed",
+      "line": 7,
+      "column": 12
+    },
+    {
+      "code": "child-not-allowed",
+      "line": 8,
+      "column": 10
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "problems": [
+    {
+      "code": "unsupported-version",
+      "line": 1,
+      "column": 9
+    },
+    {
+      "code": "unknown-element",
+      "line": 3,
+      "column": 5
+    },
+    {
+      "code": "missing-attribute",
+      "line": 4,
+      "column": 5
+    }
+  ]
+}

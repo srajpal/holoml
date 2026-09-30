@@ -492,7 +492,7 @@ see `viewpoint`), and (0.2) at most one `plan` and one `water`.
 
 Places several things together, so they move, turn, and scale as one.
 Holds the same elements as `scene`, except `viewpoint`, `hud`, `slider`,
-`choice`, and `plan`.
+`choice`, `plan`, and `water`.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
@@ -792,7 +792,7 @@ screen readers, and any text-only view of the page read its words.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `id` | id | none | A name, for `animate` and scripts |
+| `id` | id | none | A name, for a click action's `trigger` and for scripts |
 | `position` | vector | `"0 0 0"` | Where its centre is |
 | `rotation` | vector | `"0 0 0"` | How it is turned; unturned, its face looks along z, toward a viewer at a larger z |
 | `width` | number, more than 0 | `1` | How wide it is, in metres; its lines wrap to this |
@@ -1075,15 +1075,15 @@ MUST give the picture its `label` for screen readers.
 ## 8. Checking
 
 A document that follows the syntax may still break the rules above. A
-checker MUST report each problem with its place, and a renderer SHOULD
-show the rest of the scene as well as it can. A page is checked against
-the version it declares: an element or attribute from a later version is
-reported as unknown (`unknown-element`, `unknown-attribute`), and a
-value from a later version (such as an `animate` of `intensity` in a 0.1
-page) as a `bad-value`. Nothing more is reported of it: the later
-version's rules do not apply to the page, so that a 0.1 page's `toggle`
-is an unknown attribute, and not also a click action without its
-`begin`.
+checker MUST report each problem with its code and its place, and a
+renderer SHOULD show the rest of the scene as well as it can. A page is
+checked against the version it declares: an element or attribute from a
+later version is reported as unknown (`unknown-element`,
+`unknown-attribute`), and a value from a later version (such as an
+`animate` of `intensity` in a 0.1 page) as a `bad-value`. Nothing more
+is reported of it: the later version's rules do not apply to the page,
+so that a 0.1 page's `toggle` is an unknown attribute, and not also a
+click action without its `begin`.
 
 An `id` names its element wherever the element stands, even inside an
 element that is unknown or that may not stand where it is: two elements
@@ -1098,23 +1098,79 @@ The problem codes:
 | Code | Meaning |
 |---|---|
 | `wrong-root` | The root element is not `holoml` |
-| `unsupported-version` | The `version` is not one the reader knows |
+| `unsupported-version` | The `version` is not one the reader knows, written exactly |
 | `unknown-element` | An element that is not in the page's HoloML version |
 | `child-not-allowed` | An element where it may not stand |
 | `text-not-allowed` | Text in an element that holds none (text belongs in `title`, `label`, and (0.2) `hud`, `slider`, `option`, and `panel`) |
 | `empty-text` | An element that holds text, with none (a `hud` may be empty) |
-| `too-many` | A second `head`, `scene`, `title`, (0.1) `viewpoint`, or (0.2) `plan` |
-| `missing-child` | `holoml` without a `scene` |
+| `too-many` | A second `head`, `scene`, `title`, (0.1) `viewpoint`, or (0.2) `plan` or `water` |
+| `missing-child` | `holoml` without a `scene`, or (0.2) a `choice` without an `option` |
 | `wrong-order` | `head` after `scene` |
 | `unknown-attribute` | An attribute the element does not have |
-| `missing-attribute` | A required attribute is missing, or (0.2) one that another needs: a choice's `target` and `material` go together, a click action's `trigger`, `toggle`, and `label` need `begin="click"`, an animation that begins on a click needs a `trigger` when its target cannot be clicked, and a sound always does, each of several viewpoints needs an `id`, and a group's `near` needs `load="near"` |
-| `bad-value` | A value of the wrong kind, or out of range |
+| `missing-attribute` | A required attribute is missing, or (0.2) one that another needs: a choice's `target` and `material` go together, a click action's `trigger`, `toggle`, and `label` need `begin="click"`, an animation that begins on a click needs a `trigger` when its target cannot be clicked, and a sound always does, each of several viewpoints needs an `id`, a group's `near` needs `load="near"`, and a sound's `range` needs a `position` |
+| `bad-value` | A value of the wrong kind, or out of range, or (0.2) one that another attribute or element rules out: a slider's `max` and `value`, a toggle's `repeat`, a click sound's `autoplay`, an option's value that another has, a choice's `value` |
 | `attribute-not-for-type` | A light attribute its type does not use |
 | `duplicate-id` | Two elements with the same id |
 | `unknown-target` | An id reference (an `animate` target, (0.2) a trigger, a choice's target) that no element has |
 | `bad-target` | An attribute that cannot be animated on that element, or (0.2) a trigger that cannot be clicked, or a choice's target that is not a model |
 | `nested-link` | A link inside another link |
 | `unsafe-link` | An address with a scheme other than http or https |
+
+### Where a problem is reported
+
+The place of an element is its `<`; of an attribute, the first
+character of its name; and of text, its first character that is not
+whitespace, a character reference counting as one (section 5). A
+checker lists problems in the order of their places in the page. Where
+several are at one place, their order is not defined; no conformance
+sample has two codes at one place.
+
+What is checked, and where each problem is:
+
+- `wrong-root` is at the root, and nothing else in the page is checked.
+- A root without a `version` has a `missing-attribute`, at the root; a
+  `version` that is not one the checker knows is an
+  `unsupported-version`, at the attribute. In both cases the rest of
+  the page is checked by the newest version the checker knows ([section
+  11](#11-versions)).
+- An element the page's version does not have is an `unknown-element`,
+  at the element; one it has, where it may not stand, is a
+  `child-not-allowed`, at the element. Neither is checked further: not
+  its attributes, and not what it holds. In an element that holds text,
+  every element is a `child-not-allowed`.
+- `text-not-allowed` is at the text, for each text.
+- `empty-text` is at the element. Text that is whitespace alone is
+  none, however it is written.
+- `too-many` is at the second such element; a third is not reported
+  again.
+- `missing-child` is at the element that lacks the child, and
+  `wrong-order` at the first `head`, when it comes after the first
+  `scene`.
+- `unknown-attribute`, `bad-value`, `attribute-not-for-type`, and
+  `unsafe-link` are at the attribute. A value is reported once for its
+  kind, by the first of its kind's rules that it breaks; for an
+  address, its characters, then its scheme, then its file's extension.
+  A light's attributes are held to its `type` only when the type is one
+  of the four.
+- A `bad-value` between attributes is at the attribute that is wrong: a
+  slider's `max` that is not more than its `min` (at the slider itself
+  when `max` is not written), and its `value` outside them; a toggle's
+  `repeat` other than 1; a click sound's `autoplay`; a choice's `value`
+  that is none of its options'. An option whose value another option of
+  its choice has is reported at its `value`, or at the option when its
+  label is its value. None of these is reported for a value that is
+  already a `bad-value` by its kind.
+- `missing-attribute` for a required attribute is at the element, once
+  for each that is missing. For an attribute that needs another, it is
+  at the attribute that is there: a group's `near`; a click action's
+  `trigger`, `toggle`, or `label`; a sound's `range`. Otherwise it is
+  at the element: a choice with only one of `target` and `material`, an
+  animation or a sound that begins on a click and lacks the trigger it
+  needs, and each viewpoint without an `id` in a scene with several.
+- `duplicate-id` is at the later element's `id`.
+- `unknown-target` and `bad-target` are at the attribute that refers:
+  `target` or `trigger`.
+- `nested-link` is at the inner link.
 
 ## 9. Processing model
 
@@ -1128,7 +1184,11 @@ A reader decodes the page as UTF-8 and reads it as section 5 says,
 stopping at the first syntax error. It then checks the page against the
 version the page declares ([section 11](#11-versions)) and the rules of
 section 8. A renderer shows a page with problems as well as it can,
-leaving out what it cannot show.
+leaving out what it cannot show; a page whose version it does not know
+it does not draw at all (section 11). What the page's version does not
+have is one of those problems, and a renderer MUST NOT act on it as a
+later version would: a `hud` in a 0.1 page is not shown, as a `slider`
+in one is not.
 
 ### Building the scene
 
@@ -1334,7 +1394,21 @@ the scene lists only those with an `id`.
 The `version` attribute names the HoloML version a page is written for.
 A reader MUST refuse a version it does not know, rather than guess: a
 reader that knows only 0.1 refuses a 0.2 page with
-`unsupported-version`.
+`unsupported-version`. What refusing is depends on the reader:
+
+- A checker reports `unsupported-version`, at the attribute. It then
+  checks the rest of the page by the newest version it knows, so that
+  the page's other mistakes are found in the same pass. What it reports
+  beyond the version is for the page's author, and says nothing of what
+  the page means.
+- A renderer MUST NOT draw the page, neither as the version it names
+  nor as any other. It tells the viewer that the page is written for a
+  version it does not know.
+
+A page whose root has no `version` is treated in the same way, as there
+is nothing to go by but a guess: a checker reports the
+`missing-attribute` and checks the rest by the newest version it knows,
+and a renderer MUST NOT draw the page.
 
 - 0.1 (2026-09-26): models, groups, lights, labels, links, materials,
   animation of position, rotation, and scale, orbit and walk.
