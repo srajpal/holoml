@@ -1,0 +1,251 @@
+# HoloML 0.2: the structure of a page, in RELAX NG's compact syntax
+# (ISO/IEC 19757-2). Made from the checker's table
+# (packages/schema/src/rules.ts) by packages/schema/src/relaxng.ts:
+# do not edit; run `pnpm grammar:update`. Informative: SPEC.md and the
+# checker say what a page may be, and more than a schema can (unique
+# ids, targets that exist, values that depend on one another). A page
+# is read as XML would be: a flag, written alone (autoplay), is an
+# attribute with an empty value. "(0.2)" marks what a 0.1 page may
+# not use.
+
+start = holoml
+
+holoml =
+  element holoml {
+    attribute version { string "0.1" | string "0.2" },
+    head?, scene
+  }
+
+head =
+  element head {
+    (title? & meta* & script*)
+  }
+
+title =
+  element title {
+    text  # not empty
+  }
+
+meta =
+  element meta {
+    attribute name { text },
+    attribute content { text },
+    empty
+  }
+
+script =  # (0.2)
+  element script {
+    attribute src { xsd:token { pattern = "[^\s?#]*\.([jJ][sS]|[mM][jJ][sS])([?#][^\s]*)?" } },
+    empty
+  }
+
+scene =
+  element scene {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
+    attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute environment { xsd:token { pattern = "[^\s?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][eE]?[gG])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute sky { xsd:token { pattern = "[^\s?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][eE]?[gG])([?#][^\s]*)?" } }?,  # (0.2)
+    (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint* & hud* & slider* & choice* & plan? & water?)
+  }
+
+group =
+  element group {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute position { list { number, number, number } }?,
+    attribute rotation { list { number, number, number } }?,
+    attribute scale { list { number } | list { number, number, number } }?,
+    attribute solid { flag }?,  # (0.2)
+    attribute shadows { flag }?,  # (0.2)
+    attribute load { string "page" | string "near" }?,  # (0.2)
+    attribute near { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,  # (0.2)
+    (group* & model* & light* & label* & a* & animate* & sound* & panel*)
+  }
+
+model =
+  element model {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute position { list { number, number, number } }?,
+    attribute rotation { list { number, number, number } }?,
+    attribute scale { list { number } | list { number, number, number } }?,
+    attribute src { xsd:token { pattern = "[^\s?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\s]*)?" } },
+    attribute animation { text }?,
+    attribute autoplay { flag }?,
+    attribute solid { flag }?,  # (0.2)
+    attribute shadows { flag }?,  # (0.2)
+    attribute stand-in { xsd:token { pattern = "[^\s?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\s]*)?" } }?,  # (0.2)
+    material*
+  }
+
+material =
+  element material {
+    attribute name { text },
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute metalness { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute roughness { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute opacity { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute normal-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute roughness-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
+    empty
+  }
+
+viewpoint =
+  element viewpoint {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
+    attribute label { text }?,  # (0.2)
+    attribute position { list { number, number, number } }?,
+    attribute look-at { list { number, number, number } }?,
+    attribute mode { string "orbit" | string "walk" }?,
+    attribute gravity { flag }?,  # (0.2)
+    attribute jump { flag }?,  # (0.2)
+    attribute crosshair { flag }?,  # (0.2)
+    attribute speed { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0.5" maxInclusive = "10" } }?,  # (0.2)
+    attribute turn-speed { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "10" maxInclusive = "720" } }?,  # (0.2)
+    empty
+  }
+
+light =
+  element light {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute type { string "ambient" | string "directional" | string "point" | string "spot" },
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute intensity { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" } }?,
+    attribute position { list { number, number, number } }?,
+    attribute look-at { list { number, number, number } }?,
+    attribute range { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" } }?,
+    attribute angle { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "90" } }?,
+    attribute shadows { flag }?,  # (0.2)
+    empty
+  }
+
+label =
+  element label {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute position { list { number, number, number } }?,
+    attribute size { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    text  # not empty
+  }
+
+a =
+  element a {
+    attribute href { xsd:token { pattern = "[^\s]+" } },
+    (model* & group* & label* & panel*)
+  }
+
+animate =
+  element animate {
+    attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } },
+    attribute \attribute { string "position" | string "rotation" | string "scale" | string "intensity" | string "color" | string "background" },
+    attribute from { text }?,
+    attribute to { text },
+    attribute duration { xsd:token { pattern = "([0-9]+(\.[0-9]+)?|\.[0-9]+)(ms|s)" } },
+    attribute repeat { xsd:token { pattern = "[0-9]*[1-9][0-9]*|indefinite" } }?,
+    attribute begin { string "load" | string "click" }?,  # (0.2)
+    attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
+    attribute toggle { flag }?,  # (0.2)
+    attribute label { text }?,  # (0.2)
+    empty
+  }
+
+sound =  # (0.2)
+  element sound {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute src { xsd:token { pattern = "[^\s?#]*\.([oO][gG][gG]|[mM][pP]3|[wW][aA][vV])([?#][^\s]*)?" } },
+    attribute loop { flag }?,
+    attribute autoplay { flag }?,
+    attribute volume { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute position { list { number, number, number } }?,
+    attribute range { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute begin { string "load" | string "click" }?,
+    attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute label { text }?,
+    empty
+  }
+
+hud =  # (0.2)
+  element hud {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
+    attribute size { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    text  # may be empty
+  }
+
+slider =  # (0.2)
+  element slider {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
+    attribute min { number }?,
+    attribute max { number }?,
+    attribute step { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute value { number }?,
+    text  # not empty
+  }
+
+choice =  # (0.2)
+  element choice {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
+    attribute label { text }?,
+    attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute material { text }?,
+    attribute value { text }?,
+    option+
+  }
+
+option =  # (0.2)
+  element option {
+    attribute value { text }?,
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute metalness { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute roughness { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute opacity { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0" maxInclusive = "1" } }?,
+    attribute map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute normal-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute roughness-map { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } }?,  # (0.2)
+    attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
+    text  # not empty
+  }
+
+panel =  # (0.2)
+  element panel {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute position { list { number, number, number } }?,
+    attribute rotation { list { number, number, number } }?,
+    attribute width { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute size { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    text  # not empty
+  }
+
+water =  # (0.2)
+  element water {
+    attribute position { list { number, number, number } }?,
+    attribute size { list { more-than-0, more-than-0, more-than-0 } },
+    attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute clarity { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute caustics { flag }?,
+    empty
+  }
+
+plan =  # (0.2)
+  element plan {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,
+    attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
+    attribute src { xsd:token { pattern = "[^\s?#]*\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP])([?#][^\s]*)?" } },
+    attribute area { list { number, number, number, number } },
+    attribute width { xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
+    attribute label { text }?,
+    empty
+  }
+
+# Values
+
+# A number: a decimal number, optionally with an exponent; never INF or NaN.
+number = xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" }
+more-than-0 = xsd:double { pattern = "-?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" }
+# A flag, written alone in HoloML.
+flag = string ""

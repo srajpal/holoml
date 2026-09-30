@@ -9,7 +9,7 @@
 //   logos);
 // - models/shoe.glb (the shoe page's shoe, its pictures at 1024 pixels),
 //   models/shoe-<colour>.glb (the store's, at 512), and
-//   models/shoe-<colour>-far.glb (their stand-ins: about a seventh of the
+//   models/shoe-<colour>-far.glb (their stand-ins: about a ninth of the
 //   triangles, and a picture of 64 pixels);
 // - colours/<colour>.jpg (the shoe page's colour choice);
 // - the store's room, walls, bays, bench, counter, plants, and entrance,

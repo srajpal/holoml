@@ -7,9 +7,16 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: versions 0.1 and 0.2, written down.**
-[SPEC.md](SPEC.md) describes the language; this repository has a
-parser, a checker, conformance samples, and example sites. HoloML is the
+**Status: experimental; versions 0.1 and 0.2 are written down.** HoloML
+has one renderer so far, and until version 1.0 a later version may
+change or remove what an earlier one has; what a page written for 0.1 or
+0.2 means will not change.
+[SPEC.md](SPEC.md) describes the language, in the form of W3C
+specifications, with its grammar and its scene API in Web IDL; this
+repository also has a parser, a checker, conformance samples, guides,
+and example sites. The specification and the guides are published at
+https://srajpal.github.io/holoml/ (the specification at
+https://srajpal.github.io/holoml/spec/). HoloML is the
 markup language of
 [HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
 (short: HyperSpace 3D), the open-source 3D browser built alongside it,
@@ -69,7 +76,10 @@ several people.
 
 ```
 holoml/
-  SPEC.md            the language: versions 0.1 and 0.2
+  SPEC.md            the language: versions 0.1 and 0.2 (0.2's second edition)
+  spec/              its grammar: the syntax in ABNF, the structure in RELAX NG, the scene API in Web IDL
+  docs/              the guides: tutorials, how-to guides, reference, and explanation
+  site/              makes the published site from SPEC.md, docs/, and examples/ (pnpm site:build)
   packages/
     parser/          @holoml/parser: text to a tree, with line and column; no dependencies
     schema/          @holoml/schema: checks a tree against the spec and lists problems
@@ -107,8 +117,13 @@ pnpm lint
 pnpm typecheck
 ```
 
-217 unit and conformance tests passed on 2026-09-29 on Windows 11. GitHub
-Actions runs them on Windows and Linux for every push.
+362 unit, conformance, documentation, and site tests passed on
+2026-09-29 on Windows 11. GitHub Actions runs them on Windows and Linux
+for every push. `pnpm site:build` makes the site in `_site/` (open
+`_site/index.html`); `pnpm grammar:update` and `pnpm reference:update`
+write the files made from the checker's table and the specification
+(the RELAX NG schema, the reference pages, and the specification's
+index), which the tests check.
 
 ## Built with the Buildwright approach
 

@@ -1,0 +1,417 @@
+/*
+ * The HoloML site (browser milestone 22): plain pages, light and dark,
+ * with the system's own fonts, so that nothing is fetched from other
+ * sites. Every colour pair meets WCAG 2.2 AA (4.5:1 for text, 3:1 for
+ * borders that matter); site/site.test.ts checks them.
+ */
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --surface: #f4f6f9;
+  --fg: #1b1e24;
+  --muted: #4d5566;
+  --link: #0a58a8;
+  --visited: #6a3d9a;
+  --border: #8a93a3;
+  --rule: #d9dee6;
+  --must: #9b1c1c;
+  --note: #0a58a8;
+  --hl-tag: #7b2a8e;
+  --hl-attr: #8a4600;
+  --hl-value: #0b6b34;
+  --hl-comment: #5b6371;
+  --hl-keyword: #0a58a8;
+  --focus: #0a58a8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111418;
+    --surface: #1b2028;
+    --fg: #e7e9ee;
+    --muted: #aab2c0;
+    --link: #8ec3ff;
+    --visited: #c9a6f5;
+    --border: #6b7486;
+    --rule: #2c323d;
+    --must: #ff9d94;
+    --note: #8ec3ff;
+    --hl-tag: #e0a8ff;
+    --hl-attr: #f5bd7a;
+    --hl-value: #8ddba3;
+    --hl-comment: #a0a9b8;
+    --hl-keyword: #8ec3ff;
+    --focus: #8ec3ff;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 1.0625rem/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+a {
+  color: var(--link);
+  text-underline-offset: 0.15em;
+}
+
+a:visited {
+  color: var(--visited);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg);
+  color: var(--link);
+  border: 2px solid var(--focus);
+  z-index: 10;
+}
+
+.skip:focus {
+  top: 0.5rem;
+}
+
+/* The bar at the top: the site's name and its parts. */
+.bar {
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.bar nav {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.5rem;
+}
+
+.bar .home {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.bar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.1rem;
+}
+
+.bar a:visited {
+  color: var(--link);
+}
+
+.bar .here,
+.bar [aria-current='page'] {
+  color: var(--fg);
+  font-weight: 600;
+  text-decoration-thickness: 2px;
+}
+
+main {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  /* A long address breaks rather than widen the page on a phone. */
+  overflow-wrap: break-word;
+}
+
+body.spec main {
+  max-width: 56rem;
+}
+
+.crumbs ol {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.crumbs li + li::before {
+  content: '›';
+  margin-right: 0.35rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+  margin: 2rem 0 0.75rem;
+}
+
+h1 {
+  font-size: 2.1rem;
+  margin-top: 0.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+
+h1 code,
+h2 code,
+h3 code {
+  font-size: 0.95em;
+}
+
+p,
+ul,
+ol,
+dl {
+  margin: 0 0 1rem;
+}
+
+li + li {
+  margin-top: 0.25rem;
+}
+
+code,
+pre {
+  font-family: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
+pre {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+  line-height: 1.45;
+  tab-size: 2;
+}
+
+pre[data-lang]::before {
+  content: attr(data-lang);
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--muted);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.8rem;
+}
+
+.hl-tag {
+  color: var(--hl-tag);
+}
+
+.hl-attr {
+  color: var(--hl-attr);
+}
+
+.hl-value {
+  color: var(--hl-value);
+}
+
+.hl-comment {
+  color: var(--hl-comment);
+  font-style: italic;
+}
+
+.hl-keyword {
+  color: var(--hl-keyword);
+  font-weight: 600;
+}
+
+.table {
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+th,
+td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+th {
+  border-bottom: 2px solid var(--border);
+}
+
+/*
+ * Code in a table breaks only at its spaces, and the names in its first
+ * column not at all; a table too wide for the screen scrolls in its own
+ * region. The last column is most often words: room enough to read them.
+ */
+td code,
+th code {
+  overflow-wrap: normal;
+}
+
+td:first-child code {
+  white-space: nowrap;
+}
+
+td:last-child {
+  min-width: 12rem;
+}
+
+/* The specification's requirement words (BCP 14), as W3C specifications mark them. */
+em.rfc2119 {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--must);
+  letter-spacing: 0.02em;
+}
+
+p.note,
+p.informative {
+  border-left: 4px solid var(--note);
+  background: var(--surface);
+  padding: 0.6rem 0.9rem;
+  border-radius: 0 6px 6px 0;
+}
+
+p.informative {
+  font-style: italic;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-top: -0.25rem;
+}
+
+/* The specification's contents. */
+.toc {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0 1.25rem 0.5rem;
+  margin: 2rem 0;
+}
+
+.toc h2 {
+  border: none;
+  margin-top: 1rem;
+}
+
+.toc ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.toc ul ul {
+  padding-left: 1.5rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* The example sites on the home page, as cards. */
+ul.sites {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1.25rem;
+}
+
+ul.sites li {
+  margin: 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  padding-bottom: 0.75rem;
+  background: var(--surface);
+}
+
+ul.sites img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 0.6rem;
+}
+
+ul.sites li > :not(img) {
+  margin-left: 0.9rem;
+  margin-right: 0.9rem;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+footer.bar {
+  border-top: 1px solid var(--rule);
+  border-bottom: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+footer.bar div {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+footer.bar p {
+  margin: 0.25rem 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media print {
+  .bar,
+  .skip,
+  .crumbs {
+    display: none;
+  }
+
+  pre {
+    white-space: pre-wrap;
+  }
+}
