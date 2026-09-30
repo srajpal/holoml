@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -52,6 +52,50 @@ describe('examples', () => {
         for (const [, name] of (body ?? '').matchAll(/<material name="([^"]+)"/g)) expect(names, `${src} in ${file}`).toContain(name);
       }
     }
+  });
+
+  it("every link of every page leads somewhere: a file of its site, with the place or the choice its address names, or a file of this repository", () => {
+    const seen = { pages: 0, others: 0, places: 0, choices: 0, repository: 0 };
+    for (const file of files) {
+      const name = file.slice(EXAMPLES.length).replace(/\\/g, '/');
+      for (const [, href] of readFileSync(file, 'utf8').matchAll(/href="([^"]+)"/g)) {
+        // A file of this repository, on GitHub.
+        const own = /^https:\/\/github\.com\/srajpal\/holoml\/(?:blob|tree)\/main\/([^#?]+)/.exec(href!);
+        if (own) {
+          expect(existsSync(join(EXAMPLES, '..', own[1]!)), `${href} in ${name}`).toBe(true);
+          seen.repository++;
+          continue;
+        }
+        // Another site.
+        if (/^[a-z][a-z0-9+.-]*:/i.test(href!)) continue;
+        // A file of its own site: a HoloML page, or another kind of page (a cart, a booking, a checkout).
+        const [rest, place] = href!.split('#');
+        const [path, query] = rest!.split('?');
+        const target = join(dirname(file), path!);
+        expect(existsSync(target), `${href} in ${name}`).toBe(true);
+        if (path!.endsWith('.holoml')) seen.pages++;
+        else seen.others++;
+        const page = readFileSync(target, 'utf8');
+        // "#name": a place of that page (a viewpoint with that id).
+        if (place !== undefined) {
+          expect(page, `${href} in ${name}`).toMatch(new RegExp(`<viewpoint id="${place}"[\\s>]`));
+          seen.places++;
+        }
+        // "?colour=beach": a choice of that page, and one of its options.
+        for (const [id, value] of new URLSearchParams(query ?? '')) {
+          const choice = new RegExp(`<choice id="${id}"[^>]*>([\\s\\S]*?)</choice>`).exec(page)?.[1];
+          expect(choice, `${href} in ${name}: the choice ${id}`).toBeDefined();
+          expect(choice, `${href} in ${name}`).toContain(`<option value="${value}"`);
+          seen.choices++;
+        }
+      }
+    }
+    // The kinds of link the examples have today, so that none goes unchecked unnoticed.
+    expect(seen.pages).toBeGreaterThan(40);
+    expect(seen.others).toBe(4);
+    expect(seen.places).toBe(1);
+    expect(seen.choices).toBe(10);
+    expect(seen.repository).toBeGreaterThanOrEqual(11);
   });
 
   it('the showroom stays small: under 10 MB and 200,000 triangles for the hall', () => {
