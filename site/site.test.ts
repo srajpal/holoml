@@ -139,6 +139,21 @@ describe('Y1: the specification as a page', () => {
   });
 });
 
+describe('the pages alone, for HyperSpace 3D screenshots', () => {
+  it('builds without the example sites, and checks links into them against their sources', () => {
+    const pagesOnly = mkdtempSync(join(tmpdir(), 'holoml-pages-'));
+    try {
+      const result = buildSite(pagesOnly, { examples: false }) as { pages: string[]; problems: string[] };
+      expect(result.problems).toEqual([]);
+      expect(result.pages).toEqual(built.pages);
+      for (const site of EXAMPLES) expect(existsSync(join(pagesOnly, site)), site).toBe(false);
+      expect(existsSync(join(pagesOnly, 'pictures'))).toBe(true);
+    } finally {
+      rmSync(pagesOnly, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('the HoloML in code blocks is coloured without changing it', () => {
   it('keeps every character of the text', () => {
     const text = '<holoml version="0.2">\n  <!-- a comment -->\n  <scene>\n    <model src="a.glb" solid />\n    <label>1 &lt; 2</label>\n  </scene>\n</holoml>';

@@ -6,6 +6,10 @@
 // from the disk. Every link within the site is checked as it is built.
 //
 //   pnpm site:build          (node site/build.mjs [folder])
+//   node site/build.mjs <folder> --pages-only
+//                            (without the example sites, for HyperSpace 3D's
+//                            screenshots; links into them are checked
+//                            against examples/)
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -360,9 +364,11 @@ const idsOf = (html) => new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) =>
 /**
  * Builds the site into `out` (emptied first). Returns the pages made and
  * every problem found: a link to a file or a part of a page that is not
- * there, or a picture without its text.
+ * there, or a picture without its text. With `examples: false`, the
+ * example sites are left out, and links into them are checked against
+ * their sources in examples/.
  */
-export function buildSite(out = join(ROOT, '_site')) {
+export function buildSite(out = join(ROOT, '_site'), { examples = true } = {}) {
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
   const list = pages();
@@ -381,22 +387,28 @@ export function buildSite(out = join(ROOT, '_site')) {
   cpSync(join(ROOT, 'site/style.css'), join(out, 'style.css'));
   cpSync(join(ROOT, 'site/pictures'), join(out, 'pictures'), { recursive: true });
   // The example sites, without the scripts that make them.
-  for (const site of readdirSync(join(ROOT, 'examples'), { withFileTypes: true }).filter((e) => e.isDirectory())) {
+  const sites = readdirSync(join(ROOT, 'examples'), { withFileTypes: true }).filter((e) => e.isDirectory());
+  for (const site of examples ? sites : []) {
     cpSync(join(ROOT, 'examples', site.name), join(out, site.name), {
       recursive: true,
       filter: (src) => !src.split(/[\\/]/).includes('tools'),
     });
   }
   writeFileSync(join(out, '.nojekyll'), '');
+  const inSite = (to) => (!examples && sites.some((s) => to.startsWith(`${s.name}/`)) ? join(ROOT, 'examples', to) : join(out, to));
   for (const { from, to, anchor } of links) {
-    if (!existsSync(join(out, to))) problems.push(`${from}: a link to ${to}, which the site does not have`);
+    if (!existsSync(inSite(to))) problems.push(`${from}: a link to ${to}, which the site does not have`);
     else if (anchor && made.has(to) && !idsOf(made.get(to)).has(anchor)) problems.push(`${from}: a link to ${to}#${anchor}, a part that page does not have`);
   }
   return { out, pages: [...made.keys()], problems: [...new Set(problems)] };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const { out, pages: made, problems } = buildSite(process.argv[2]);
+  const args = process.argv.slice(2);
+  const { out, pages: made, problems } = buildSite(
+    args.find((a) => !a.startsWith('--')),
+    { examples: !args.includes('--pages-only') },
+  );
   for (const p of problems) console.error(p);
   console.log(`${made.length} pages in ${out}${problems.length ? `; ${problems.length} problems` : ''}`);
   process.exitCode = problems.length ? 1 : 0;
