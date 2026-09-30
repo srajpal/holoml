@@ -110,7 +110,31 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     typeof declared === 'string' && known.includes(declared) && (VERSIONS as readonly string[]).includes(declared) ? (declared as Version) : VERSION;
   const ctx: Context = { version, known };
 
+  // Every id in the page, first, wherever its element stands: an element
+  // inside one that is unknown or misplaced is not checked further, but a
+  // reference to it still finds it, and is not reported as a second, false
+  // "no element has the id" (review 134, L6).
   const ids = new Map<string, ElementNode>();
+  const collect = (el: ElementNode) => {
+    const id = attr(el, 'id');
+    if (id?.value && ID.test(id.value)) {
+      if (ids.has(id.value)) report('duplicate-id', `The id "${id.value}" is used twice`, id.start);
+      else ids.set(id.value, el);
+    }
+    for (const child of el.children) if (child.type === 'element') collect(child);
+  };
+  collect(root);
+  /** The id a reference names; null when it is absent or not a reference (already reported as a bad value). */
+  const named = (reference: Attribute | undefined): string | null => {
+    const value = reference?.value;
+    return value?.startsWith('#') && ID.test(value.slice(1)) ? value.slice(1) : null;
+  };
+  /** Is this an element of the page's version? One that is not is already reported, and nothing more is said of it. */
+  const inVersion = (el: ElementNode): boolean => {
+    const rule = own(ELEMENTS, el.name);
+    return rule !== undefined && atLeast(version, rule.since);
+  };
+
   const animations: ElementNode[] = [];
   const choices: ElementNode[] = [];
   const sounds: ElementNode[] = [];
@@ -123,11 +147,6 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
       return;
     }
     checkAttributes(el, report, ctx);
-    const id = attr(el, 'id');
-    if (id?.value && ID.test(id.value)) {
-      if (ids.has(id.value)) report('duplicate-id', `The id "${id.value}" is used twice`, id.start);
-      else ids.set(id.value, el);
-    }
     if (el.name === 'animate') animations.push(el);
     if (el.name === 'choice') choices.push(el);
     if (el.name === 'sound') sounds.push(el);
@@ -194,13 +213,14 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     const target = attr(anim, 'target');
     const which = attr(anim, 'attribute')?.value ?? undefined;
     const usable = animatable(which, version);
-    if (!target?.value?.startsWith('#')) continue; // already reported as a bad value
-    const el = ids.get(target.value.slice(1));
+    const id = named(target);
+    if (!target || id === null) continue;
+    const el = ids.get(id);
     if (!el) {
-      report('unknown-target', `No element has the id "${target.value.slice(1)}"`, target.start);
+      report('unknown-target', `No element has the id "${id}"`, target.start);
       continue;
     }
-    if (!usable) continue;
+    if (!usable || !inVersion(el)) continue;
     const kinds = own(ANIMATABLE, which)?.filter((k) => atLeast(version, k.since)).map((k) => k.element) ?? [];
     if (!kinds.includes(el.name)) {
       report('bad-target', `The ${which} of a <${el.name}> cannot be animated`, target.start);
@@ -209,14 +229,15 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     }
   }
   // Click actions (0.2): what begins them, and what can be clicked.
-  const clickable = (trigger: ReturnType<typeof attr>, what: string): boolean => {
-    if (!trigger?.value?.startsWith('#')) return false; // absent, or already reported as a bad value
-    const el = ids.get(trigger.value.slice(1));
-    if (!el) report('unknown-target', `No element has the id "${trigger.value.slice(1)}"`, trigger.start);
-    else if (!CLICKABLE.includes(el.name)) report('bad-target', `${what} begins when its trigger is clicked, and a <${el.name}> cannot be clicked`, trigger.start);
-    return true;
+  const clickable = (trigger: Attribute, what: string): void => {
+    const id = named(trigger);
+    if (id === null) return;
+    const el = ids.get(id);
+    if (!el) report('unknown-target', `No element has the id "${id}"`, trigger.start);
+    else if (inVersion(el) && !CLICKABLE.includes(el.name)) report('bad-target', `${what} begins when its trigger is clicked, and a <${el.name}> cannot be clicked`, trigger.start);
   };
-  for (const anim of animations) {
+  // A 0.1 page has no click actions: what it writes of them is already reported as unknown (review 134, L6).
+  for (const anim of atLeast(version, '0.2') ? animations : []) {
     const onClick = attr(anim, 'begin')?.value === 'click';
     for (const name of ['trigger', 'toggle', 'label']) {
       const a = attr(anim, name);
@@ -227,9 +248,9 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     if (trigger) clickable(trigger, 'An <animate> with begin="click"');
     else {
       // Without a trigger, a click on the target begins it: the target must be something that can be clicked.
-      const target = attr(anim, 'target')?.value;
-      const el = target?.startsWith('#') ? ids.get(target.slice(1)) : undefined;
-      if (el && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
+      const target = named(attr(anim, 'target'));
+      const el = target === null ? undefined : ids.get(target);
+      if (el && inVersion(el) && !CLICKABLE.includes(el.name)) report('missing-attribute', `<animate begin="click"> on a <${el.name}> needs a "trigger": a <${el.name}> cannot be clicked`, anim.start);
     }
     const repeat = attr(anim, 'repeat');
     if (attr(anim, 'toggle') && repeat && trimSpace(repeat.value ?? '') !== '1') report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
@@ -262,10 +283,11 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     const material = attr(choice, 'material');
     if (target && !material) report('missing-attribute', '<choice> with a "target" needs the attribute "material"', choice.start);
     if (material && !target) report('missing-attribute', '<choice> with a "material" needs the attribute "target"', choice.start);
-    if (target?.value?.startsWith('#')) {
-      const el = ids.get(target.value.slice(1));
-      if (!el) report('unknown-target', `No element has the id "${target.value.slice(1)}"`, target.start);
-      else if (el.name !== 'model') report('bad-target', `A <choice> changes a <model>'s material, not a <${el.name}>`, target.start);
+    const id = named(target);
+    if (target && id !== null) {
+      const el = ids.get(id);
+      if (!el) report('unknown-target', `No element has the id "${id}"`, target.start);
+      else if (inVersion(el) && el.name !== 'model') report('bad-target', `A <choice> changes a <model>'s material, not a <${el.name}>`, target.start);
     }
     const values = new Set<string>();
     for (const option of choice.children) {
@@ -365,12 +387,13 @@ function checkAttributes(el: ElementNode, report: (code: ProblemCode, message: s
     }
   }
   // Some light attributes belong to some types only; an unknown type is
-  // already reported as a bad value.
+  // already reported as a bad value, and so is an attribute the page's
+  // version does not have (a 0.1 light's `shadows`).
   const type = el.name === 'light' ? attr(el, 'type')?.value : undefined;
   if (type && ['ambient', 'directional', 'point', 'spot'].includes(type)) {
     for (const a of el.attributes) {
       const types = own(LIGHT_ONLY, a.name);
-      if (types && !types.includes(type)) report('attribute-not-for-type', `A ${type} light has no "${a.name}"`, a.start);
+      if (types && atLeast(ctx.version, own(rule.attributes, a.name)?.since) && !types.includes(type)) report('attribute-not-for-type', `A ${type} light has no "${a.name}"`, a.start);
     }
   }
 }

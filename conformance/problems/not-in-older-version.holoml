@@ -1,0 +1,12 @@
+<holoml version="0.1">
+  <scene>
+    <model id="door" src="models/door.glb" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" trigger="#door" toggle label="Door" />
+    <animate target="#door" attribute="rotation" to="0 90 0" duration="1s" begin="click" toggle repeat="2" />
+    <light id="lamp" type="ambient" shadows />
+    <animate target="#lamp" attribute="position" to="0 1 0" duration="1s" begin="click" />
+    <group near="4" />
+    <viewpoint />
+    <viewpoint />
+  </scene>
+</holoml>

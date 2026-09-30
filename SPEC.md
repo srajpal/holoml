@@ -995,7 +995,20 @@ show the rest of the scene as well as it can. A page is checked against
 the version it declares: an element or attribute from a later version is
 reported as unknown (`unknown-element`, `unknown-attribute`), and a
 value from a later version (such as an `animate` of `intensity` in a 0.1
-page) as a `bad-value`. The problem codes:
+page) as a `bad-value`. Nothing more is reported of it: the later
+version's rules do not apply to the page, so that a 0.1 page's `toggle`
+is an unknown attribute, and not also a click action without its
+`begin`.
+
+An `id` names its element wherever the element stands, even inside an
+element that is unknown or that may not stand where it is: two elements
+anywhere in the page with the same id are a `duplicate-id`, and a
+reference to such an element is not an `unknown-target`. A reference to
+an element that is unknown in the page's version is not reported again,
+as the element already is. A reference that is not written as one (`#`
+and an id) is a `bad-value` and nothing more.
+
+The problem codes:
 
 | Code | Meaning |
 |---|---|

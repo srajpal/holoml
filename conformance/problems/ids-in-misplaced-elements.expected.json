@@ -1,0 +1,39 @@
+{
+  "problems": [
+    {
+      "code": "child-not-allowed",
+      "line": 4,
+      "column": 7
+    },
+    {
+      "code": "unknown-element",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "code": "unknown-element",
+      "line": 7,
+      "column": 5
+    },
+    {
+      "code": "bad-value",
+      "line": 17,
+      "column": 14
+    },
+    {
+      "code": "unknown-target",
+      "line": 18,
+      "column": 14
+    },
+    {
+      "code": "duplicate-id",
+      "line": 19,
+      "column": 12
+    },
+    {
+      "code": "duplicate-id",
+      "line": 20,
+      "column": 12
+    }
+  ]
+}

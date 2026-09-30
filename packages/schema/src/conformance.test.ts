@@ -67,6 +67,9 @@ describe('conformance samples (O2, O3, O4)', () => {
         'bad-numbers': 'bad-value',
         'bad-times': 'bad-value',
         'empty-values': 'bad-value',
+        // Versions and ids.
+        'not-in-older-version': 'unknown-attribute',
+        'ids-in-misplaced-elements': 'child-not-allowed',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }
