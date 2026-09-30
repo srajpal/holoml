@@ -153,7 +153,7 @@
       <model id="butterflyfish-1" src="models/butterflyfish.glb" position="-5.321 0.709 12.067" rotation="0 36.694 0" animation="Swim" autoplay />
       <model id="butterflyfish-2" src="models/butterflyfish.glb" position="-8.743 1.271 7.427" rotation="0 150.024 0" animation="Swim" autoplay />
       <sound src="sounds/blip.wav" begin="click" trigger="#shark-1" label="About the great white shark" volume="0.5" />
-      <sound src="sounds/blip.wav" begin="click" trigger="#turtle-1" label="About the flatback sea turtle" volume="0.5" />
+      <sound src="sounds/blip.wav" begin="click" trigger="#turtle-1" label="About the hawksbill sea turtle" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#tuna-1" label="About the tuna" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#barramundi-1" label="About the barramundi" volume="0.5" />
       <sound src="sounds/blip.wav" begin="click" trigger="#bream-1" label="About the gilt-head bream" volume="0.5" />

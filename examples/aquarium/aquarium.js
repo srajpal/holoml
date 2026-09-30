@@ -59,7 +59,7 @@ function somewhere(k) {
   for (let tries = 0; tries < 40; tries++) {
     const p = [random(TANK.min[0] + margin, TANK.max[0] - margin), random(k.depth[0], k.depth[1]), random(TANK.min[2] + margin, TANK.max[2] - margin - 1)];
     if (tunnelGap(p, k.clearance) < 0.6) continue;
-    if (ROCKS.some((r) => rockGap(p, r, k.clearance) < 0.4)) continue;
+    if (BALLS.some((b) => rockGap(p, b, k.clearance) < 0.4)) continue;
     return p;
   }
   return [TANK.min[0] + margin, (k.depth[0] + k.depth[1]) / 2, 0];
@@ -71,21 +71,33 @@ function tunnelGap(p, clearance) {
   return Math.hypot(p[0], Math.max(0, p[1])) - TUNNEL.radius - clearance;
 }
 
-/** A rock, as a ball about as big as it is. */
-function rockBall(r) {
-  return { at: [r.at[0], r.at[1] + 0.75 * r.scale, r.at[2]], radius: 0.95 * r.scale };
+/** Each rock, as a ball about as big as it is (worked out once: every fish asks about every rock each frame). */
+const BALLS = ROCKS.map((r) => ({ at: [r.at[0], r.at[1] + 0.75 * r.scale, r.at[2]], radius: 0.95 * r.scale }));
+
+/** How far a point is outside a rock's ball, less a fish's clearance. */
+function rockGap(p, b, clearance) {
+  return Math.hypot(p[0] - b.at[0], p[1] - b.at[1], p[2] - b.at[2]) - b.radius - clearance;
 }
 
-function rockGap(p, r, clearance) {
-  const b = rockBall(r);
-  return length(sub(p, b.at)) - b.radius - clearance;
+/** Adds to `want`, in place, the direction of (x, y, z), `weight` strong. */
+function lean(want, x, y, z, weight) {
+  const l = Math.hypot(x, y, z) || 1;
+  want[0] += (x / l) * weight;
+  want[1] += (y / l) * weight;
+  want[2] += (z / l) * weight;
 }
 
-/** Where a fish wants to go now, as a direction and a speed, from its target, its neighbours, the food, and what it must keep clear of. */
+/**
+ * Where a fish wants to go now, as a direction and a speed, from its
+ * target, its neighbours, the food, and what it must keep clear of. It
+ * runs for every fish against every other each frame, so it sums into one
+ * array with plain numbers, and makes no others along the way.
+ */
 function steer(f, now) {
   const k = f.kind;
+  const p = f.p;
   let speed = f.cruise;
-  let want = [0, 0, 0];
+  const want = [0, 0, 0];
   // Food: the nearest flake within reach, for fish that eat it.
   f.eating = null;
   if (EATERS.has(k.kind)) {
@@ -93,51 +105,60 @@ function steer(f, now) {
     let near = 7;
     for (const flake of food) {
       if (!flake.falling) continue;
-      const d = length(sub(flake.p, f.p));
-      if (d < near) [best, near] = [flake, d];
+      const d = Math.hypot(flake.p[0] - p[0], flake.p[1] - p[1], flake.p[2] - p[2]);
+      if (d < near) {
+        best = flake;
+        near = d;
+      }
     }
     if (best) {
       f.eating = best;
-      want = add(want, scale(unit(sub(best.p, f.p)), 3));
+      lean(want, best.p[0] - p[0], best.p[1] - p[1], best.p[2] - p[2], 3);
       speed = k.speed[1];
     }
   }
   if (!f.eating) {
-    if (!f.target || now > f.until || length(sub(f.target, f.p)) < 1.2) {
+    if (!f.target || now > f.until || length(sub(f.target, p)) < 1.2) {
       f.target = somewhere(k);
       f.until = now + random(8, 20);
     }
-    want = add(want, unit(sub(f.target, f.p)));
+    lean(want, f.target[0] - p[0], f.target[1] - p[1], f.target[2] - p[2], 1);
   }
   // Schools: toward their fellows, and the same way they go.
   if (k.school) {
-    let [centre, heading, n] = [[0, 0, 0], [0, 0, 0], 0];
+    let [cx, cy, cz, hx, hy, hz, n] = [0, 0, 0, 0, 0, 0, 0];
     for (const o of fish) {
-      if (o === f || o.kind !== k || length(sub(o.p, f.p)) > 4) continue;
-      centre = add(centre, o.p);
-      heading = add(heading, unit(o.v));
+      if (o === f || o.kind !== k || Math.hypot(o.p[0] - p[0], o.p[1] - p[1], o.p[2] - p[2]) > 4) continue;
+      cx += o.p[0];
+      cy += o.p[1];
+      cz += o.p[2];
+      const l = Math.hypot(o.v[0], o.v[1], o.v[2]) || 1;
+      hx += o.v[0] / l;
+      hy += o.v[1] / l;
+      hz += o.v[2] / l;
       n++;
     }
     if (n) {
-      want = add(want, scale(unit(sub(scale(centre, 1 / n), f.p)), 0.6));
-      want = add(want, scale(unit(heading), 0.8));
+      const each = 1 / n;
+      lean(want, cx * each - p[0], cy * each - p[1], cz * each - p[2], 0.6);
+      lean(want, hx, hy, hz, 0.8);
     }
   }
   // Room: away from any fish too near.
   for (const o of fish) {
     if (o === f) continue;
-    const d = sub(f.p, o.p);
+    const [dx, dy, dz] = [p[0] - o.p[0], p[1] - o.p[1], p[2] - o.p[2]];
     const room = (k.clearance + o.kind.clearance) * 1.3;
-    const l = length(d);
-    if (l < room && l > 1e-6) want = add(want, scale(unit(d), (2 * (room - l)) / room));
+    const l = Math.hypot(dx, dy, dz);
+    if (l < room && l > 1e-6) lean(want, dx, dy, dz, (2 * (room - l)) / room);
   }
   // Clear of the tunnel: out from its middle line, harder the nearer.
-  const gap = tunnelGap(f.p, k.clearance);
-  if (gap < 1.5) want = add(want, scale(unit([f.p[0], Math.max(0.2, f.p[1]), 0]), (1.5 - gap) * 2.5));
+  const gap = tunnelGap(p, k.clearance);
+  if (gap < 1.5) lean(want, p[0], Math.max(0.2, p[1]), 0, (1.5 - gap) * 2.5);
   // Clear of the rocks.
-  for (const r of ROCKS) {
-    const g = rockGap(f.p, r, k.clearance);
-    if (g < 0.8) want = add(want, scale(unit(sub(f.p, rockBall(r).at)), (0.8 - g) * 2.5));
+  for (const b of BALLS) {
+    const g = rockGap(p, b, k.clearance);
+    if (g < 0.8) lean(want, p[0] - b.at[0], p[1] - b.at[1], p[2] - b.at[2], (0.8 - g) * 2.5);
   }
   // Inside the water: away from the walls, the sand, and the surface; and within its kind's depth,
   // unless it is after food, which it follows down to the sand.
@@ -146,8 +167,8 @@ function steer(f, now) {
     const floor = f.eating ? TANK.min[1] + k.clearance * 0.5 + 0.1 : Math.max(TANK.min[1] + margin, k.depth[0]);
     const low = a === 1 ? floor : TANK.min[a] + margin;
     const high = a === 1 ? (f.eating ? TANK.max[1] - margin : Math.min(TANK.max[1] - margin, k.depth[1])) : TANK.max[a] - margin;
-    if (f.p[a] < low) want[a] += (low - f.p[a]) * 2;
-    if (f.p[a] > high) want[a] -= (f.p[a] - high) * 2;
+    if (p[a] < low) want[a] += (low - p[a]) * 2;
+    if (p[a] > high) want[a] -= (p[a] - high) * 2;
   }
   return { direction: unit(want), speed };
 }
@@ -180,9 +201,9 @@ function swim(dt, now) {
       const out = unit([f.p[0], Math.max(0.05, f.p[1]), 0]);
       f.p = add(f.p, scale(out, -gap));
     }
-    for (const r of ROCKS) {
-      const g = rockGap(f.p, r, f.kind.clearance * 0.5);
-      if (g < 0) f.p = add(f.p, scale(unit(sub(f.p, rockBall(r).at)), -g));
+    for (const b of BALLS) {
+      const g = rockGap(f.p, b, f.kind.clearance * 0.5);
+      if (g < 0) lean(f.p, f.p[0] - b.at[0], f.p[1] - b.at[1], f.p[2] - b.at[2], -g);
     }
     f.thing.position = f.p;
     f.thing.rotation = rotation(Math.atan2(f.v[0], f.v[2]), Math.asin(clamp(f.v[1] / (length(f.v) || 1), -1, 1)));
@@ -235,6 +256,7 @@ for (let i = 0; i < FLAKES; i++) {
   food.push({ thing, p: [...FEEDER], v: [0, 0, 0], falling: false, landed: 0, eaten: false });
 }
 
+/** Whether food is falling: from a feed until its last flake is eaten or gone. */
 let fed = false;
 function feed() {
   if (food.some((f) => f.falling)) return;
@@ -247,19 +269,38 @@ function feed() {
     f.thing.rotation = [random(-20, 20), random(0, 360), random(-20, 20)];
     f.thing.visible = true;
   }
-  fed = true;
   if (holoml.reducedMotion) {
-    // Held still: the food on the sand at once, and gone a moment later.
+    // Held still: the food on the sand at once, and gone a moment later. Nothing falls, so there is
+    // nothing for sink() to finish, or to count, when motion comes back.
     for (const f of food) f.thing.position = [f.p[0], 0.1, f.p[2]];
     status.text = 'Food is down.';
     setTimeout(() => {
+      // Unless motion came back meanwhile, and another feed is falling now.
+      if (fed) return;
       for (const f of food) f.thing.visible = false;
       status.text = 'The fish have eaten.';
     }, 1500);
     return;
   }
+  fed = true;
   for (const f of food) f.falling = true;
   status.text = 'Food is falling: the fish are coming.';
+}
+
+/**
+ * Ends a feed at once, when reduced motion is turned on while food is
+ * falling: nothing moves any more, so the food is gone and the corner
+ * says so, as a feed with reduced motion ends, and Feed works again.
+ */
+function settle() {
+  if (!fed) return;
+  for (const f of food) {
+    f.falling = false;
+    f.thing.visible = false;
+  }
+  for (const f of fish) f.eating = null;
+  fed = false;
+  status.text = 'The fish have eaten.';
 }
 
 function eat(flake, byFish = true) {
@@ -324,6 +365,8 @@ function clicked(e) {
 
 // A click on a fish (with the mouse, through the glass too), or on the button of its kind in the outline (the keyboard and screen readers).
 holoml.on('click', (e) => {
+  // The first button only: another button's click does not press Feed, or ask about a fish.
+  if (e.button !== 'left') return;
   if (e.thing?.id === 'feed') {
     feed();
     return;
@@ -336,12 +379,17 @@ holoml.on('click', (e) => {
 
 // Each frame moves everything on; with reduced motion nothing moves, and the scene draws only when something changes.
 let stop = null;
+/** Reduced motion is on: no more frames, and a feed that was falling ends. */
+function halt() {
+  if (stop) stop();
+  stop = null;
+  settle();
+}
 function start() {
   if (stop || holoml.reducedMotion) return;
   stop = holoml.on('frame', (e) => {
     if (holoml.reducedMotion) {
-      stop();
-      stop = null;
+      halt();
       return;
     }
     const dt = Math.min(0.1, e.dt / 1000);
@@ -353,7 +401,8 @@ function start() {
 }
 if (holoml.reducedMotion) placeBubbles();
 start();
-// Reduced motion can be turned on and off while the page is open.
+// Reduced motion can be turned on and off while the page is open (and a page held still may send no more frames).
 setInterval(() => {
-  if (!holoml.reducedMotion) start();
+  if (holoml.reducedMotion) halt();
+  else start();
 }, 1000);

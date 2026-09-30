@@ -1,0 +1,20 @@
+# For editors (https://editorconfig.org): Unix line ends, UTF-8, two
+# spaces, and a new line at the end of every file (review 134, H8).
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+
+# HoloML documents are checked byte for byte, and some conformance
+# samples have unusual line ends, spaces, and endings on purpose: editors
+# leave them as they are.
+[*.holoml]
+charset = unset
+end_of_line = unset
+indent_style = unset
+indent_size = unset
+insert_final_newline = unset

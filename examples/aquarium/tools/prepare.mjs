@@ -26,11 +26,13 @@ import { app, nativeImage } from 'electron';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { RATE, wav } from '../../tools/sound.mjs';
 import { AIRSTONES, GALLERY, KINDS, LOGS, PLANTS, ROCKS, ROCKWORK, SHELLS, TANK, TUNNEL } from '../ocean.js';
-import { FISH } from './fish.mjs';
+import { BABYLON_COMMIT, FISH } from './fish.mjs';
 import { fitFish, fitMaterials } from './fit.mjs';
 import { multiply, nodeMatrix, readAccessor, readGlb, readImage, transformDirection, transformPoint } from './glb.mjs';
-import { placedFish, riggedFish } from './rig.mjs';
+import { LICENCES, checkLicence } from './licence.mjs';
+import { placedFish, riggedFish, riggedTurtle } from './rig.mjs';
 import { arch, archRing, box, budgetShares, ellipsoid, ground, material, modelBytes, plantBytes, quad, swayingPlant, thinTo } from './shapes.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -72,13 +74,15 @@ function seeThrough(g) {
 }
 
 function fish() {
+  // Before anything is made: every file's own licence stamp agrees with its credit (licence.mjs).
+  for (const f of FISH) checkLicence(f, readFileSync(join(cache, `${f.id}.glb`)));
   for (const f of FISH) {
     const { json: g, bin } = readGlb(join(cache, `${f.id}.glb`));
     const side = f.length < 0.3 ? 512 : 1024;
     const alpha = seeThrough(g);
     const pictures = (i) => picture(readImage(g, bin, i).bytes, side, alpha.has(i));
     let out;
-    if (f.clip || f.turtle) {
+    if (f.clip) {
       out = fitFish(f.id, g, bin, f, pictures);
     } else {
       let prims = placedFish(g, bin, f);
@@ -87,7 +91,8 @@ function fish() {
         const shares = budgetShares(prims.map((p) => p.indices.length / 3), f.triangles);
         prims = prims.map((p, i) => (p.indices.length / 3 > shares[i] ? thinTo(p, shares[i]) : p));
       }
-      out = riggedFish(f.id, prims, { materials: fitMaterials(g), length: f.length, ...(f.rig ?? {}) });
+      const rig = { materials: fitMaterials(g), length: f.length, ...(f.rig ?? {}) };
+      out = f.turtle ? riggedTurtle(f.id, prims, rig) : riggedFish(f.id, prims, rig);
       if (g.images) {
         out.json.images = g.images.map((_, i) => {
           const p = pictures(i);
@@ -314,28 +319,6 @@ function tank() {
 
 // ---- Sounds ---------------------------------------------------------------------------------
 
-const RATE = 22050;
-
-/** A mono 16-bit WAV file of samples from -1 to 1. */
-function wav(samples) {
-  const data = Buffer.alloc(samples.length * 2);
-  samples.forEach((v, i) => data.writeInt16LE(Math.round(Math.max(-1, Math.min(1, v)) * 32767), i * 2));
-  const head = Buffer.alloc(44);
-  head.write('RIFF', 0, 'ascii');
-  head.writeUInt32LE(36 + data.length, 4);
-  head.write('WAVEfmt ', 8, 'ascii');
-  head.writeUInt32LE(16, 16);
-  head.writeUInt16LE(1, 20);
-  head.writeUInt16LE(1, 22);
-  head.writeUInt32LE(RATE, 24);
-  head.writeUInt32LE(RATE * 2, 28);
-  head.writeUInt16LE(2, 32);
-  head.writeUInt16LE(16, 34);
-  head.write('data', 36, 'ascii');
-  head.writeUInt32LE(data.length, 40);
-  return Buffer.concat([head, data]);
-}
-
 /** The same random numbers every time the tools run. */
 function randoms(seed) {
   let s = seed;
@@ -474,13 +457,29 @@ function credits() {
     'Each fish was fitted for the tank by tools/prepare.mjs: its materials',
     'made drawable by three.js, turned, sized, and centred, its pictures made',
     'smaller, where its file had no swim, given a skeleton and one (made',
-    'here), and the great white shark, the turtle, and the mackerel made',
-    'lighter (fewer triangles). The Sketchfab models come from Objaverse, the',
-    "Allen Institute for AI's copy of Sketchfab's free models",
-    '(huggingface.co/datasets/allenai/objaverse), whose records give their',
-    'authors and licences.',
+    'here), and the great white shark and the mackerel made lighter (fewer',
+    'triangles).',
     '',
     ...FISH.map((f) => `- ${f.id}.glb, ${f.name}: "${f.credit.title}" by ${f.credit.author}, ${f.credit.source}, ${f.credit.licence}.`),
+    '',
+    // Each licence's address: CC BY 4.0 asks for it wherever a model under it is credited.
+    'The licences are set out at:',
+    '',
+    ...Object.entries(LICENCES).map(([name, address]) => `- ${name}: ${address}`),
+    '',
+    "The Sketchfab models come from Objaverse, the Allen Institute for AI's",
+    "copy of Sketchfab's free models",
+    '(huggingface.co/datasets/allenai/objaverse). Each of those files carries',
+    "Sketchfab's own stamp of its author and licence, and tools/licence.mjs",
+    'stops the tools if a stamp and the credit above disagree.',
+    '',
+    'The great white shark and the grey snapper come from the Babylon.js',
+    `asset library (github.com/BabylonJS/Assets, at commit ${BABYLON_COMMIT.slice(0, 7)}). Their`,
+    "files carry no stamp. The library's README says: \"This work is licensed",
+    'under a Creative Commons Attribution 4.0 International License (Unless',
+    'specified otherwise in the asset folder)", its LICENSE file is that',
+    "licence's text, and neither file's folder says otherwise (read",
+    '2026-09-30).',
     '',
     '## From Poly Haven (CC0)',
     '',

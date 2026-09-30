@@ -10,8 +10,12 @@
 //                            (without the example sites, for HyperSpace 3D's
 //                            screenshots; links into them are checked
 //                            against examples/)
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
-import { join, posix } from 'node:path';
+//
+// The folder is emptied first, so the builder takes only a folder that is
+// not there yet, an empty one, or one it made before (it leaves a marker
+// file in each), and never the repository or a folder of its sources.
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { isAbsolute, join, posix, relative as between, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Marked, Renderer } from 'marked';
 
@@ -19,6 +23,11 @@ const ROOT = fileURLToPath(new URL('../', import.meta.url));
 /** Where the site is published; links to it become links within it. */
 export const SITE = 'https://srajpal.github.io/holoml/';
 const REPOSITORY = 'https://github.com/srajpal/holoml';
+
+/** The file the builder leaves in a folder it has made, so that it empties only folders of its own. */
+export const MARKER = '.holoml-site';
+/** What the example sites' folders hold that is not published: the scripts that make them. */
+const TOOLS = 'tools';
 
 /** The parts of the site, for the bar at the top of every page. */
 const PARTS = [
@@ -233,6 +242,7 @@ function render(page, byPath, links, problems) {
       const language = LANGUAGES[lang ?? ''];
       const body = language ? language.highlight(text) : escapeHtml(text);
       const label = language ? ` data-lang="${language.label}"` : '';
+      // Reachable by the keyboard, to scroll it; code.js takes the blocks that do not scroll out of the Tab order.
       return `<pre tabindex="0"${label}><code${lang ? ` class="language-${escapeHtml(lang)}"` : ''}>${body}</code></pre>\n`;
     },
     link({ href, title, tokens }) {
@@ -332,6 +342,7 @@ function layout(page, html, headings) {
 <title>${escapeHtml(home ? 'HoloML' : `${title} · HoloML`)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="stylesheet" href="${root}style.css">
+<script src="${root}code.js" defer></script>
 </head>
 <body class="${page.path === 'spec/index.html' ? 'spec' : home ? 'home' : 'guide'}">
 <a class="skip" href="#main">Skip to the content</a>
@@ -361,16 +372,59 @@ ${html}</main>
 /** The ids a page has, for checking links to its parts. */
 const idsOf = (html) => new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
 
+/** Whether `path` is `folder` itself or somewhere inside it. */
+function within(folder, path) {
+  const rel = between(folder, path);
+  return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
+}
+
 /**
- * Builds the site into `out` (emptied first). Returns the pages made and
- * every problem found: a link to a file or a part of a page that is not
- * there, or a picture without its text. With `examples: false`, the
- * example sites are left out, and links into them are checked against
- * their sources in examples/.
+ * Why the site cannot be built into `out`, or null when it can. The
+ * builder empties the folder first, so it refuses the repository, any
+ * folder the repository is in, and its docs/ and examples/ (whatever they
+ * hold), and any other folder that has something in it and was not made
+ * by an earlier build (it has no marker file). The repository's own
+ * _site/, where the site goes when no folder is named, is always taken.
+ */
+export function refusal(out) {
+  const target = resolve(out);
+  if (!existsSync(target)) return null;
+  // As the disk names them, so that another spelling (a link, or capitals on Windows) is still the same folder.
+  const real = realpathSync.native(target);
+  const root = realpathSync.native(ROOT);
+  const why = 'the site is not built there, as building empties the folder first';
+  if (within(real, root)) return `${target} is the repository or a folder it is in: ${why}`;
+  for (const kept of ['docs', 'examples']) {
+    if (real === join(root, kept)) return `${target} is the repository's ${kept}/, which the site is made from: ${why}`;
+  }
+  if (!statSync(real).isDirectory()) return `${target} is a file, not a folder`;
+  // The repository's own _site/ is the builder's (Git ignores it), marker or not: builds from before the marker made it.
+  if (real === join(root, '_site')) return null;
+  if (readdirSync(real).length > 0 && !existsSync(join(real, MARKER))) {
+    return `${target} has files in it that an earlier build did not make (it has no ${MARKER} file), and building would delete them: name a new or empty folder, or delete this one yourself`;
+  }
+  return null;
+}
+
+/** Whether a file of an example site is published: every file but the scripts that make the site (its tools/ folder). */
+export function isPublished(site, file) {
+  return !between(site, file).split(/[\\/]/).includes(TOOLS);
+}
+
+/**
+ * Builds the site into `out` (emptied first; see refusal for the folders
+ * it does not take). Returns the pages made and every problem found: a
+ * link to a file or a part of a page that is not there, or a picture
+ * without its text. With `examples: false`, the example sites are left
+ * out, and links into them are checked against their sources in
+ * examples/.
  */
 export function buildSite(out = join(ROOT, '_site'), { examples = true } = {}) {
+  const refused = refusal(out);
+  if (refused) throw new Error(refused);
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
+  writeFileSync(join(out, MARKER), 'Made by site/build.mjs, which empties this folder before each build.\n');
   const list = pages();
   const byPath = new Map(list.map((p) => [p.source, p.path]));
   const links = [];
@@ -385,14 +439,13 @@ export function buildSite(out = join(ROOT, '_site'), { examples = true } = {}) {
     made.set(page.path, full);
   }
   cpSync(join(ROOT, 'site/style.css'), join(out, 'style.css'));
+  cpSync(join(ROOT, 'site/code.js'), join(out, 'code.js'));
   cpSync(join(ROOT, 'site/pictures'), join(out, 'pictures'), { recursive: true });
-  // The example sites, without the scripts that make them.
-  const sites = readdirSync(join(ROOT, 'examples'), { withFileTypes: true }).filter((e) => e.isDirectory());
+  // The example sites, without the scripts that make them (each site's tools/, and examples/tools/, which they share).
+  const sites = readdirSync(join(ROOT, 'examples'), { withFileTypes: true }).filter((e) => e.isDirectory() && e.name !== TOOLS);
   for (const site of examples ? sites : []) {
-    cpSync(join(ROOT, 'examples', site.name), join(out, site.name), {
-      recursive: true,
-      filter: (src) => !src.split(/[\\/]/).includes('tools'),
-    });
+    const from = join(ROOT, 'examples', site.name);
+    cpSync(from, join(out, site.name), { recursive: true, filter: (src) => isPublished(from, src) });
   }
   writeFileSync(join(out, '.nojekyll'), '');
   const inSite = (to) => (!examples && sites.some((s) => to.startsWith(`${s.name}/`)) ? join(ROOT, 'examples', to) : join(out, to));
@@ -405,11 +458,15 @@ export function buildSite(out = join(ROOT, '_site'), { examples = true } = {}) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2);
-  const { out, pages: made, problems } = buildSite(
-    args.find((a) => !a.startsWith('--')),
-    { examples: !args.includes('--pages-only') },
-  );
-  for (const p of problems) console.error(p);
-  console.log(`${made.length} pages in ${out}${problems.length ? `; ${problems.length} problems` : ''}`);
-  process.exitCode = problems.length ? 1 : 0;
+  const folder = args.find((a) => !a.startsWith('--')) ?? join(ROOT, '_site');
+  const refused = refusal(folder);
+  if (refused) {
+    console.error(`Not built: ${refused}.`);
+    process.exitCode = 1;
+  } else {
+    const { out, pages: made, problems } = buildSite(folder, { examples: !args.includes('--pages-only') });
+    for (const p of problems) console.error(p);
+    console.log(`${made.length} pages in ${out}${problems.length ? `; ${problems.length} problems` : ''}`);
+    process.exitCode = problems.length ? 1 : 0;
+  }
 }
