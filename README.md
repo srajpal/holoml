@@ -114,7 +114,7 @@ pnpm lint
 pnpm typecheck
 ```
 
-361 unit, conformance, documentation, and site tests passed on
+362 unit, conformance, documentation, and site tests passed on
 2026-09-29 on Windows 11. GitHub Actions runs them on Windows and Linux
 for every push. `pnpm site:build` makes the site in `_site/` (open
 `_site/index.html`); `pnpm grammar:update` and `pnpm reference:update`
