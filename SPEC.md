@@ -204,10 +204,10 @@ what was meant. Appendix A gives the same syntax as a grammar.
   for, so `&#32;` alone is text (though an element that needs text
   still has none with it: section 8). A reader keeps text as it is
   written, with its whitespace and its line ends. A comment inside text
-  parts it in two. In `title` and `label`, runs of whitespace show as one space,
-  and whitespace at the start and end is dropped, as in HTML. (0.2) In
-  `hud`, each line of text is a line on the screen: within a line, runs
-  of whitespace show as one space; empty lines are not shown.
+  parts it in two. In `title` and `label`, runs of whitespace show as
+  one space, and whitespace at the start and end is dropped, as in HTML.
+  (0.2) In `hud`, each line of text is a line on the screen: within a
+  line, runs of whitespace show as one space; empty lines are not shown.
 - Character references: `&amp;` (&), `&lt;` (<), `&gt;` (>), `&quot;`
   ("), `&apos;` ('), and numbers such as `&#233;` or `&#xE9;` (é). An `&`
   that does not start one of these is an error; write `&amp;`.
