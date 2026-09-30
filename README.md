@@ -91,6 +91,7 @@ holoml/
     harbour-loft/    a HoloML 0.2 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
     sneaker-store/   a HoloML 0.2 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart
     aquarium/        a HoloML 0.2 ocean tunnel: 30 fish swum by a script, water, light from the waves, bubbles, feeding
+    tools/           what the examples' own tools share, and the tests of their scripts (not published)
 ```
 
 The examples are published with GitHub Pages:

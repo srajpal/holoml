@@ -160,6 +160,29 @@ needs in its file. Loading by area is in
 To try a model, open its page in HyperSpace 3D: press Ctrl+O, use its
 menu, or drop the file on its window.
 
+## Check each model's licence
+
+A model someone else made comes under a licence, and the page that uses
+it must keep to it. The example sites take only models that are CC0 (no
+conditions) or CC BY 4.0 (credit the author), and none that is
+"non-commercial", "no derivatives", or "share alike".
+
+- Read the licence where the file itself carries it. A file downloaded
+  from Sketchfab has its author, its licence, and its address in its own
+  `asset.extras`; a list or a record kept elsewhere can say something
+  else, and then the file is right. The aquarium's tools compare each
+  file's stamp with the licence its credit gives, and stop when they
+  differ
+  ([`licence.mjs`](../../examples/aquarium/tools/licence.mjs)).
+- For a file without a stamp, find where its source states the licence
+  (a repository's README or LICENSE file), and write down what it says
+  and where.
+- Credit each model beside the models (the examples use
+  `models/CREDITS.md`): its title, its author, where it came from, its
+  licence with the licence's address, and what you changed.
+- Fix the version you download (a commit, or a checksum of the file), so
+  that a source that changes a file cannot change your site unnoticed.
+
 ## See also
 
 - The specification: [files](../../SPEC.md#4-files),
