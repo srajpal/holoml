@@ -201,9 +201,10 @@ what was meant. Appendix A gives the same syntax as a grammar.
   MUST be separated from the name and from each other by whitespace.
 - Text is anything between tags. Text that is only whitespace is
   ignored; a character reference is not whitespace, whatever it stands
-  for, so `&#32;` alone is text. A reader keeps text as it is written,
-  with its whitespace and its line ends. A comment inside text parts it
-  in two. In `title` and `label`, runs of whitespace show as one space,
+  for, so `&#32;` alone is text (though an element that needs text
+  still has none with it: section 8). A reader keeps text as it is
+  written, with its whitespace and its line ends. A comment inside text
+  parts it in two. In `title` and `label`, runs of whitespace show as one space,
   and whitespace at the start and end is dropped, as in HTML. (0.2) In
   `hud`, each line of text is a line on the screen: within a line, runs
   of whitespace show as one space; empty lines are not shown.

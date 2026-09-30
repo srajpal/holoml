@@ -89,5 +89,6 @@ describe('rules between attributes leave alone a value that is already reported 
     expect(problems(toggle('2'))).toEqual(['bad-value 3:89']);
     expect(problems(toggle('indefinite'))).toEqual(['bad-value 3:89']);
     expect(problems(toggle('often'))).toEqual(['bad-value 3:89']);
+    expect(problems(toggle('99999999999999999999'))).toEqual(['bad-value 3:89']);
   });
 });

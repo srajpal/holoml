@@ -280,7 +280,7 @@ export function check(doc: HoloDocument, options: CheckOptions = {}): Problem[] 
     // A toggle runs once each way: a repeat other than 1 (one that is not a count is already reported).
     const repeat = attr(anim, 'repeat');
     const runs = trimSpace(repeat?.value ?? '');
-    if (attr(anim, 'toggle') && repeat && (runs === INDEFINITE || (COUNT.test(runs) && Number(runs) !== 1))) report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
+    if (attr(anim, 'toggle') && repeat && (runs === INDEFINITE || (COUNT.test(runs) && Number.isSafeInteger(Number(runs)) && Number(runs) !== 1))) report('bad-value', '"repeat": a toggle runs once each way, forward on one click and back on the next', repeat.start);
   }
   for (const sound of sounds) {
     // Sounds from a place: how far one comes needs where it comes from.
