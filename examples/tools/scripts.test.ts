@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeScene, type FakeScene, type FakeThing } from './fake-scene.ts';
 
 const EXAMPLES = fileURLToPath(new URL('../', import.meta.url));
+/** Room for the two checks that run a minute or two of the aquarium, on a busy machine. */
+const SLOW = 60_000;
 const left = (thing: FakeThing | null, more: Record<string, unknown> = {}) => ({ thing, point: null, normal: null, button: 'left', ...more });
 
 beforeEach(() => {
@@ -34,11 +36,12 @@ describe('E4: the aquarium (aquarium.js)', () => {
     expect(status(scene)).toBe('Food is falling: the fish are coming.');
     expect(flakes(scene)).toHaveLength(24);
     expect(flakes(scene).every((f) => f.visible)).toBe(true);
-    // Flakes fall at about a tenth of a metre a second from 6.3 m, and lie 20 seconds on the sand.
-    scene.frames(60 * 100);
+    // Flakes fall at about a tenth of a metre a second from 6.3 m, and lie 20 seconds on the sand:
+    // two minutes, in steps of a tenth of a second (the longest step the script takes).
+    scene.frames(1200, 100);
     expect(status(scene)).toMatch(/^The fish have eaten/);
     expect(flakes(scene).every((f) => !f.visible)).toBe(true);
-  });
+  }, SLOW);
 
   it('ends a feed when reduced motion is turned on while food falls, and Feed works again', async () => {
     const scene = await open();
@@ -110,7 +113,7 @@ describe('E4: the aquarium (aquarium.js)', () => {
     const start = fish.map((f) => [...(f.position as number[])]);
     for (let second = 0; second < 60; second++) {
       if (second === 10) scene.emit('click', left(scene.find('feed')));
-      scene.frames(60);
+      scene.frames(30, 1000 / 30);
       for (const f of fish) {
         const [x, y, z] = f.position as [number, number, number];
         for (const [a, v] of [x, y, z].entries()) {
@@ -125,7 +128,7 @@ describe('E4: the aquarium (aquarium.js)', () => {
     }
     // They swam: each is somewhere else.
     fish.forEach((f, i) => expect(Math.hypot(...(f.position as number[]).map((v, a) => v - start[i]![a]!)), String(f.id)).toBeGreaterThan(0.5));
-  });
+  }, SLOW);
 });
 
 describe('E4: Blockworld (game.js)', () => {
