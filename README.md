@@ -7,7 +7,10 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: versions 0.1 and 0.2, written down.**
+**Status: experimental; versions 0.1 and 0.2 are written down.** HoloML
+has one renderer so far, and until version 1.0 a later version may
+change or remove what an earlier one has; what a page written for 0.1 or
+0.2 means will not change.
 [SPEC.md](SPEC.md) describes the language, in the form of W3C
 specifications, with its grammar and its scene API in Web IDL; this
 repository also has a parser, a checker, conformance samples, guides,

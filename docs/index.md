@@ -7,6 +7,10 @@ HoloML-aware browser, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
 shows the scene as a space to orbit or walk around.
 
+HoloML is experimental. It has one renderer so far, HyperSpace 3D, and
+until version 1.0 a later version may change or remove what an earlier
+one has. What a page written for 0.1 or 0.2 means will not change.
+
 ```holoml
 <holoml version="0.2">
   <head>

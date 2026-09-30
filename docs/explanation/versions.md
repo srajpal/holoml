@@ -6,13 +6,25 @@ not know, what the second edition of 0.2 changed, and what 0.3 plans.
 The rules are in the specification's
 [section 11](../../SPEC.md#11-versions).
 
-## Two versions, both final
+## Two versions, both fixed
 
 HoloML 0.1, of 2026-09-26, is the first: models, groups, lights,
 labels, links, materials, the animation of position, rotation, and
 scale, and orbiting and walking. HoloML 0.2, of 2026-09-29 (begun
 2026-09-27), adds to it without changing it: every 0.1 page means the
-same in 0.2. Both versions are final.
+same in 0.2. Both versions are fixed: what a page written for either
+means will not change.
+
+## Why HoloML is experimental
+
+HoloML is marked experimental: its specification is published for
+examination, experimental implementation, and evaluation. It has one
+renderer so far, HyperSpace 3D, and a language is proved by more than
+one; and until version 1.0, a later version may change or remove what
+an earlier one has, where experience shows a better way. The versions
+keep that safe for pages: each page says which version it is written
+for, and keeps the meaning of that version. A page that moves to a
+later version may need changes.
 
 ## How a page says its version
 

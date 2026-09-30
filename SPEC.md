@@ -3,6 +3,7 @@
 **A markup language for 3D web pages**
 
 - This version: 0.2, second edition, with clarifications (2026-09-29)
+- Status: experimental (see "Status of this document")
 - Latest published version: https://srajpal.github.io/holoml/spec/
 - Source: https://github.com/srajpal/holoml/blob/main/SPEC.md
 - First edition of 0.2: https://github.com/srajpal/holoml/blob/v0.2.0/SPEC.md
@@ -23,12 +24,18 @@ a renderer shows a page, and the scene API that a page's scripts use.
 
 ## Status of this document
 
+HoloML is experimental. This specification is "published for
+examination, experimental implementation, and evaluation", as the IETF
+says of its experimental specifications [RFC7841]: HoloML has one
+renderer so far, and until version 1.0 a later version may change or
+remove what an earlier one has.
+
 This document describes HoloML 0.2, published 2026-09-29, in its second
 edition: the language is the same, and the document is written in the
 form of W3C specifications, with clarifications where the first edition
 left something unsaid (appendix C lists them). Version 0.1 (2026-09-26)
 is part of 0.2: every 0.1 page means the same in 0.2. Both versions are
-final.
+fixed: what a page written for either means will not change.
 
 HoloML is developed in the open at https://github.com/srajpal/holoml,
 alongside its first renderer, HyperSol HyperSpace 3D
@@ -1220,6 +1227,11 @@ reader that knows only 0.1 refuses a 0.2 page with
   and a model's animation speed in the scene API. Everything in 0.1
   means the same in a 0.2 page.
 
+HoloML is experimental (see "Status of this document"): until 1.0, a
+later version may change or remove what an earlier one has, so a page
+that moves to it may need changes, and every page keeps the meaning of
+the version it declares.
+
 Ideas for later versions: movement along paths, physics, named colours,
 styles shared between elements, and spaces shared by several people.
 The next version, 0.3, is planned with HyperSpace 3D's milestone 23:
@@ -1865,7 +1877,9 @@ Change controller: The HoloML Authors
   classes and requirement words (BCP 14), terminology, the processing
   model (section 9), the considerations (sections 12 to 15), the formal
   grammar and the scene API in Web IDL (appendix A), the media type's
-  registration (appendix B), references, and an index. Clarified:
+  registration (appendix B), references, and an index. Its status says
+  that HoloML is experimental, and that 0.1 and 0.2 are fixed (the
+  first edition called them final). Clarified:
   - Requirement words: where the first edition wrote a renderer's
     behaviour in the present tense ("a renderer lets …"), this edition
     writes it with the requirement words of section 2, at the strength
@@ -2042,6 +2056,9 @@ site](#3-terminology), [thing](#3-terminology),
   https://www.rfc-editor.org/rfc/rfc6838
 - [RFC7405] Case-Sensitive String Support in ABNF. P. Kyzivat. IETF,
   December 2014. https://www.rfc-editor.org/rfc/rfc7405
+- [RFC7841] RFC Streams, Headers, and Boilerplates. J. Halpern, L.
+  Daigle, O. Kolkman (editors). IETF, May 2016.
+  https://www.rfc-editor.org/rfc/rfc7841
 - [SECURITY-PRIVACY] Self-Review Questionnaire: Security and Privacy.
   W3C Technical Architecture Group.
   https://www.w3.org/TR/security-privacy-questionnaire/
