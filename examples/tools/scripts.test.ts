@@ -100,7 +100,18 @@ describe('E4: the aquarium (aquarium.js)', () => {
     expect(scene.find('board').text).toMatch(/^Hawksbill sea turtle\n\nLives on coral reefs/);
   });
 
-  it('keeps every fish in the water, clear of the tunnel and the rocks, through a minute and a feed', async () => {
+  /** The same numbers every run from a seed (mulberry32), in place of Math.random. */
+  const seeded = (seed: number) => () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  // Random paths, and one that is the same every run: with seed 25 a snapper after the food was pushed out of a
+  // rock and down through the sand (0.184 m from it), before the pushes were repeated until all held (holoml #30).
+  it.each([['random paths'], ['seed 25', 25]] as [string, number?][])('keeps every fish in the water, clear of the tunnel and the rocks, through a minute and a feed (%s)', async (_, seed) => {
+    if (seed !== undefined) vi.spyOn(Math, 'random').mockImplementation(seeded(seed));
     const { TANK, TUNNEL, ROCKS, KINDS } = (await import(new URL('../aquarium/ocean.js', import.meta.url).href)) as {
       TANK: { min: number[]; max: number[] };
       TUNNEL: { radius: number; from: number; to: number };
@@ -128,6 +139,29 @@ describe('E4: the aquarium (aquarium.js)', () => {
     }
     // They swam: each is somewhere else.
     fish.forEach((f, i) => expect(Math.hypot(...(f.position as number[]).map((v, a) => v - start[i]![a]!)), String(f.id)).toBeGreaterThan(0.5));
+  }, SLOW);
+
+  it('puts a fish anywhere back in the water and clear of everything, or leaves it where it was (keepClear, holoml #30)', async () => {
+    type Point = [number, number, number];
+    const ocean = (await import(new URL('../aquarium/ocean.js', import.meta.url).href)) as {
+      BALLS: { at: Point; radius: number }[];
+      clear: (p: Point, clearance: number) => boolean;
+      keepClear: (from: Point, to: Point, clearance: number) => Point;
+    };
+    const from: Point = [0, 4.5, 0];
+    for (const clearance of [0.125, 0.7]) {
+      expect(ocean.clear(from, clearance)).toBe(true);
+      // Where the pushes fight: under each rock at the sand (its ball reaches below it), and on each side of it.
+      const hard: Point[] = ocean.BALLS.flatMap(({ at }) => [[at[0], 0.1, at[2]], [at[0] + 0.3, 0.2, at[2]], [at[0], 0.2, at[2] - 0.3]] as Point[]);
+      // And every point of a grid over the tank and a little beyond, a quarter of a metre up and half a metre across.
+      for (let x = -13; x <= 13; x += 0.5) for (let y = -0.5; y <= 7; y += 0.25) for (let z = -21; z <= 15; z += 0.5) hard.push([x, y, z]);
+      for (const to of hard) {
+        const p = ocean.keepClear(from, to, clearance);
+        expect(ocean.clear(p, clearance), `${to.join(' ')} with ${clearance} clear: ${p.join(' ')}`).toBe(true);
+      }
+    }
+    // A fish already clear goes where it swam, untouched.
+    expect(ocean.keepClear(from, [0.5, 4.4, 0.1], 0.7)).toEqual([0.5, 4.4, 0.1]);
   }, SLOW);
 });
 

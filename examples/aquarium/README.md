@@ -53,7 +53,8 @@ Published at https://srajpal.github.io/holoml/aquarium/ (open
 - `aquarium.js`: the page's script; `ocean.js`: the layout (the tank,
   the tunnel, the rocks, the plants) and the fish (how many, how fast,
   how deep, and what the board says), which the script and the tools
-  share.
+  share, and `keepClear`, which keeps a fish in the water and clear of
+  the tunnel and the rocks.
 - `models/`: the fish, the tank's parts, and `CREDITS.md`; `sounds/`:
   the water, the bubbles, the food's plop, and the fish buttons' blip.
 - `tools/`: `download.mjs` fetches the fish and Poly Haven's rock, log,

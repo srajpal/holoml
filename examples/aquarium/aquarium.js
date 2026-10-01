@@ -8,7 +8,7 @@
 // it. A click on a fish, or its button in the outline, tells about it on
 // the board in the tunnel. With reduced motion everything holds still,
 // and feeding puts the food down and says that the fish have eaten.
-import { AIRSTONES, FEEDER, KINDS, ROCKS, TANK, TUNNEL } from './ocean.js';
+import { AIRSTONES, BALLS, FEEDER, KINDS, TANK, keepClear, rockGap, tunnelGap } from './ocean.js';
 
 const board = holoml.find('board');
 const status = holoml.find('status');
@@ -63,20 +63,6 @@ function somewhere(k) {
     return p;
   }
   return [TANK.min[0] + margin, (k.depth[0] + k.depth[1]) / 2, 0];
-}
-
-/** How far a point is outside the tunnel's glass, less a fish's clearance (the tunnel runs along z on the floor). */
-function tunnelGap(p, clearance) {
-  if (p[2] > TUNNEL.from + 1 || p[2] < TUNNEL.to - 1.5) return Infinity;
-  return Math.hypot(p[0], Math.max(0, p[1])) - TUNNEL.radius - clearance;
-}
-
-/** Each rock, as a ball about as big as it is (worked out once: every fish asks about every rock each frame). */
-const BALLS = ROCKS.map((r) => ({ at: [r.at[0], r.at[1] + 0.75 * r.scale, r.at[2]], radius: 0.95 * r.scale }));
-
-/** How far a point is outside a rock's ball, less a fish's clearance. */
-function rockGap(p, b, clearance) {
-  return Math.hypot(p[0] - b.at[0], p[1] - b.at[1], p[2] - b.at[2]) - b.radius - clearance;
 }
 
 /** Adds to `want`, in place, the direction of (x, y, z), `weight` strong. */
@@ -193,18 +179,8 @@ function swim(dt, now) {
     const was = length(f.v);
     const pace = was + clamp(speed - was, -0.6 * dt, 0.9 * dt);
     f.v = scale(next, pace);
-    f.p = add(f.p, scale(f.v, dt));
-    // Never through the glass, the walls, or a rock, whatever the steering did.
-    for (let a = 0; a < 3; a++) f.p[a] = clamp(f.p[a], TANK.min[a] + 0.2, TANK.max[a] - 0.2);
-    const gap = tunnelGap(f.p, f.kind.clearance * 0.5);
-    if (gap < 0) {
-      const out = unit([f.p[0], Math.max(0.05, f.p[1]), 0]);
-      f.p = add(f.p, scale(out, -gap));
-    }
-    for (const b of BALLS) {
-      const g = rockGap(f.p, b, f.kind.clearance * 0.5);
-      if (g < 0) lean(f.p, f.p[0] - b.at[0], f.p[1] - b.at[1], f.p[2] - b.at[2], -g);
-    }
+    // Never through the glass, the walls, the sand, or a rock, whatever the steering did (ocean.js).
+    f.p = keepClear(f.p, add(f.p, scale(f.v, dt)), f.kind.clearance * 0.5);
     f.thing.position = f.p;
     f.thing.rotation = rotation(Math.atan2(f.v[0], f.v[2]), Math.asin(clamp(f.v[1] / (length(f.v) || 1), -1, 1)));
     // The tail beats faster when it hurries.

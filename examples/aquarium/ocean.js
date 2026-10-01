@@ -27,6 +27,62 @@ export const ROCKS = [
   { at: [-7.4, 0, 11.5], scale: 1.4, turn: 120 },
 ];
 
+/** Each rock, as a ball about as big as it is (worked out once: every fish asks about every rock each frame). */
+export const BALLS = ROCKS.map((r) => ({ at: [r.at[0], r.at[1] + 0.75 * r.scale, r.at[2]], radius: 0.95 * r.scale }));
+
+/** How far a point is outside the tunnel's glass, less a fish's clearance (the tunnel runs along z on the floor). */
+export function tunnelGap(p, clearance) {
+  if (p[2] > TUNNEL.from + 1 || p[2] < TUNNEL.to - 1.5) return Infinity;
+  return Math.hypot(p[0], Math.max(0, p[1])) - TUNNEL.radius - clearance;
+}
+
+/** How far a point is outside a rock's ball, less a fish's clearance. */
+export function rockGap(p, b, clearance) {
+  return Math.hypot(p[0] - b.at[0], p[1] - b.at[1], p[2] - b.at[2]) - b.radius - clearance;
+}
+
+/** How near a fish's middle comes to the glass, the sand, and the surface (metres). */
+export const WALL = 0.2;
+
+/** Whether a point is in the water, WALL from its sides, and `clearance` clear of the tunnel and every rock. */
+export function clear(p, clearance) {
+  for (let a = 0; a < 3; a++) if (p[a] < TANK.min[a] + WALL || p[a] > TANK.max[a] - WALL) return false;
+  return tunnelGap(p, clearance) >= 0 && BALLS.every((b) => rockGap(p, b, clearance) >= 0);
+}
+
+/**
+ * Where a fish that swam from `from` to `to` ends up: `to` pushed back
+ * into the water, out of the tunnel, and out of the rocks. One push can
+ * undo another (a rock's ball reaches below the sand, so a push out of it
+ * may go down through the floor), so they repeat until all hold, a few
+ * times at most; if they still do not, the fish stays at `from` (where
+ * the last frame left it, clear) for this frame, and its steering turns it
+ * away. Returns a new point.
+ */
+export function keepClear(from, to, clearance) {
+  const p = [...to];
+  for (let pass = 0; pass < 4; pass++) {
+    for (let a = 0; a < 3; a++) p[a] = Math.min(TANK.max[a] - WALL, Math.max(TANK.min[a] + WALL, p[a]));
+    const gap = tunnelGap(p, clearance);
+    if (gap < 0) {
+      // Out from the tunnel's middle line, sideways and up.
+      const y = Math.max(0.05, p[1]);
+      const l = Math.hypot(p[0], y) || 1;
+      p[0] -= (p[0] / l) * gap;
+      p[1] -= (y / l) * gap;
+    }
+    for (const b of BALLS) {
+      const g = rockGap(p, b, clearance);
+      if (g >= 0) continue;
+      const d = [p[0] - b.at[0], p[1] - b.at[1], p[2] - b.at[2]];
+      const l = Math.hypot(d[0], d[1], d[2]) || 1;
+      for (let a = 0; a < 3; a++) p[a] -= (d[a] / l) * g;
+    }
+    if (clear(p, clearance)) return p;
+  }
+  return [...from];
+}
+
 /** Rockwork along the foot of the walls: large boulders, half sunk in the sand (the fish keep clear of the walls anyway). */
 export const ROCKWORK = [
   { at: [-11.3, -0.6, -15], scale: 3.2, turn: 15 },
