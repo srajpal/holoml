@@ -53,7 +53,8 @@ describe('E3: the automatic builds', () => {
     expect(steps).toEqual(['pnpm install --frozen-lockfile', 'pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm site:build']);
     // The site is handed over after them, and only by this job.
     expect(build.indexOf('actions/upload-pages-artifact@')).toBeGreaterThan(build.indexOf('pnpm site:build'));
-    expect(build).toMatch(/upload-pages-artifact@[0-9a-f]{40} # v3\n {8}with:\n {10}path: _site\n/);
+    // At whatever version Dependabot has pinned it: the order of the steps and the path are the requirement.
+    expect(build).toMatch(/upload-pages-artifact@[0-9a-f]{40} # v\d+(?:\.\d+)*\n {8}with:\n {10}path: _site\n/);
   });
 
   it('keep the names the rule on GitHub asks for: CI on windows-latest and ubuntu-latest', () => {
