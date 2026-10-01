@@ -13,9 +13,21 @@ language versions; [Versions](docs/explanation/versions.md) explains
 both. The specification's own list of changes is its
 [appendix C](SPEC.md#appendix-c-changes).
 
+## [Unreleased]
+
+### Fixed
+
+- The ocean tunnel's fish could leave the water (#30): after a fish was
+  put back inside the tank, a push out of a rock could take it down
+  through the sand (a rock reaches below it), and a push out of the
+  tunnel into a rock. The pushes now repeat until the water, the tunnel,
+  and every rock all hold, and a fish they cannot settle stays where it
+  was for that frame (`keepClear` in the example's ocean.js). Its check
+  runs a fixed path that broke before, and every point of a grid.
+
 ## [0.2.2] - 2026-09-30
 
-HoloML 0.2, third edition. Not tagged yet. The language is the same;
+HoloML 0.2, third edition, tagged v0.2.2 on 2026-10-01. The language is the same;
 this release follows a review of the parser, the checker, the
 specification, and the conformance samples (HyperSpace 3D's prompt 134).
 
@@ -206,8 +218,9 @@ lights, labels, links, materials, the animation of position, rotation,
 and scale, and orbiting and walking; the parser, the checker, and the
 conformance samples.
 
-[0.2.2]: https://github.com/srajpal/holoml/compare/v0.2.0...HEAD
-[0.2.1]: https://github.com/srajpal/holoml/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/srajpal/holoml/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/srajpal/holoml/compare/v0.2.0...v0.2.2
+[0.2.1]: https://github.com/srajpal/holoml/compare/v0.2.0...v0.2.2
 [0.2.0]: https://github.com/srajpal/holoml/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/srajpal/holoml/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/srajpal/holoml/releases/tag/v0.1.0
