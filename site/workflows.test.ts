@@ -61,7 +61,16 @@ describe('E3: the automatic builds', () => {
     const ci = read('ci.yml');
     expect(ci).toMatch(/^name: CI$/m);
     expect(job(ci, 'test')).toMatch(/^ {4}name: \$\{\{ matrix\.os \}\}\n[\s\S]*^ {8}os: \[windows-latest, ubuntu-latest\]$/m);
-    expect([...job(ci, 'test').matchAll(/^ {8}run: (.+)$/gm)].map((m) => m[1])).toEqual(['pnpm install --frozen-lockfile', 'pnpm lint', 'pnpm typecheck', 'pnpm test']);
+    // And, since browser milestone 23, the VS Code extension: packaged, and its tests inside VS Code (on Linux on a virtual display).
+    expect([...job(ci, 'test').matchAll(/^ {8}run: (.+)$/gm)].map((m) => m[1])).toEqual([
+      'pnpm install --frozen-lockfile',
+      'pnpm lint',
+      'pnpm typecheck',
+      'pnpm test',
+      'pnpm --filter holoml-vscode package',
+      'pnpm --filter holoml-vscode test:vscode',
+      'xvfb-run -a pnpm --filter holoml-vscode test:vscode',
+    ]);
   });
 });
 

@@ -2,6 +2,11 @@ packages:
   - packages/*
 
 # Packages allowed to run install scripts: esbuild checks its platform
-# binary (used by Vitest). Nothing here runs at HoloML's run time.
+# binary (used by Vitest and by the VS Code extension's bundle). Nothing
+# here runs at HoloML's run time. @vscode/vsce-sign (which comes with
+# @vscode/vsce) signs extensions for the Marketplace; its install script
+# may download its program, and the extension is not published, so it
+# does not run.
 allowBuilds:
+  '@vscode/vsce-sign': false
   esbuild: true

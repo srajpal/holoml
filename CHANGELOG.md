@@ -15,6 +15,21 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
+### Added
+
+- A VS Code extension, `packages/vscode` (HyperSpace 3D's milestone 23):
+  syntax colours; mistakes as you type, from the parser and the checker;
+  suggestions of the elements, attributes, and values the page's version
+  allows where the cursor is; help on hover from the specification;
+  snippets; end tags written as you type and renamed with their start
+  tags; the outline and folding; colour swatches; going to a `#name` and
+  finding its references; and links to the files a page names. Its work
+  is done by a language server that other editors can use. Installed by
+  hand from a .vsix, not published; no preview; no network. The guide:
+  [Write HoloML in VS Code](docs/how-to/vscode.md).
+- `@holoml/schema` exports `COLOR_PATTERN`, for the extension's colour
+  swatches.
+
 ### Fixed
 
 - The ocean tunnel's fish could leave the water (#30): after a fish was

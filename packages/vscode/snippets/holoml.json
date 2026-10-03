@@ -1,0 +1,49 @@
+{
+  "New page": {
+    "prefix": "holoml",
+    "description": "A new HoloML page: a title, a place to stand, and light",
+    "body": [
+      "<holoml version=\"0.2\">",
+      "\t<head>",
+      "\t\t<title>${1:My page}</title>",
+      "\t</head>",
+      "\t<scene background=\"${2:#101820}\">",
+      "\t\t<viewpoint position=\"0 1.6 6\" look-at=\"0 1 0\" mode=\"${3|orbit,walk|}\" />",
+      "\t\t<light type=\"ambient\" intensity=\"0.4\" />",
+      "\t\t<light type=\"directional\" position=\"3 6 4\" intensity=\"1.2\" />",
+      "\t\t$0",
+      "\t</scene>",
+      "</holoml>"
+    ]
+  },
+  "Model": {
+    "prefix": "model",
+    "description": "A 3D model from a glTF file",
+    "body": ["<model src=\"${1:models/thing.glb}\" position=\"${2:0 0 0}\" />$0"]
+  },
+  "Light": {
+    "prefix": "light",
+    "description": "A light that shines from a place",
+    "body": ["<light type=\"${1|point,spot,directional|}\" position=\"${2:0 3 0}\" intensity=\"${3:1}\" />$0"]
+  },
+  "Place to stand": {
+    "prefix": "viewpoint",
+    "description": "Where the viewer starts, and how they move",
+    "body": ["<viewpoint position=\"${1:0 1.6 6}\" look-at=\"${2:0 1 0}\" mode=\"${3|walk,orbit|}\" />$0"]
+  },
+  "Link": {
+    "prefix": "a",
+    "description": "A link: click what it holds to go to another page",
+    "body": ["<a href=\"${1:other.holoml}\">", "\t<label position=\"${2:0 2 0}\">${3:Go there}</label>", "</a>$0"]
+  },
+  "Label": {
+    "prefix": "label",
+    "description": "Text in the scene",
+    "body": ["<label position=\"${1:0 2 0}\">${2:Hello}</label>$0"]
+  },
+  "Group": {
+    "prefix": "group",
+    "description": "Several things that move, turn, and scale as one",
+    "body": ["<group position=\"${1:0 0 0}\">", "\t$0", "</group>"]
+  }
+}

@@ -1,5 +1,9 @@
 # Checks every push and pull request on Windows and Linux: lint, types,
-# and the unit and conformance tests (milestone 13, owner prompt 63, Q4 a).
+# and the unit and conformance tests (milestone 13, owner prompt 63, Q4 a);
+# and the VS Code extension (browser milestone 23): its .vsix made, and its
+# tests run inside VS Code 1.96.0, which @vscode/test-electron downloads
+# from Microsoft's update server and checks against the checksum the
+# server gives (Q4 a: that download happens here only).
 # Actions are named by commit, with their version beside them (review
 # 134); Dependabot (.github/dependabot.yml) proposes their updates.
 name: CI
@@ -47,3 +51,15 @@ jobs:
 
       - name: Tests
         run: pnpm test
+
+      - name: VS Code extension, packaged
+        run: pnpm --filter holoml-vscode package
+
+      - name: VS Code extension, in VS Code (Windows)
+        if: runner.os == 'Windows'
+        run: pnpm --filter holoml-vscode test:vscode
+
+      # Linux has no display: VS Code draws on a virtual one.
+      - name: VS Code extension, in VS Code (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a pnpm --filter holoml-vscode test:vscode

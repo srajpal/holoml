@@ -1,0 +1,14 @@
+<holoml version="0.2">
+  <head>
+    <title>Test page</title>
+  </head>
+  <scene background="#101820">
+    <viewpoint id="start" position="0 1.6 6" look-at="0 1 0" mode="orbit" />
+    <light id="lamp" type="point" position="0 3 0" color="#ffcc88" />
+    <model id="box" src="models/box.glb" position="0 0 0" />
+    <animate target="#lamp" attribute="intensity" from="0.2" to="1" duration="2s" />
+    <a href="next.holoml">
+      <label position="0 2 0">Next</label>
+    </a>
+  </scene>
+</holoml>

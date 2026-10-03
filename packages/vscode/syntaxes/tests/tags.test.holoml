@@ -1,0 +1,32 @@
+<!-- SYNTAX TEST "text.holoml" "tags, attributes, and values"
+<holoml version="0.2">
+<!-- <- punctuation.definition.tag.begin.holoml
+<!-- <~------ entity.name.tag.holoml
+<!--    ^^^^^^^ entity.other.attribute-name.holoml
+<!--           ^ punctuation.separator.key-value.holoml
+<!--            ^ string.quoted.double.holoml punctuation.definition.string.begin.holoml
+<!--             ^^^ string.quoted.double.holoml
+<!--                ^ punctuation.definition.string.end.holoml
+<!--                 ^ punctuation.definition.tag.end.holoml
+  <model src='car.glb' autoplay solid />
+<!--     ^^^ entity.other.attribute-name.holoml
+<!--         ^^^^^^^^^ string.quoted.single.holoml
+<!--                   ^^^^^^^^ entity.other.attribute-name.holoml
+<!--                            ^^^^^ entity.other.attribute-name.holoml
+<!--                                  ^^ punctuation.definition.tag.end.holoml
+  <light
+<!-- <~~~----- entity.name.tag.holoml
+    type="point"
+<!-- <~~~~---- meta.tag.holoml entity.other.attribute-name.holoml
+<!--      ^^^^^ meta.tag.holoml string.quoted.double.holoml
+    intensity="1.5" />
+<!-- <~~~~--------- entity.other.attribute-name.holoml
+  <label>Fish &amp; chips &#233;</label>
+<!--     ^^^^ - meta.tag.holoml
+<!--          ^^^^^ constant.character.entity.holoml
+<!--                      ^^^^^^ constant.character.entity.holoml
+<!--                            ^^ punctuation.definition.tag.begin.holoml
+<!--                              ^^^^^ entity.name.tag.holoml
+</holoml>
+<!-- <-- meta.tag.holoml punctuation.definition.tag.begin.holoml
+<!-- <~~------ entity.name.tag.holoml

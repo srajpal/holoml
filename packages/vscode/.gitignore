@@ -1,0 +1,9 @@
+# Made by build.mjs and the package script
+dist/
+dist-test/
+LICENSE
+NOTICE
+THIRD-PARTY-NOTICES.txt
+*.vsix
+# VS Code's test runs (a downloaded copy of VS Code in the automatic builds, and the test profile)
+.vscode-test/
