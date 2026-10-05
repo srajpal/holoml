@@ -1484,7 +1484,7 @@ the version it declares.
 
 Ideas for later versions: movement along paths, physics, named colours,
 styles shared between elements, and spaces shared by several people.
-The next version, 0.3, is planned with HyperSpace 3D's milestone 24:
+The next version, 0.3, is planned with HyperSpace 3D's milestone 25:
 names for models and groups, the language and direction of text, a
 lighter model shown far away, and more of the scene API.
 

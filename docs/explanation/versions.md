@@ -163,7 +163,7 @@ checker.
 
 ## What comes next
 
-HoloML 0.3 is planned with HyperSpace 3D's milestone 24: names for
+HoloML 0.3 is planned with HyperSpace 3D's milestone 25: names for
 models and groups, the language and direction of text, a lighter model
 shown far away, and more of the scene API. The first two fill the gaps
 that [Accessibility in 3D](accessibility.md) describes. A page that uses
