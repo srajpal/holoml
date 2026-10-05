@@ -49,5 +49,13 @@ async function closeTag(e: vscode.TextDocumentChangeEvent): Promise<void> {
   // Only if nothing has changed while the server was asked, and the cursor is still where the character went.
   const active = vscode.window.activeTextEditor;
   if (!snippet || active?.document !== doc || doc.version !== version || !active.selection.active.isEqual(position)) return;
-  await active.insertSnippet(new vscode.SnippetString(snippet), position, { undoStopBefore: false, undoStopAfter: false });
+  // The answer is a snippet whose "$0" marks where the cursor stays. It is written as text, and the cursor put back:
+  // VS Code 1.139 leaves the cursor after a snippet that has nothing but "$0" in it.
+  const at = snippet.indexOf('$0');
+  const text = snippet.replace('$0', '');
+  if (!(await active.edit((edit) => edit.insert(position, text)))) return;
+  if (at >= 0 && at < text.length) {
+    const cursor = position.translate(0, at);
+    active.selection = new vscode.Selection(cursor, cursor);
+  }
 }

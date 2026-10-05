@@ -118,8 +118,8 @@ describe('HoloML in VS Code', () => {
     await vscode.commands.executeCommand('type', { text: '<group' });
     await vscode.commands.executeCommand('type', { text: '>' });
     await until('the end tag', () => editor.document.lineAt(2).text.includes('<group></group>'), () => JSON.stringify(editor.document.lineAt(2).text));
-    // The cursor stays between the tags.
-    assert.equal(editor.selection.active.character, '    <group>'.length);
+    // The cursor stays between the tags (VS Code tells the extension of the new selection just after the new text).
+    await until('the cursor between the tags', () => editor.selection.active.character === '    <group>'.length, () => String(editor.selection.active.character));
     await vscode.commands.executeCommand('editor.action.commentLine');
     assert.match(editor.document.lineAt(2).text, /^\s*<!-- <group><\/group> -->$/);
     await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');

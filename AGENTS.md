@@ -94,12 +94,15 @@ after they ran; on Windows and Linux in GitHub Actions,
 - Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
 - The VS Code extension: `pnpm --filter holoml-vscode package` makes
   packages/vscode/holoml-vscode.vsix (first run 2026-10-03); `pnpm
-  --filter holoml-vscode test:vscode` runs its tests inside VS Code (not
-  checked yet in VS Code; run once in Cursor on 2026-10-03). On a
+  --filter holoml-vscode test:vscode` runs its tests inside VS Code (10
+  passed in VS Code 1.139.1 on 2026-10-05). On a
   developer's computer they use the VS Code installed there (HOLOML_VSCODE
   names its program; on Windows its usual place is found), and stop if
   there is none; only in GitHub Actions (CI set) is VS Code 1.96.0
-  downloaded for the run. A VS Code window opens while they run. VS Code
+  downloaded for the run. Each run starts a fresh profile whose settings
+  turn off what in VS Code itself reaches the network (its AI features,
+  telemetry, experiments, and update checks). A VS Code window opens
+  while they run. VS Code
   will not start a second copy while it is waiting to finish an update:
   restart it first.
 - After adding or changing a sample: `pnpm conformance:update` writes

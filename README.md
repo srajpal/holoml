@@ -139,7 +139,8 @@ them on Windows and Linux for every push, and the site is published from
 `main` only after they pass there too. The extension's tests inside a
 real VS Code run with `pnpm --filter holoml-vscode test:vscode` (on a
 developer's computer in the VS Code installed there; in GitHub Actions in
-VS Code 1.96.0, downloaded for the run; not checked yet in VS Code). `pnpm site:build` makes the site in `_site/` (open
+VS Code 1.96.0, downloaded for the run; 10 passed in VS Code 1.139.1 on
+2026-10-05). `pnpm site:build` makes the site in `_site/` (open
 `_site/index.html`); `pnpm grammar:update` and `pnpm reference:update`
 write the files made from the checker's table and the specification
 (the RELAX NG schema, the reference pages, and the specification's
