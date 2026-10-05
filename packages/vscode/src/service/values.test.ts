@@ -54,7 +54,8 @@ describe('links to files', () => {
     });
     expect(found.map((l) => l.target)).toEqual(['file:///c%3A/site/sky.hdr', 'file:///c%3A/site/models/car.glb', 'file:///c%3A/site/next.holoml']);
     expect(asked).not.toContain('file:///root.glb');
-    expect(asked.some((u) => u.includes('example.com'))).toBe(false);
+    // Only files on the computer are asked about: never the address on the web.
+    expect(asked.map((u) => new URL(u).protocol)).toEqual(['file:', 'file:', 'file:', 'file:']);
   });
 
   it('gives no links for a page that is not a file', () => {

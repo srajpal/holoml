@@ -274,13 +274,16 @@ export function declaredVersion(outline: Outline): string | undefined {
 /** The text an element holds, without its tags or comments, with its whitespace run together. */
 export function textOf(outline: Outline, el: ElementNode): string {
   if (el.startTagEnd === undefined) return '';
+  const stop = contentEnd(el);
+  // What lies between its tags and is not text: its children, and the comments the reader found.
+  const skip = [...el.children, ...outline.comments.filter((c) => c.start >= el.startTagEnd! && c.start < stop)].sort((a, b) => a.start - b.start);
   let out = '';
   let i = el.startTagEnd;
-  const stop = contentEnd(el);
-  for (const child of el.children) {
-    out += outline.text.slice(i, child.start);
-    i = child.end;
+  for (const part of skip) {
+    if (part.start < i) continue;
+    out += outline.text.slice(i, part.start);
+    i = Math.min(part.end, stop);
   }
   out += outline.text.slice(i, stop);
-  return out.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ').trim();
+  return out.replace(/\s+/g, ' ').trim();
 }

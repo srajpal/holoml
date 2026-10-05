@@ -65,5 +65,8 @@ describe('the forgiving reader', () => {
   it('gives an element its text without tags or comments', () => {
     const outline = readOutline('<panel>Two <!-- x -->\n  lines</panel>');
     expect(textOf(outline, outline.roots[0]!)).toBe('Two lines');
+    // A comment that holds what looks like another one, and one never closed, are left out whole.
+    const tricky = readOutline('<label>A<!-- <!-- b --> c<!-- d</label>');
+    expect(textOf(tricky, tricky.roots[0]!)).toBe('A c');
   });
 });
