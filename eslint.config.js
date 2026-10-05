@@ -2,7 +2,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['**/node_modules/**', 'coverage/**', '_site/**', '.claude/**'],
+    ignores: ['**/node_modules/**', 'coverage/**', '_site/**', '.claude/**', 'packages/vscode/dist/**', 'packages/vscode/dist-test/**', 'packages/vscode/.vscode-test/**'],
   },
   ...tseslint.configs.recommended,
   // Rules that need the types (browser review of 2026-09-30, H8): a

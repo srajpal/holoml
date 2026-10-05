@@ -1,0 +1,5 @@
+<holoml version="0.2">
+  <scene>
+    <modl src="models/box.glb" />
+  </scene>
+</holoml>

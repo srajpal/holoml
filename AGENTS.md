@@ -66,9 +66,17 @@ CLAUDE.local.md, which is gitignored.
 ## Testing
 
 Where tests live:
-- Unit tests next to the code: `*.test.ts` in packages/parser/src and
-  packages/schema/src; the site's in site/; those of the example sites'
-  scripts and tools in examples/*/tools/ and examples/tools/.
+- Unit tests next to the code: `*.test.ts` in packages/parser/src,
+  packages/schema/src, and packages/vscode/src; the site's in site/;
+  those of the example sites' scripts and tools in examples/*/tools/ and
+  examples/tools/.
+- The VS Code extension (packages/vscode, browser milestone 23): its unit
+  tests (above) include the grammar's tests (packages/vscode/syntaxes/tests,
+  run by vscode-tmgrammar-test), the built extension's (no network code,
+  the language server over every example site with the network refused,
+  and the .vsix's contents), and the snippets'. Its tests inside a real VS
+  Code are in packages/vscode/test/vscode, with the folder they open in
+  packages/vscode/test/fixtures.
 - The guides: docs/, organised as tutorials, how-to guides, reference,
   and explanation; docs.test.ts checks every HoloML example in them.
 - Conformance samples: conformance/valid, conformance/syntax-errors, and
@@ -81,9 +89,22 @@ after they ran; on Windows and Linux in GitHub Actions,
 .github/workflows/ci.yml):
 - Toolchain: Node 22.13 or newer; pnpm 12.4.1, pinned in package.json.
 - Install: `pnpm install --frozen-lockfile`
-- Unit, conformance, documentation, and site tests: `pnpm test` (Vitest;
-  505 tests passed on 2026-09-30)
+- Unit, conformance, documentation, site, and extension tests: `pnpm
+  test` (Vitest; 834 tests passed on 2026-10-03)
 - Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
+- The VS Code extension: `pnpm --filter holoml-vscode package` makes
+  packages/vscode/holoml-vscode.vsix (first run 2026-10-03); `pnpm
+  --filter holoml-vscode test:vscode` runs its tests inside VS Code (10
+  passed in VS Code 1.139.1 on 2026-10-05). On a
+  developer's computer they use the VS Code installed there (HOLOML_VSCODE
+  names its program; on Windows its usual place is found), and stop if
+  there is none; only in GitHub Actions (CI set) is VS Code 1.96.0
+  downloaded for the run. Each run starts a fresh profile whose settings
+  turn off what in VS Code itself reaches the network (its AI features,
+  telemetry, experiments, and update checks). A VS Code window opens
+  while they run. VS Code
+  will not start a second copy while it is waiting to finish an update:
+  restart it first.
 - After adding or changing a sample: `pnpm conformance:update` writes
   its `.expected.json`; read every changed file before committing, since
   the expected results are the specification's.

@@ -1,0 +1,99 @@
+{
+  "name": "HoloML",
+  "scopeName": "text.holoml",
+  "fileTypes": ["holoml"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#end-tag" },
+    { "include": "#start-tag" },
+    { "include": "#unsupported-markup" },
+    { "include": "#character-reference" },
+    { "include": "#bad-ampersand" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.block.holoml",
+      "begin": "<!--",
+      "end": "-->",
+      "captures": { "0": { "name": "punctuation.definition.comment.holoml" } },
+      "patterns": [{ "name": "invalid.illegal.characters-not-allowed-here.holoml", "match": "--" }]
+    },
+    "start-tag": {
+      "name": "meta.tag.holoml",
+      "begin": "(<)([a-zA-Z][a-zA-Z0-9-]*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.holoml" },
+        "2": { "name": "entity.name.tag.holoml" }
+      },
+      "end": "(/?>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.holoml" } },
+      "patterns": [{ "include": "#attributes" }]
+    },
+    "end-tag": {
+      "name": "meta.tag.holoml",
+      "begin": "(</)([a-zA-Z][a-zA-Z0-9-]*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.holoml" },
+        "2": { "name": "entity.name.tag.holoml" }
+      },
+      "end": "(>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.holoml" } },
+      "patterns": [{ "name": "invalid.illegal.end-tag-content.holoml", "match": "[^\\s>]+" }]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "comment": "A value without quotes is a syntax error.",
+          "match": "(=)\\s*([^\\s\"'<>=/]+)",
+          "captures": {
+            "1": { "name": "punctuation.separator.key-value.holoml" },
+            "2": { "name": "invalid.illegal.unquoted-attribute-value.holoml" }
+          }
+        },
+        { "name": "punctuation.separator.key-value.holoml", "match": "=" },
+        { "include": "#double-quoted" },
+        { "include": "#single-quoted" },
+        { "name": "entity.other.attribute-name.holoml", "match": "[a-zA-Z][a-zA-Z0-9-]*" },
+        { "name": "invalid.illegal.character-in-tag.holoml", "match": "/(?!>)|[^\\s\"'<>=/]" }
+      ]
+    },
+    "double-quoted": {
+      "name": "string.quoted.double.holoml",
+      "begin": "\"",
+      "end": "\"",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.holoml" } },
+      "endCaptures": { "0": { "name": "punctuation.definition.string.end.holoml" } },
+      "patterns": [{ "include": "#character-reference" }, { "include": "#bad-ampersand" }, { "include": "#less-than-in-value" }]
+    },
+    "single-quoted": {
+      "name": "string.quoted.single.holoml",
+      "begin": "'",
+      "end": "'",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.holoml" } },
+      "endCaptures": { "0": { "name": "punctuation.definition.string.end.holoml" } },
+      "patterns": [{ "include": "#character-reference" }, { "include": "#bad-ampersand" }, { "include": "#less-than-in-value" }]
+    },
+    "character-reference": {
+      "name": "constant.character.entity.holoml",
+      "match": "(&)(?:#[0-9]{1,7}|#x[0-9a-fA-F]{1,6}|amp|lt|gt|quot|apos)(;)",
+      "captures": {
+        "1": { "name": "punctuation.definition.entity.holoml" },
+        "2": { "name": "punctuation.definition.entity.holoml" }
+      }
+    },
+    "bad-ampersand": {
+      "comment": "An & that starts no known character reference is a syntax error.",
+      "name": "invalid.illegal.bad-ampersand.holoml",
+      "match": "&"
+    },
+    "less-than-in-value": {
+      "name": "invalid.illegal.less-than-in-value.holoml",
+      "match": "<"
+    },
+    "unsupported-markup": {
+      "comment": "Declarations and processing instructions are not HoloML.",
+      "name": "invalid.illegal.unsupported-markup.holoml",
+      "match": "<[!?][^>]*>?"
+    }
+  }
+}

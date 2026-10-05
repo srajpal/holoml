@@ -1,0 +1,108 @@
+{
+  "name": "holoml-vscode",
+  "displayName": "HoloML",
+  "description": "HoloML pages in VS Code: syntax colours, mistakes as you type, suggestions, and help on hover.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "holoml",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/srajpal/holoml"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "holoml",
+    "3d",
+    "markup"
+  ],
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": {
+      "supported": "limited",
+      "description": "Links to the files a page names work only for files on the computer."
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "holoml",
+        "aliases": [
+          "HoloML",
+          "holoml"
+        ],
+        "extensions": [
+          ".holoml"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "holoml",
+        "scopeName": "text.holoml",
+        "path": "./syntaxes/holoml.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "holoml",
+        "path": "./snippets/holoml.json"
+      }
+    ],
+    "configuration": {
+      "title": "HoloML",
+      "properties": {
+        "holoml.autoClosingTags": {
+          "type": "boolean",
+          "default": true,
+          "description": "Write the end tag when a start tag is finished with \">\", or when \"</\" is typed."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[holoml]": {
+        "editor.linkedEditing": true,
+        "editor.quickSuggestions": {
+          "other": "on",
+          "comments": "off",
+          "strings": "on"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "package": "node build.mjs && vsce package --no-dependencies --out holoml-vscode.vsix",
+    "test:vscode": "node build.mjs --tests && vscode-test"
+  },
+  "dependencies": {
+    "@holoml/parser": "workspace:*",
+    "@holoml/schema": "workspace:*",
+    "vscode-languageclient": "10.1.2",
+    "vscode-languageserver": "10.1.2",
+    "vscode-languageserver-textdocument": "1.0.15"
+  },
+  "devDependencies": {
+    "@types/mocha": "10.0.10",
+    "@types/node": "^26.6.2",
+    "@types/vscode": "1.96.0",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.0.0",
+    "esbuild": "0.28.2",
+    "vscode-oniguruma": "1.7.0",
+    "vscode-textmate": "7.0.4",
+    "vscode-tmgrammar-test": "0.1.3"
+  }
+}

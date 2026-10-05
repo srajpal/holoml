@@ -29,3 +29,7 @@ Each guide does one thing, assuming you know how a page is put together
 ## Sharing
 
 - [Publish a site](publishing.md)
+
+## Tools
+
+- [Write HoloML in VS Code](vscode.md)

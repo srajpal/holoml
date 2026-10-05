@@ -84,6 +84,7 @@ holoml/
   packages/
     parser/          @holoml/parser: text to a tree, with line and column; no dependencies
     schema/          @holoml/schema: checks a tree against the spec and lists problems
+    vscode/          the VS Code extension: colours, mistakes as you type, suggestions, hover
   conformance/       sample documents and the result any reader must give for each
   examples/
     showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
@@ -108,6 +109,19 @@ where they are also listed under "HoloML examples".
 
 The packages are not published to npm yet.
 
+## Writing HoloML in VS Code
+
+`packages/vscode` is an extension for VS Code and editors built on it
+(1.96 or newer): syntax colours, mistakes underlined as you type with
+the checker's own words, suggestions of only what is allowed where the
+cursor is, help on hover from the specification, snippets, end tags
+written for you, the outline, colour swatches, and going to a `#name`.
+It is not in the Marketplace: `pnpm --filter holoml-vscode package`
+makes `packages/vscode/holoml-vscode.vsix`, which VS Code installs with
+"Install from VSIX...". It shows no preview (open a page in HyperSpace
+3D for that), and it never goes on the network.
+[Write HoloML in VS Code](docs/how-to/vscode.md) has the details.
+
 ## Testing
 
 From the repository root (Node 22.13 or newer, pnpm 12.4.1):
@@ -119,10 +133,14 @@ pnpm lint
 pnpm typecheck
 ```
 
-505 unit, conformance, documentation, site, and example tests passed on
-2026-09-30 on Windows 11. GitHub Actions runs them on Windows and Linux
-for every push, and the site is published from `main` only after they
-pass there too. `pnpm site:build` makes the site in `_site/` (open
+834 unit, conformance, documentation, site, example, and VS Code
+extension tests passed on 2026-10-03 on Windows 11. GitHub Actions runs
+them on Windows and Linux for every push, and the site is published from
+`main` only after they pass there too. The extension's tests inside a
+real VS Code run with `pnpm --filter holoml-vscode test:vscode` (on a
+developer's computer in the VS Code installed there; in GitHub Actions in
+VS Code 1.96.0, downloaded for the run; 10 passed in VS Code 1.139.1 on
+2026-10-05). `pnpm site:build` makes the site in `_site/` (open
 `_site/index.html`); `pnpm grammar:update` and `pnpm reference:update`
 write the files made from the checker's table and the specification
 (the RELAX NG schema, the reference pages, and the specification's

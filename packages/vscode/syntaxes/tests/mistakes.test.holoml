@@ -1,0 +1,18 @@
+<!-- SYNTAX TEST "text.holoml" "comments, and what the syntax does not allow"
+<!-- A comment -->
+<!-- <---- comment.block.holoml punctuation.definition.comment.holoml
+<!-- ^^^^^^^^^ comment.block.holoml
+<!-- a -- b -->
+<!--   ^^ comment.block.holoml invalid.illegal.characters-not-allowed-here.holoml
+<scene background=red>
+<!--              ^^^ invalid.illegal.unquoted-attribute-value.holoml
+<label>Salt & pepper</label>
+<!--        ^ invalid.illegal.bad-ampersand.holoml
+<label title="a < b">x</label>
+<!--            ^ invalid.illegal.less-than-in-value.holoml
+<!DOCTYPE holoml>
+<!-- <----------------- invalid.illegal.unsupported-markup.holoml
+<?xml version="1.0"?>
+<!-- <----- invalid.illegal.unsupported-markup.holoml
+</scene x>
+<!--    ^ invalid.illegal.end-tag-content.holoml

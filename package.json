@@ -12,7 +12,7 @@
   "scripts": {
     "test": "vitest run",
     "lint": "eslint .",
-    "typecheck": "tsc -p packages/parser --noEmit && tsc -p packages/schema --noEmit",
+    "typecheck": "tsc -p packages/parser --noEmit && tsc -p packages/schema --noEmit && tsc -p packages/vscode --noEmit",
     "conformance:update": "node --experimental-strip-types packages/schema/src/update-conformance.ts",
     "grammar:update": "node --experimental-strip-types packages/schema/src/update-grammar.ts",
     "reference:update": "node --experimental-strip-types packages/schema/src/update-reference.ts",
