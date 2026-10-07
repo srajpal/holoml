@@ -124,7 +124,7 @@ makes `packages/vscode/holoml-vscode.vsix`, which VS Code installs with
 
 ## Testing
 
-From the repository root (Node 22.13 or newer, pnpm 12.4.1):
+From the repository root (Node 24, or 22.13 or newer for now; pnpm 12.4.1):
 
 ```
 pnpm install --frozen-lockfile
