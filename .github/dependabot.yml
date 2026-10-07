@@ -22,6 +22,17 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # @types/node follows the Node the code runs on, 24 (owner, prompt
+      # 161 in the browser repository): a new major comes when the builds
+      # move, not on its own (prompt 162).
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # @types/vscode must not be newer than engines.vscode in
+      # packages/vscode/package.json (^1.96.0), or vsce refuses to
+      # package the extension; it moves when engines.vscode does.
+      - dependency-name: '@types/vscode'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
     groups:
       packages:
         patterns: ['*']
