@@ -1364,10 +1364,10 @@ KHR_materials_ior, KHR_materials_iridescence, KHR_materials_sheen,
 KHR_materials_specular, KHR_materials_transmission,
 KHR_materials_unlit, KHR_materials_volume, KHR_mesh_quantization,
 KHR_texture_transform, EXT_materials_bump, EXT_mesh_gpu_instancing,
-EXT_texture_avif, and EXT_texture_webp. It does not yet read files that
-need compressed geometry (KHR_draco_mesh_compression,
-EXT_meshopt_compression, and KHR_meshopt_compression) or compressed
-pictures (KHR_texture_basisu).
+EXT_texture_avif, EXT_texture_webp, and (since its milestone 25, with
+three.js's decoders, carried in the browser) compressed geometry
+(KHR_draco_mesh_compression, EXT_meshopt_compression, and
+KHR_meshopt_compression) and compressed pictures (KHR_texture_basisu).
 
 ### Limits
 

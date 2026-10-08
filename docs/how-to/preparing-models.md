@@ -118,20 +118,43 @@ How the example sites stay light:
   studio's tools keep normal maps at a little higher quality, as their
   errors show as bumps.
 
-## Leave out extensions that need decoding
+## Compress a model, if the renderers you aim for read it
 
 A glTF file may use extensions, additions to glTF, which it lists in
 `extensionsUsed`, and may need some of them to be drawn at all, which
 it lists in `extensionsRequired`. A renderer leaves out a model whose
-file needs an extension that the renderer does not read. HyperSpace 3D
-reads many (the specification's [Loading](../../SPEC.md#loading) lists
-them), but not yet those that compress a file so that a viewer must
+file needs an extension that the renderer does not read. Some
+extensions compress a file, so that a viewer downloads less and must
 decode it: Draco and meshopt for the shape (KHR_draco_mesh_compression,
 EXT_meshopt_compression, and KHR_meshopt_compression), and KTX2 for the
-pictures (KHR_texture_basisu). Such files are common on the web; save
-or export a model without them. The script in
+pictures (KHR_texture_basisu). HyperSpace 3D reads all four since its
+milestone 25 (the specification's [Loading](../../SPEC.md#loading)
+lists what it reads); another renderer may not, so check the ones you
+aim for. The script in
 [Find a material's name](models-and-materials.md#find-a-materials-name)
 prints the extensions a file needs.
+
+The [glTF Transform](https://gltf-transform.dev/) command line makes a
+compressed copy (Node.js; `npx @gltf-transform/cli --help`):
+
+```text
+gltf-transform draco shoe.glb shoe-draco.glb
+gltf-transform meshopt shoe.glb shoe-meshopt.glb
+```
+
+Compressing the shape makes the file smaller to download; what the
+renderer draws is the same, and counts toward its limits the same, as
+the triangles and pictures it decodes to.
+
+## Make a lighter version for far away
+
+A model's `far` (0.3) is a lighter version of it, drawn instead while
+the viewer is `far-from` metres or more away. Make it as a stand-in is
+made (below): from the same model, with the same origin, size, and
+direction, and fewer triangles; and, for a model that plays one of its
+own animations, with the same skeleton and the animation of the same
+name, so that it moves the same far away. Glue it on with
+[A lighter model far away](big-sites.md#show-a-lighter-model-far-away).
 
 ## Give a detailed model a lighter stand-in
 

@@ -51,6 +51,17 @@ runs along the tank's floor, inside the box, so seen from the tunnel
 even the near glass and the walkway take a little of the blue; a clear
 water keeps that small.
 
+## Change the water from a script
+
+In a 0.3 page, water with an `id` is a thing a script changes, for
+example murkier as the tank is fed:
+
+```js
+const tank = holoml.find('tank');
+tank.clarity = 8; // metres; more than 0
+tank.color = '#2a6f6b';
+```
+
 ## Keep the walker where they belong
 
 The water is not solid and has no weight. The walker is stopped by the

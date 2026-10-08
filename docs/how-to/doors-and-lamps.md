@@ -111,6 +111,27 @@ a panel whose click plays a chime; its script hears the click, from the
 mouse or the keyboard, and adds the shoe to the cart
 ([sound on a click](sound.md#play-a-sound-on-a-click)).
 
+## Start and stop an animation from a script
+
+In a 0.3 page, an `animate` with an `id` is a thing a script starts
+and stops:
+
+```holoml-scene
+<model id="fan" src="models/fan.glb" position="0 2.6 0" />
+<animate id="spin" target="#fan" attribute="rotation" to="0 360 0" duration="2s" repeat="indefinite" />
+```
+
+```js
+const spin = holoml.find('spin');
+holoml.on('key', (e) => {
+  if (e.down && e.key === 'f') (spin.running ? spin.stop() : spin.start());
+});
+```
+
+`start()` runs it from its beginning, as when it begins by itself;
+`stop()` leaves it where it is. A click action still runs on its
+clicks, also after a script stopped it.
+
 ## Reduced motion
 
 When the viewer has asked for reduced motion (their system's setting

@@ -66,6 +66,29 @@ The first goes to the kitchen on this page. The second is Harbour
 Loft's way back from its roof terrace: it opens the flat at the place by
 the terrace door, where the viewer left it, not in the hall.
 
+## Go to a place from a script
+
+In a 0.3 page, a script sends the viewer to a place, as a link to
+`#name` does, and hears where the viewer arrives:
+
+```js
+// tour.js: a button panel "next" takes the viewer round the places in turn.
+const PLACES = ['hall', 'kitchen', 'terrace'];
+holoml.on('click', (e) => {
+  if (e.thing?.id !== 'next') return;
+  const at = PLACES.indexOf(holoml.viewer.place);
+  holoml.viewer.goTo(PLACES[(at + 1) % PLACES.length]);
+});
+holoml.on('place', (e) => {
+  holoml.find('where').text = `You are at: ${e.place}`;
+});
+```
+
+`holoml.viewer.place` is the id of the place the viewer last arrived
+at (walking does not change it); `goTo` with an id that is not a
+place's is an error. The floor plan is a thing scripts find by its id:
+`holoml.find('plan').visible = false` hides it.
+
 ## Move between pages with a fade
 
 Following a link to another HoloML page of the same site (the same

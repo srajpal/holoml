@@ -14,6 +14,7 @@ Each guide does one thing, assuming you know how a page is put together
 
 - [Add sound, and sound from a place](sound.md)
 - [Put text in the scene and on the screen](text.md)
+- [Name things, and write text in any language](names-and-languages.md)
 
 ## Things to do
 
