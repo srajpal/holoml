@@ -1,19 +1,21 @@
 # Versions
 
-This page explains HoloML's versions: what 0.1 and 0.2 hold, how a page
-says which one it is written for, why a reader refuses a version it does
-not know, what the editions of 0.2 changed, and what 0.3 plans.
+This page explains HoloML's versions: what 0.1, 0.2, and 0.3 hold, how
+a page says which one it is written for, why a reader refuses a version
+it does not know, what the editions of 0.2 changed, and what may come
+later.
 The rules are in the specification's
 [section 11](../../SPEC.md#11-versions).
 
-## Two versions, both fixed
+## Three versions, all fixed
 
 HoloML 0.1, of 2026-09-26, is the first: models, groups, lights,
 labels, links, materials, the animation of position, rotation, and
 scale, and orbiting and walking. HoloML 0.2, of 2026-09-29 (begun
 2026-09-27), adds to it without changing it: every 0.1 page means the
-same in 0.2. Both versions are fixed: what a page written for either
-means will not change.
+same in 0.2. HoloML 0.3, of 2026-10-07 (released as 0.3.0 on
+2026-10-08), adds to 0.2 in the same way. All three are fixed: what a
+page written for any of them means will not change.
 
 ## Why HoloML is experimental
 
@@ -29,8 +31,8 @@ later version may need changes.
 ## How a page says its version
 
 The root element's `version` names the version the page is written for.
-Every page has one, written exactly, `"0.1"` or `"0.2"`, with no spaces
-around it:
+Every page has one, written exactly, `"0.1"`, `"0.2"`, or `"0.3"`, with
+no spaces around it:
 
 ```holoml
 <holoml version="0.1">
@@ -105,13 +107,42 @@ each addition "(0.2)". In all:
   `trigger`, `toggle`).
 - Loading by area (`load`, `near`, and stand-ins).
 
+## What 0.3 added
+
+Version 0.3 came with HyperSpace 3D's milestone 25, from the gaps that
+the documentation of 0.2 found; the specification marks each addition
+"(0.3)". In all:
+
+- Names: `label` on `model` and `group`, which screen readers hear in
+  place of an id or a file's name; a link is named by the labels of
+  the models and groups in it too.
+- Languages: `lang` and `dir`, taken from the nearest element that says
+  them, as in HTML, so that text in Arabic or Hebrew runs right to left
+  and is read in its own voice.
+- Far models: `far` and `far-from` on `model`, a lighter version shown
+  from that distance on, and only what is shown is loaded.
+- More of the scene API: an animation's `start()`, `stop()`, and
+  `running`; the viewer's `place`, `goTo()`, and `place` event; the
+  water's `color` and `clarity`; the floor plan's `visible`; a model's
+  and a group's `label`; and `holoml.add` taking animations, panels,
+  and links.
+
+What 0.3's first edition wrote down for every version is no addition:
+how a scene is lit and seen, which way a panorama faces, and the least
+every renderer must allow. A 0.1 or 0.2 page keeps its meaning, and is
+now drawn the same way by any renderer that follows the text.
+Compressed models (Draco, meshopt, KTX2 pictures) are not part of the
+language either: they are glTF extensions a renderer reads, at any
+version.
+
 ## The editions of 0.2
 
 A version's specification can have more than one edition. An edition
 changes the document, not the language: it says what was left unsaid,
 and corrects what was wrong. The releases of HoloML's parser and
 checker are numbered with it: 0.2.0 came with the first edition of 0.2,
-0.2.1 with the second, and 0.2.2 with the third. The
+0.2.1 with the second, and 0.2.2 with the third; 0.3.0 comes with the
+first edition of 0.3. The
 [change log](../../CHANGELOG.md) lists what each release changed.
 
 The second edition, of 2026-09-29, has the same language: no page
@@ -163,14 +194,7 @@ checker.
 
 ## What comes next
 
-HoloML 0.3 is planned with HyperSpace 3D's milestone 25: names for
-models and groups, the language and direction of text, a lighter model
-shown far away, and more of the scene API. The first two fill the gaps
-that [Accessibility in 3D](accessibility.md) describes. A page that uses
-them will say `version="0.3"`, and readers that know only 0.1 and 0.2
-will refuse it rather than guess.
-
-Further off are ideas for later versions: movement along paths,
+Ideas for later versions: movement along paths,
 physics, named colours, styles shared between elements, and spaces
 shared by several people.
 

@@ -1,6 +1,6 @@
 {
   "name": "@holoml/parser",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "private": true,
   "description": "Reads HoloML text into a tree of elements, with the line and column of each.",
   "license": "Apache-2.0",
