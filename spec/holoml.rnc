@@ -52,7 +52,7 @@ scene =
     attribute sky { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
     attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
-    (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint? & hud* & slider* & choice* & plan? & water?)
+    (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint* & hud* & slider* & choice* & plan? & water?)
   }
 
 group =

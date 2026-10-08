@@ -20,3 +20,8 @@ https://creativecommons.org/licenses/by/4.0/):
   bream by BlueMesh, the Atlantic mackerel by Amy Scott-Murray, the tuna
   by GoldenZtuff, the clownfish by zixisun02, and the copperband
   butterflyfish by Dsanchez13.
+
+The tests use Jing, the RELAX NG validator, kept in tools/jing/: Copyright
+(c) 2001-2003 Thai Open Source Software Center Ltd, under the 3-clause
+BSD licence in tools/jing/COPYING.txt. It is not part of what HoloML's
+packages or examples carry.

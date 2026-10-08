@@ -19,7 +19,9 @@
     "site:build": "node site/build.mjs"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "4.5.1",
     "@types/node": "^24.19.1",
+    "draco3dgltf": "1.5.7",
     "eslint": "^10.12.0",
     "marked": "18.0.14",
     "typescript": "^6.0.3",

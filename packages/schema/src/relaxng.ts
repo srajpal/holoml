@@ -12,6 +12,7 @@ import {
   NUMBER_PATTERN,
   VERSION,
   VERSIONS,
+  atLeast,
   type AttributeRule,
   type ElementRule,
   type ValueKind,
@@ -141,7 +142,9 @@ function content(name: string, rule: ElementRule): Part {
   // The root's head comes before its scene (the checker's wrong-order).
   if (name === 'holoml') return { code: 'head?, scene' };
   const counted = rule.children.map((child) => {
-    const once = rule.once?.includes(child) && !(rule.manyFrom?.[child] === VERSION);
+    // The newest version's rule: a child a later version allows several times is many, from that version on.
+    const many = rule.manyFrom?.[child];
+    const once = rule.once?.includes(child) && !(many !== undefined && atLeast(VERSION, many));
     const needed = rule.needs?.includes(child);
     return `${child}${once ? (needed ? '' : '?') : needed ? '+' : '*'}`;
   });
