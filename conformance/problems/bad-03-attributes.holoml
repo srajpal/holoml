@@ -1,0 +1,9 @@
+<holoml version="0.3" lang="en_GB">
+  <scene dir="up">
+    <model src="models/lion.glb" far="models/lion-far.glb" />
+    <model src="models/bird.glb" far-from="20" />
+    <model src="models/fish.glb" far="models/fish-far.png" far-from="0" />
+    <group label="" lang="" />
+    <label lang="ar-" dir="RTL">نص</label>
+  </scene>
+</holoml>

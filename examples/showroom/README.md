@@ -1,13 +1,18 @@
 # HoloML showroom
 
-A small HoloML 0.1 site: five cars in a round hall, one of them on a
+A small HoloML 0.3 site: five cars in a round hall, one of them on a
 turntable. Choose a car to walk around it, in three colours each.
 
 - `index.holoml`: the hall (orbit around it).
 - `quellis.holoml`, `pippet.holoml`, `tallberg.holoml`, `veyl.holoml`,
   `strafe.holoml`: each car on its own (walk around it), with a page for
   each of its other colours (for example `quellis-silver.holoml`).
-  HoloML 0.1 has no scripts, so each colour is its own page.
+  The site has no scripts, so each colour is its own page, with its
+  own address.
+  It was written in HoloML 0.1, and moved to 0.3 so that every model
+  a screen reader reaches has a name (`label`): the hall, each
+  plinth, and each car on its own page. In the hall each car is
+  inside its link, which the car's name already names.
 - `about.holoml`: what the showroom is made of.
 - `index.html`: a note for ordinary web browsers, which cannot show
   HoloML.

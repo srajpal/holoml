@@ -1,4 +1,4 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>Everyday Runner</title>
     <meta name="description" content="One shoe close up, on a turntable: orbit around it, turn it over to see the sole, choose its colour (it changes in place) and its size, and add it to your cart. A HoloML 0.2 shop page." />
@@ -33,12 +33,12 @@
     </a>
 
     <group shadows>
-      <model src="models/studio.glb" />
-      <model src="models/turntable.glb" />
+      <model src="models/studio.glb" label="Studio" />
+      <model src="models/turntable.glb" label="Turntable" />
       <!-- The shoe turns on the turntable (spin); turned over, about its middle (flip). -->
-      <group id="spin" position="0 0.035 0">
-        <group id="flip" position="0 0.077 0">
-          <model id="shoe" src="models/shoe.glb" position="-0.0016 -0.077 -0.0048" />
+      <group id="spin" label="On the turntable" position="0 0.035 0">
+        <group id="flip" label="The shoe" position="0 0.077 0">
+          <model id="shoe" src="models/shoe.glb" label="Everyday Runner" position="-0.0016 -0.077 -0.0048" />
         </group>
       </group>
     </group>

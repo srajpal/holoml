@@ -31,6 +31,11 @@
       "column": 7
     },
     {
+      "code": "too-many",
+      "line": 8,
+      "column": 5
+    },
+    {
       "code": "bad-value",
       "line": 8,
       "column": 12

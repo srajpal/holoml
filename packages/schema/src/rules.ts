@@ -8,7 +8,9 @@
  * The table is the newest version's. What a later version added says so
  * in `since`; a page that declares an earlier version may not use it
  * (SPEC.md, "Versions"). Version 0.2 grew with the browser's example
- * sites (HyperSpace 3D milestones 17 to 21).
+ * sites (HyperSpace 3D milestones 17 to 21); 0.3 added names for models
+ * and groups, the language and direction of text, and a lighter model
+ * far away (HyperSpace 3D milestone 25).
  */
 
 export type ValueKind =
@@ -28,6 +30,8 @@ export type ValueKind =
   /** Three numbers more than 0: a width, a height, and a depth. */
   | { kind: 'size' }
   | { kind: 'id' }
+  /** A language tag, as in HTML's lang: `en`, `ar`, `pt-BR`, `zh-Hant`. */
+  | { kind: 'language' }
   /** "#" and the id of an element in the same document. */
   | { kind: 'idref' }
   /** One of a list; a value added later names its version in `since`. */
@@ -63,10 +67,10 @@ export interface ElementRule {
 }
 
 /** The versions this checker knows, oldest first. */
-export const VERSIONS = ['0.1', '0.2'] as const;
+export const VERSIONS = ['0.1', '0.2', '0.3'] as const;
 export type Version = (typeof VERSIONS)[number];
 /** The newest version: the one the table describes in full. */
-export const VERSION: Version = '0.2';
+export const VERSION: Version = '0.3';
 
 const place = {
   id: { value: { kind: 'id' } },
@@ -87,6 +91,17 @@ const LOOK = {
   repeat: { value: { kind: 'tiling' }, since: '0.2' },
 } as const satisfies Record<string, AttributeRule>;
 
+/**
+ * (0.3) The language of an element's text and the direction it runs, as
+ * in HTML: on the root, on what holds other things (a scene, a group, a
+ * link), and on every element that holds or shows text. An element
+ * without them takes them from the nearest one that has them.
+ */
+const LANGUAGE = {
+  lang: { value: { kind: 'language' }, since: '0.3' },
+  dir: { value: { kind: 'choice', values: ['ltr', 'rtl', 'auto'] }, since: '0.3' },
+} as const satisfies Record<string, AttributeRule>;
+
 /** What may stand in a scene or a group; `panel` is 0.2. */
 const SCENE_CONTENT = ['group', 'model', 'light', 'label', 'a', 'animate', 'sound', 'panel'] as const;
 
@@ -98,14 +113,14 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     children: ['head', 'scene'],
     once: ['head', 'scene'],
     needs: ['scene'],
-    attributes: { version: { value: { kind: 'version' }, required: true } },
+    attributes: { version: { value: { kind: 'version' }, required: true }, ...LANGUAGE },
   },
   head: {
     children: ['title', 'meta', 'script'],
     once: ['title'],
     attributes: {},
   },
-  title: { children: 'text', attributes: {} },
+  title: { children: 'text', attributes: { ...LANGUAGE } },
   meta: {
     children: 'none',
     attributes: {
@@ -129,6 +144,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       background: { value: { kind: 'color' } },
       environment: { value: { kind: 'url', for: 'environment' }, since: '0.2' },
       sky: { value: { kind: 'url', for: 'environment' }, since: '0.2' },
+      ...LANGUAGE,
     },
   },
   group: {
@@ -140,6 +156,9 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       // 0.2: loading by area (checked in index.ts: near needs load="near").
       load: { value: { kind: 'choice', values: ['page', 'near'] }, since: '0.2' },
       near: { value: { kind: 'number', positive: true }, since: '0.2' },
+      // 0.3: its name, for screen readers and the text view.
+      label: { value: { kind: 'text' }, since: '0.3' },
+      ...LANGUAGE,
     },
   },
   model: {
@@ -153,6 +172,12 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       shadows: { value: { kind: 'flag' }, since: '0.2' },
       // 0.2: a lighter model shown in its place until it has loaded, and once it is let go.
       'stand-in': { value: { kind: 'url', for: 'model' }, since: '0.2' },
+      // 0.3: its name, for screen readers and the text view.
+      label: { value: { kind: 'text' }, since: '0.3' },
+      // 0.3: a lighter model shown from `far-from` metres away (checked in index.ts: each needs the other).
+      far: { value: { kind: 'url', for: 'model' }, since: '0.3' },
+      'far-from': { value: { kind: 'number', positive: true }, since: '0.3' },
+      ...LANGUAGE,
     },
   },
   material: {
@@ -175,6 +200,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       crosshair: { value: { kind: 'flag' }, since: '0.2' },
       speed: { value: { kind: 'number', min: 0.5, max: 10 }, since: '0.2' },
       'turn-speed': { value: { kind: 'number', min: 10, max: 720 }, since: '0.2' },
+      ...LANGUAGE,
     },
   },
   light: {
@@ -198,17 +224,21 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       position: { value: { kind: 'vector3' } },
       size: { value: { kind: 'number', positive: true } },
       color: { value: { kind: 'color' } },
+      ...LANGUAGE,
     },
   },
   a: {
     children: ['model', 'group', 'label', 'panel'],
     attributes: {
       href: { value: { kind: 'url', for: 'link' }, required: true },
+      ...LANGUAGE,
     },
   },
   animate: {
     children: 'none',
     attributes: {
+      // 0.3: a name, for scripts to start and stop it.
+      id: { value: { kind: 'id' }, since: '0.3' },
       target: { value: { kind: 'idref' }, required: true },
       attribute: {
         value: {
@@ -227,6 +257,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       trigger: { value: { kind: 'idref' }, since: '0.2' },
       toggle: { value: { kind: 'flag' }, since: '0.2' },
       label: { value: { kind: 'text' }, since: '0.2' },
+      ...LANGUAGE,
     },
   },
   sound: {
@@ -245,6 +276,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       begin: { value: { kind: 'choice', values: ['load', 'click'] } },
       trigger: { value: { kind: 'idref' } },
       label: { value: { kind: 'text' } },
+      ...LANGUAGE,
     },
   },
   hud: {
@@ -256,6 +288,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       corner: CORNER,
       size: { value: { kind: 'number', positive: true } },
       color: { value: { kind: 'color' } },
+      ...LANGUAGE,
     },
   },
   /** A number to choose on the screen; its text is its label (checked in index.ts: min < max, value between). */
@@ -269,6 +302,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       max: { value: { kind: 'number' } },
       step: { value: { kind: 'number', positive: true } },
       value: { value: { kind: 'number' } },
+      ...LANGUAGE,
     },
   },
   /**
@@ -288,6 +322,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       target: { value: { kind: 'idref' } },
       material: { value: { kind: 'text' } },
       value: { value: { kind: 'text' } },
+      ...LANGUAGE,
     },
   },
   /** One option of a choice: its label, its value, and the material's new look. */
@@ -297,6 +332,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     attributes: {
       value: { value: { kind: 'text' } },
       ...LOOK,
+      ...LANGUAGE,
     },
   },
   /**
@@ -314,6 +350,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       size: { value: { kind: 'number', positive: true } },
       color: { value: { kind: 'color' } },
       background: { value: { kind: 'color' } },
+      ...LANGUAGE,
     },
   },
   /**
@@ -325,6 +362,8 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
     since: '0.2',
     children: 'none',
     attributes: {
+      // 0.3: a name, for scripts to change it.
+      id: { value: { kind: 'id' }, since: '0.3' },
       position: { value: { kind: 'vector3' } },
       size: { value: { kind: 'size' }, required: true },
       color: { value: { kind: 'color' } },
@@ -343,6 +382,7 @@ export const ELEMENTS: Readonly<Record<string, ElementRule>> = {
       area: { value: { kind: 'area' }, required: true },
       width: { value: { kind: 'number', positive: true } },
       label: { value: { kind: 'text' } },
+      ...LANGUAGE,
     },
   },
 };
@@ -424,6 +464,14 @@ export const ID_PATTERN = '[A-Za-z][A-Za-z0-9_\\-]*';
 
 /** A reference to an id: `#` and the id. */
 export const IDREF_PATTERN = `#${ID_PATTERN}`;
+
+/**
+ * A language tag (BCP 47, as HTML's `lang` takes): a first part of
+ * letters, then parts of letters and digits after hyphens: `en`,
+ * `pt-BR`, `zh-Hant-TW`, `x-klingon`. Only its form is checked, not
+ * whether the language exists.
+ */
+export const LANGUAGE_PATTERN = '[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*';
 
 /** A count of 1 or more: a whole number that is not zero. */
 export const COUNT_PATTERN = '0*[1-9][0-9]*';

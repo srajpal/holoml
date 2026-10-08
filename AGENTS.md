@@ -93,7 +93,11 @@ after they ran; on Windows and Linux in GitHub Actions,
   prompts 161 and 164); pnpm 12.4.1, pinned in package.json.
 - Install: `pnpm install --frozen-lockfile`
 - Unit, conformance, documentation, site, and extension tests: `pnpm
-  test` (Vitest; 834 tests passed on 2026-10-03)
+  test` (Vitest; 883 tests passed on 2026-10-07). The RELAX NG schema
+  is checked by Jing (tools/jing/, its SHA-256 checked), which needs
+  Java (run with Java 17 here; GitHub's machines have it): without Java
+  those checks are skipped and say so, and in GitHub Actions (CI set) a
+  missing Java fails the run (HyperSpace 3D milestone 25, prompt 170)
 - Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
 - The VS Code extension: `pnpm --filter holoml-vscode package` makes
   packages/vscode/holoml-vscode.vsix (first run 2026-10-03); `pnpm

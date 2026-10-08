@@ -1,11 +1,12 @@
-# HoloML 0.2
+# HoloML 0.3
 
 **A markup language for 3D web pages**
 
-- This version: 0.2, third edition, with corrections (2026-09-30)
+- This version: 0.3, first edition (2026-10-07)
 - Status: experimental (see "Status of this document")
 - Latest published version: https://srajpal.github.io/holoml/spec/
 - Source: https://github.com/srajpal/holoml/blob/main/SPEC.md
+- Previous version: 0.2, third edition: https://github.com/srajpal/holoml/blob/v0.2.2/SPEC.md
 - First edition of 0.2: https://github.com/srajpal/holoml/blob/v0.2.0/SPEC.md
 - Editors: The HoloML Authors
 - Feedback: https://github.com/srajpal/holoml/issues
@@ -30,15 +31,16 @@ says of its experimental specifications [RFC7841]: HoloML has one
 renderer so far, and until version 1.0 a later version may change or
 remove what an earlier one has.
 
-This document describes HoloML 0.2, published 2026-09-29, in its third
-edition, of 2026-09-30. The language is the same. The second edition
-(2026-09-29) wrote the document in the form of W3C specifications, with
-clarifications where the first left something unsaid. The third corrects
-places where the document disagreed with itself, with HoloML's checker,
-or with its first renderer, and says exactly what a reader reports and
-where (appendix C lists the changes of both). Version 0.1 (2026-09-26)
-is part of 0.2: every 0.1 page means the same in 0.2. Both versions are
-fixed: what a page written for either means will not change.
+This document describes HoloML 0.3, in its first edition, of
+2026-10-07. Version 0.3 adds names for models and groups, the language
+and direction of text, a lighter model shown far away, and more of the
+scene API; and it writes down, for every version, what earlier editions
+left to each renderer: how a scene looks, the least a renderer has to
+manage, and what a reader reports in two cases (appendix C lists the
+changes). Versions 0.1 (2026-09-26) and 0.2 (2026-09-29, third edition
+2026-09-30) are part of 0.3: every 0.1 and 0.2 page means the same in
+0.3. Versions 0.1 and 0.2 are fixed: what a page written for either
+means will not change.
 
 HoloML is developed in the open at https://github.com/srajpal/holoml,
 alongside its first renderer, HyperSol HyperSpace 3D
@@ -204,7 +206,10 @@ what was meant. Appendix A gives the same syntax as a grammar.
   for, so `&#32;` alone is text (though an element that needs text
   still has none with it: section 8). A reader keeps text as it is
   written, with its whitespace and its line ends. A comment inside text
-  parts it in two. In `title` and `label`, runs of whitespace show as
+  parts it in two, and the element's text is all of its texts, in
+  order, joined: `<label>Rock <!-- a note --> pool</label>` says
+  "Rock pool", as in HTML. (This was not said before 0.3, and holds for
+  every version.) In `title` and `label`, runs of whitespace show as
   one space, and whitespace at the start and end is dropped, as in HTML.
   (0.2) In `hud`, each line of text is a line on the screen: within a
   line, runs of whitespace show as one space; empty lines are not shown.
@@ -410,7 +415,9 @@ The root element. It holds an optional `head`, then one `scene`.
 
 | Attribute | Value | Meaning |
 |---|---|---|
-| `version` | `"0.1"` or `"0.2"` (required) | The HoloML version the page is written for ([section 11](#11-versions)) |
+| `version` | `"0.1"`, `"0.2"`, or `"0.3"` (required) | The HoloML version the page is written for ([section 11](#11-versions)) |
+| `lang` | language tag | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ### `head`
 
@@ -426,6 +433,11 @@ Information about the page. Holds at most one `title`, any number of
 
 The page's title, shown in the browser's tab and history. Holds text
 only.
+
+| Attribute | Value | Meaning |
+|---|---|---|
+| `lang` | language tag | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-head
 <title>A showroom</title>
@@ -475,6 +487,8 @@ see `viewpoint`), and (0.2) at most one `plan` and one `water`.
 | `background` | colour | the renderer's | The colour behind everything |
 | `environment` | address | none | (0.2) A panorama of the surroundings (an HDR, PNG, or JPEG picture, from the page's own site) that lights the scene: shiny and soft materials alike take their light and reflections from it. Without it, the renderer's own soft light. Its brightness follows the ambient lights (see `light`) |
 | `sky` | address | none | (0.2) A panorama (an HDR, PNG, or JPEG picture, from the page's own site) drawn behind everything, in place of the background colour: the view out of the windows, or the sky over a field. Its brightness follows the ambient lights, as the surroundings' light does. It may be the same file as `environment` |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml
 <holoml version="0.1">
@@ -508,6 +522,9 @@ Holds the same elements as `scene`, except `viewpoint`, `hud`, `slider`,
 | `shadows` | flag | off | (0.2) Every model in it casts and receives shadows (see "Shadows") |
 | `load` | `page` or `near` | `page` | (0.2) When its models load: with the page, or only while the viewer is near (see "Loading by area") |
 | `near` | number, more than 0 | `10` | (0.2) With `load="near"`: how near, in metres, the viewer comes for its models to load |
+| `label` | text | none | (0.3) Its name, heard by screen readers and shown in the text view |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <group id="stand" position="0 0.5 0" rotation="0 45 0">
@@ -532,6 +549,11 @@ A 3D model from a glTF 2.0 file. Holds any number of `material`.
 | `solid` | flag | off | (0.2) The walker cannot pass through it (see "Walls and gravity") |
 | `shadows` | flag | off | (0.2) It casts and receives shadows (see "Shadows") |
 | `stand-in` | address | none | (0.2) A lighter model shown in its place until it has loaded, and again once it is let go (see "Loading by area") |
+| `label` | text | none | (0.3) Its name, heard by screen readers and shown in the text view; without it, its `id`, then its file's name |
+| `far` | address | none | (0.3) A lighter model shown in its place from `far-from` metres away (see [A lighter model far away](#a-lighter-model-far-away)) |
+| `far-from` | number, more than 0 | none | (0.3) The distance, in metres from the viewer, from which `far` is shown |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 With `animation` and no `autoplay`, the model is shown in the first
 frame of that animation (a pose). When the viewer asked for reduced
@@ -613,6 +635,8 @@ when the viewer asked for reduced motion.
 | `crosshair` | flag | off | (0.2) A small cross in the middle of the view, for aiming with the keyboard (section 10, `holoml.aim()`) |
 | `speed` | number, 0.5 to 10 | `2.2` | (0.2) Walk only: how fast the viewer walks, in metres a second. A renderer's key for running (HyperSpace 3D: Shift) goes faster than this |
 | `turn-speed` | number, 10 to 720 | `90` | (0.2) Walk only: how fast the viewer turns, and looks up and down, from the keyboard, in degrees a second |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 - `orbit`: the viewer circles the `look-at` point: drag to go around it,
   scroll or pinch to come closer or move away.
@@ -725,6 +749,7 @@ stands in `scene`, at most one; holds nothing.
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
+| `id` | id | none | (0.3) A name, for scripts to change it |
 | `position` | vector | `"0 0 0"` | The middle of the water's floor |
 | `size` | three numbers more than 0 (required) | | Its width (x), height (y), and depth (z), in metres; its top is the surface |
 | `color` | colour | `"#1f6f8b"` | The colour that things seen through the water fade into |
@@ -788,6 +813,35 @@ only.
 </group>
 ```
 
+### A lighter model far away
+
+(0.3) A model with `far` and `far-from` (each needs the other) is drawn
+from the lighter file in `far` while the viewer is `far-from` metres
+or more from the model's place, and from its own file when nearer. The
+distance is measured from the viewer's eyes to the model's `position`
+in the scene, after the groups around it have moved and turned it.
+
+- A renderer MUST NOT draw both at once, and SHOULD switch between them
+  a little after the distance is crossed each way (so that standing at
+  the line does not make it flicker).
+- A renderer SHOULD load only the file it draws first, and the other
+  when the viewer comes within reach of the line; what a renderer
+  loads counts toward its limits (section 9, "Limits").
+- The far model takes the model's place, turn, and size, its
+  `material` changes, and what a click on the model does. It plays the
+  model's `animation` if it has one of that name. It is solid and casts
+  shadows if the model is.
+- With loading by area, a model that is not yet loaded shows its
+  `stand-in` as before; once loaded, its `far` model is shown when
+  the viewer is far.
+- Screen readers, the text view, and the outline of the scene hear of
+  one model, whichever file is drawn.
+
+```holoml-scene
+<model src="fish/shark.glb" far="fish/shark-far.glb" far-from="20"
+       label="Blacktip reef shark" position="0 2 -6" />
+```
+
 ### `label`
 
 Text in the scene. It always faces the viewer. Holds text only.
@@ -798,6 +852,8 @@ Text in the scene. It always faces the viewer. Holds text only.
 | `position` | vector | `"0 0 0"` | Where its centre is |
 | `size` | number, more than 0 | `0.2` | The height of a line of text, in metres |
 | `color` | colour | the renderer's | The colour of the text |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <label position="0 2.1 0" size="0.15">From $32,000</label>
@@ -821,6 +877,8 @@ screen readers, and any text-only view of the page read its words.
 | `size` | number, more than 0 | `0.06` | The height of a line of text, in metres |
 | `color` | colour | the renderer's | The colour of the text; by default one that reads well on the board, or on the scene's background without one |
 | `background` | colour | none | The colour of the board behind the text; without it, the text alone |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 A panel is as tall as its text needs.
 
@@ -848,9 +906,16 @@ the viewer asked for reduced motion).
 | Attribute | Value | Meaning |
 |---|---|---|
 | `href` | address (required) | Another HoloML page, or any web page |
+| `lang` | language tag | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 A renderer SHOULD show which things are links, for example by the
 pointer and a highlight.
+
+The keyboard and screen readers reach a link by its words: the text of
+the labels and the first paragraph of the panels in it, in order, and
+(0.3) the `label` of the models and groups in it. A renderer SHOULD name
+a link with none of these by its address.
 
 ```holoml-scene
 <a href="coupe.holoml">
@@ -867,6 +932,7 @@ colour, and the scene's background. Holds nothing. It may stand in
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
+| `id` | id | none | (0.3) A name, for scripts to start and stop it |
 | `target` | id reference (required) | | The element to change |
 | `attribute` | `position`, `rotation`, or `scale`; (0.2) `intensity`, `color`, or `background` (required) | | What to change |
 | `from` | as `to` | the target's own value | Where to start |
@@ -877,6 +943,8 @@ colour, and the scene's background. Holds nothing. It may stand in
 | `trigger` | id reference | its target | (0.2) With `begin="click"`: the element whose click runs it, a `model`, `group`, `label`, or `panel` |
 | `toggle` | flag | off | (0.2) With `begin="click"`: each click runs it forward, and the next back, so that a door opens and closes |
 | `label` | text | the trigger's id | (0.2) With `begin="click"`: its name for the keyboard and screen readers, such as "Bedroom door" |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 - The change is even over the duration; a colour changes its red,
   green, and blue evenly. Each repeat starts again at `from`; after the
@@ -951,6 +1019,8 @@ motion, MUST show an action's end at once. Scripts still hear the click
 | `begin` | `load` or `click` | `load` | With `click`, it plays each time its trigger is clicked (see "Click actions"); such a sound has no `autoplay` |
 | `trigger` | id reference | none | With `begin="click"`, and needed then: the element whose click plays it |
 | `label` | text | the trigger's id | With `begin="click"`: its name for the keyboard and screen readers |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 A renderer MUST NOT play any sound before the viewer's first click,
 tap, or key on the page: web pages may not start sounds on their own,
@@ -983,6 +1053,8 @@ and show it in any text-only view of the page.
 | `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-left` | Where on the screen |
 | `size` | number, more than 0 | `18` | The height of its text, in CSS pixels |
 | `color` | colour | the renderer's | The colour of the text |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <hud id="score" corner="top-right">Gems: 0 of 5</hud>
@@ -1012,6 +1084,8 @@ with the corner's `hud` text, in page order.
 | `max` | number, more than `min` | `1` | The largest value |
 | `step` | number, more than 0 | a hundredth of the range | The steps between values |
 | `value` | number, from `min` to `max` | `min` | The value at the start |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <slider id="pace" corner="top-left" min="0.5" max="2" step="0.25" value="1">Speed</slider>
@@ -1040,6 +1114,8 @@ text-only view of the page, and MUST tell the page's scripts (the
 | `target` | id reference | none | The `model` whose material it changes (with `material`) |
 | `material` | text | none | The name of that material in the model's glTF file (with `target`) |
 | `value` | text | the first option's | The value of the option chosen at the start |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <model id="sofa" src="models/sofa.glb" />
@@ -1067,6 +1143,8 @@ from the material's own look and changes only what it gives.
 | `normal-map` | address | the material's | A picture of fine bumps |
 | `roughness-map` | address | the material's | A picture of how rough each point is |
 | `repeat` | tiling | `"1"` | How many times the pictures tile |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <model id="armchair" src="models/armchair.glb" />
@@ -1093,9 +1171,46 @@ MUST give the picture its `label` for screen readers.
 | `area` | area (required) | | The rectangle of the ground the picture shows |
 | `width` | number, more than 0 | `200` | How wide it is on the screen, in CSS pixels; its height follows the picture |
 | `label` | text | `"Floor plan"` | Its name for screen readers |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](#language-and-direction) |
 
 ```holoml-scene
 <plan src="plans/loft.png" area="-6 -4 6 4" corner="top-right" width="220" label="Floor plan of the loft" />
+```
+
+### Language and direction
+
+(0.3) `lang` says which language an element's text is in, and `dir`
+which way it runs, as in HTML [HTML]:
+
+- `lang` is a language tag [BCP47]: `en`, `ar`, `he`, `pt-BR`,
+  `zh-Hant`. A checker checks its form only: letters, then parts of
+  letters and digits after hyphens, none longer than eight.
+- `dir` is `ltr` (left to right), `rtl` (right to left), or `auto`
+  (the direction of the first letter that has one, by the Unicode
+  Bidirectional Algorithm [UAX9]).
+- Both may be written on `holoml`, `scene`, `group`, and `a`, and on
+  every element that holds or shows text. An element without them takes
+  them from the nearest element around it that has them, as in HTML. A
+  page without them has text in no stated language, running left to
+  right.
+- They apply to the element's own text, and to the text of its
+  `label` attribute (a model's, a group's, a place's, a sound's, a
+  click action's, a choice's, or a plan's).
+- A renderer MUST give the language to screen readers with the text,
+  and MUST lay out and draw text of the direction `rtl` from right to
+  left: a label's, a panel's lines, the screen's text, a slider's and a
+  choice's labels, and their place in their corner. It SHOULD use fonts
+  for the language where the viewer's system has them.
+
+```holoml
+<holoml version="0.3" lang="en">
+  <scene>
+    <label position="0 2 0">Welcome</label>
+    <label position="0 1.5 0" lang="ar" dir="rtl">أهلاً وسهلاً</label>
+    <label position="0 1 0" lang="he" dir="rtl">ברוכים הבאים</label>
+  </scene>
+</holoml>
 ```
 
 ## 8. Checking
@@ -1129,7 +1244,7 @@ The problem codes:
 | `child-not-allowed` | An element where it may not stand |
 | `text-not-allowed` | Text in an element that holds none (text belongs in `title`, `label`, and (0.2) `hud`, `slider`, `option`, and `panel`) |
 | `empty-text` | An element that holds text, with none (a `hud` may be empty) |
-| `too-many` | A second `head`, `scene`, `title`, (0.1) `viewpoint`, or (0.2) `plan` or `water` |
+| `too-many` | A further `head`, `scene`, `title`, (0.1) `viewpoint`, or (0.2) `plan` or `water` |
 | `missing-child` | `holoml` without a `scene`, or (0.2) a `choice` without an `option` |
 | `wrong-order` | `head` after `scene` |
 | `unknown-attribute` | An attribute the element does not have |
@@ -1167,8 +1282,9 @@ What is checked, and where each problem is:
 - `text-not-allowed` is at the text, for each text.
 - `empty-text` is at the element. Text that is whitespace alone is
   none, however it is written.
-- `too-many` is at the second such element; a third is not reported
-  again.
+- `too-many` is at each such element after the first: a third is
+  reported as well as the second. (Before 0.3 this said that only the
+  second was; it holds for every version.)
 - `missing-child` is at the element that lacks the child, and
   `wrong-order` at the first `head`, when it comes after the first
   `scene`.
@@ -1253,10 +1369,10 @@ KHR_materials_ior, KHR_materials_iridescence, KHR_materials_sheen,
 KHR_materials_specular, KHR_materials_transmission,
 KHR_materials_unlit, KHR_materials_volume, KHR_mesh_quantization,
 KHR_texture_transform, EXT_materials_bump, EXT_mesh_gpu_instancing,
-EXT_texture_avif, and EXT_texture_webp. It does not yet read files that
-need compressed geometry (KHR_draco_mesh_compression,
-EXT_meshopt_compression, and KHR_meshopt_compression) or compressed
-pictures (KHR_texture_basisu).
+EXT_texture_avif, EXT_texture_webp, and (since its milestone 25, with
+three.js's decoders, carried in the browser) compressed geometry
+(KHR_draco_mesh_compression, EXT_meshopt_compression, and
+KHR_meshopt_compression) and compressed pictures (KHR_texture_basisu).
 
 ### Limits
 
@@ -1268,9 +1384,33 @@ number of triangles, what the files become once they are decoded (the
 pixels of pictures, the seconds of sound), the number of lights, and how
 far from the middle of the scene a thing may be. When a page goes past a limit, the renderer
 SHOULD show as much of the scene as it can, leave out what crossed the
-limit, and tell the viewer what was left out and why. Such limits are
-the renderer's choice, not part of the language: a valid page stays
-valid whatever a renderer's limits are.
+limit, and tell the viewer what was left out and why. Limits do not make
+a page invalid: a valid page stays valid whatever a renderer's limits
+are.
+
+(0.3, for every version) So that a page that keeps within them works in
+every renderer, a renderer MUST show a page whole that uses no more than
+these, and MAY allow more:
+
+| What | At least |
+|---|---|
+| The page's text | 1 MB (1,048,576 bytes) |
+| Elements | 5,000 |
+| Model files (a file used by many models counts once) | 32 |
+| One model or sound file | 16 MB |
+| All model and sound files together | 64 MB |
+| One picture, in a model or a material | 2048 by 2048 pixels |
+| All pictures together, once decoded | 33,554,432 pixels (eight pictures of 2048 by 2048) |
+| Triangles, as drawn, once the models are decoded | 1,000,000 |
+| Sound, once decoded | 300 seconds |
+| Lights that shine from a place or a direction, those in model files included | 8, of which 2 cast shadows |
+| Places, sizes, and scales | within 100,000 (metres, or times) |
+| Time for one file to load, before the renderer gives up on it | 30 seconds |
+
+A renderer SHOULD show a page within these, once its files are in, in 5
+seconds or less on a computer with a graphics card, and MUST NOT hold
+the viewer's browser or other pages while it prepares it. Scripts have
+their own limits (section 10, "Limits for scripts").
 
 *Note (non-normative):* HyperSol HyperSpace 3D allows per page 2 MB of
 text, 10,000 elements, 64 model files (a file used by many models is
@@ -1289,6 +1429,40 @@ materials, animations, (0.2) shadows, water, and sky, as section 7 says.
 While a 0.2 page's scripts listen for frames, it keeps drawing, except
 while the page cannot be seen (section 10, the `frame` event). A
 renderer need not draw while nothing in the scene changes.
+
+The look, so that two renderers draw a page alike (written down in 0.3,
+and true of every version):
+
+- **Colour.** Colours in the page and in pictures are sRGB. A renderer
+  lights the scene in linear light and turns the result into the
+  screen's colours with the ACES filmic tone curve [ACES] at an
+  exposure of 1, then into sRGB.
+- **Lights.** A `directional`, `point`, or `spot` light of
+  `intensity` 1 lights a surface facing it with an illuminance of 2
+  (in the units in which a white surface that scatters light evenly,
+  lit by an illuminance E, sends out E divided by pi); `ambient` light
+  of `intensity` 1 lights every surface with an illuminance of 1 from
+  every side. Point and spot lights do not grow dimmer with distance:
+  they light evenly to their `range`, and nothing beyond it. A spot's
+  light fades over the outer quarter of its `angle`.
+- **Without lights.** A scene with no `light` is lit as if it had an
+  `ambient` light of `intensity` 0.6 and a `directional` light of
+  `intensity` 0.7 from `"3 10 6"` toward `"0 0 0"`.
+- **The light from around.** Without an `environment`, a renderer
+  lights shiny and soft surfaces with light from a plain, softly lit
+  room around the scene, at 0.45 of its full strength; with one, the
+  panorama at full strength. Both then follow the ambient lights, as
+  `light` says.
+- **Panoramas.** An `environment` and a `sky` are equirectangular
+  pictures: across their width the whole way round (360 degrees), down
+  their height from straight up to straight down (180 degrees). Halfway
+  across, the picture faces +x; a quarter across, it faces -z, the way a
+  viewpoint looks unless told otherwise; three quarters across, +z; and
+  its left and right edges meet at -x. Seen from above, going rightwards
+  across the picture turns clockwise. Its top row is straight up.
+- **The eyes.** The viewer's view is 50 degrees from top to bottom,
+  and as wide as the page's window makes it. A renderer MAY leave out
+  what is nearer than 0.05 metres to the eyes, or farther than 2,000.
 
 *Note (non-normative):* Where Chromium draws in software (a computer
 without a graphics card), HyperSpace 3D draws the scene with half as
@@ -1342,8 +1516,8 @@ holoml.on('click', (e) => {
 |---|---|
 | `holoml.version` | The version the page declares, such as `"0.2"` |
 | `holoml.ready` | A promise, kept when the page is ready: when every file it loads with the page (models, sounds, and pictures; section 9, "Loading") has loaded or been left out |
-| `holoml.find(id)` | The element with this id, as a thing (below), or `null`: when no element has the id, and when the element is not of a kind that is a thing (the scene, a viewpoint, a plan) |
-| `holoml.add(markup, parent)` | Adds elements written in HoloML to the scene, or into the group thing `parent`. The markup's own elements are `group`, `model`, `light`, `label`, and `sound`; a group in it holds what a page's group holds. Returns the new things, one for each of the markup's own elements that was added. The markup is checked like a 0.2 page's: an element with a problem is left out, and the console says why. So is any other element written as the markup's own, and, wherever it is in the markup, an `animate` and a `sound` that begins on a click: what a script adds, the script moves and plays |
+| `holoml.find(id)` | The element with this id, as a thing (below), or `null`: when no element has the id, and when the element is not of a kind that is a thing (the scene, a viewpoint; before 0.3, a plan) |
+| `holoml.add(markup, parent)` | Adds elements written in HoloML to the scene, or into the group thing `parent`. The markup's own elements are `group`, `model`, `light`, `label`, and `sound`; a group in it holds what a page's group holds. Returns the new things, one for each of the markup's own elements that was added. The markup is checked like a page of the page's version: an element with a problem is left out, and the console says why. So is any other element written as the markup's own. In a 0.2 page, so is, wherever it is in the markup, an `animate` and a `sound` that begins on a click: what a script adds, the script moves and plays. (0.3) In a 0.3 page the markup's own elements are also `animate`, `panel`, and `a`, and what it holds may have click actions; an `animate` or a click action whose target or trigger is not in the scene once the markup is added is left out |
 | `holoml.remove(thing)` | Removes an element and everything in it |
 | `holoml.on(type, listener)` | Calls `listener` with each event of that type (below). Returns a function that stops it |
 | `holoml.aim()` | What is in the middle of the view, under the crosshair: `{ thing, point, normal }` as for a click, or `null` |
@@ -1360,6 +1534,8 @@ holoml.on('click', (e) => {
 | `lookAt(point)` | Turns them to look at a point |
 | `speed` | For walking: how fast, in metres a second, from 0.5 to 10; starts as the `viewpoint` says, and can be set. A value outside the range is an error |
 | `turnSpeed` | For walking: how fast they turn, in degrees a second, from 10 to 720; starts as the `viewpoint` says, and can be set. A value outside the range is an error |
+| `place` | (0.3) The `id` of the place (the `viewpoint`) the viewer last arrived at: the first one when the scene is shown, or the one the page's address names; then each one the viewer goes to by a link to `#name`, the renderer's list of places, or `goTo`. Walking does not change it. `null` when the scene's viewpoints have no ids. Read only |
+| `goTo(id)` | (0.3) Takes the viewer to the place with this `id`, as a link to `#id` does (through a fade, unless the viewer asked for reduced motion). An id that is not a place's is an error |
 
 Vectors are arrays of three numbers, `[x, y, z]`: metres for positions
 and degrees for rotations, in the parent's space, as in the markup. The
@@ -1379,17 +1555,20 @@ a thing is removed, setting its members does nothing.
 | Member | Kinds | What it is |
 |---|---|---|
 | `id` | all | Its id, or `null` |
-| `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"panel"`, `"sound"`, `"hud"`, `"slider"`, or `"choice"` |
+| `kind` | all | `"model"`, `"group"`, `"light"`, `"label"`, `"panel"`, `"sound"`, `"hud"`, `"slider"`, `"choice"`, (0.3) `"animate"`, `"water"`, or `"plan"` |
 | `parent` | all | The nearest group it is in, as a thing, or `null` when it is in none. A link is not a thing, and does not count: a model in a link in a group has that group as its parent |
-| `position` | model, group, label, panel, light, sound | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says), and setting `null` is an error: a sound that has a place keeps one |
+| `position` | model, group, label, panel, light, sound | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says). In a 0.2 page, setting `null` is an error: a sound that has a place keeps one; (0.3) in a 0.3 page, setting `null` takes its place away, and it is heard as a sound without a place again |
 | `rotation` | model, group, panel | How it is turned; can be set |
 | `scale` | model, group | How big; can be set |
-| `visible` | model, group, label, panel | Whether it is shown; can be set. A thing that is not shown, by its own `visible` or that of a group around it, takes no clicks (a click, the crosshair, and `holoml.aim()` go through it to what is behind) and does not stop the walker, whatever its `solid` |
+| `visible` | model, group, label, panel, (0.3) plan | Whether it is shown; can be set. A thing that is not shown, by its own `visible` or that of a group around it, takes no clicks (a click, the crosshair, and `holoml.aim()` go through it to what is behind) and does not stop the walker, whatever its `solid` |
 | `solid` | model, group | Whether the walker is stopped by it; can be set |
 | `animationSpeed` | model | How fast its own animation plays: `1` as it was made, `2` twice as fast, `0.5` half as fast, `0` held still; from 0 to 4; can be set. A value outside that range is an error. A model that plays no animation keeps the value for when it does |
 | `loaded` | model, group | (Read only) Whether its file has loaded (a model); whether every model in it that is near enough to load has loaded or been left out (a group). A group that loads by area, or is in one, is not loaded while it is let go |
 | `text` | label, panel, hud, slider, choice | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set. A renderer MAY keep only the start of a very long text (HyperSpace 3D keeps 10,000 characters) |
-| `color` | light, label, hud | Its colour, as `"#rrggbb"`; can be set |
+| `label` | (0.3) model, group | Its name, as screen readers hear it, or `null` for none; can be set |
+| `color` | light, label, hud, (0.3) water | Its colour, as `"#rrggbb"`; can be set |
+| `clarity` | (0.3) water | How far one can see through it, in metres, more than 0; can be set. A value that is not more than 0 is an error |
+| `start()`, `stop()`, `running` | (0.3) animate | Starts it from its beginning, as when it begins by itself (with reduced motion, it shows its end at once); stops it where it is, which it keeps; whether it runs. A click action's `animate` still also runs on its clicks |
 | `intensity` | light | How bright; can be set |
 | `material(name, change)` | model | Changes one of the model's materials; `change` may have `color`, `metalness`, `roughness`, and `opacity`, as `material` has |
 | `play()`, `stop()`, `playing` | sound | Plays from the start; stops; whether it plays. Before sounds may play (section 7, `sound`), `play()` does nothing |
@@ -1411,6 +1590,7 @@ Every event has a `type`, its kind, as `holoml.on` was given it
 | `key` | A key goes down or up while the page has the keyboard | `key`, `down`, `repeat` | `key` is the key, as a web page's `KeyboardEvent.key` (`"e"`, `"1"`, `" "`); `down` is `true` or `false`; `repeat` is `true` when the key is held down and repeating, as a web page's `KeyboardEvent.repeat` (clarified). The renderer's own keys (walking, turning) still work. A key pressed together with Ctrl, Alt, or the system's key (Meta) is the renderer's and does not reach scripts, and neither does a key that a slider, a choice, or another of the renderer's controls uses while it has the keyboard |
 | `frame` | Before each frame is drawn | `time`, `dt` | `time` is the milliseconds since the scene was shown. `dt` is how far the scene moves on in this frame, in milliseconds: the time since the last frame, but never more than 100, so that after a slow frame what a script moves by `dt` does not jump; and where there is no last frame to measure from (the first frame, and the first after drawing stopped) it is one frame's usual time, about 16. The sum of `dt` can so fall behind `time`. While a script listens for frames, the renderer MUST keep drawing, except while the page cannot be seen (for example, while its tab is behind another): then it MAY stop drawing, and frames with it, until the page is seen again |
 | `change` | The viewer moves a slider, or picks an option of a choice | `thing`, `value` | `thing` is the slider or the choice, and `value` a slider's number or the chosen option's value |
+| `place` | (0.3) The viewer arrives at a place: by a link to `#name`, the renderer's list of places, or `goTo` | `place` | `place` is the place's `id` |
 | `load` | A group that loads by area (`load="near"`) has loaded its models (its `loaded` became `true`), or let them go | `thing`, `loaded` | `thing` is the group, and `loaded` is `true` when its models are in and `false` when they were let go. A model a script adds to a group already in does not make it tell again |
 
 The keyboard can do whatever the mouse does: with a crosshair, a script
@@ -1476,6 +1656,14 @@ and a renderer MUST NOT draw the page.
   (`water`), sounds from a place (a sound's `position` and `range`),
   and a model's animation speed in the scene API. Everything in 0.1
   means the same in a 0.2 page.
+- 0.3 (2026-10-07): names for models and groups (`label`), the
+  language and direction of text (`lang`, `dir`), a lighter model
+  shown far away (`far`, `far-from`), ids for `animate` and `water`,
+  and in the scene API: starting and stopping an `animate`, going to a
+  place and knowing which one the viewer is at (`goTo`, `place`, and
+  the `place` event), changing the water, finding the floor plan, more
+  that `holoml.add` takes, and taking a sound's place away. Everything
+  in 0.1 and 0.2 means the same in a 0.3 page.
 
 HoloML is experimental (see "Status of this document"): until 1.0, a
 later version may change or remove what an earlier one has, so a page
@@ -1484,9 +1672,6 @@ the version it declares.
 
 Ideas for later versions: movement along paths, physics, named colours,
 styles shared between elements, and spaces shared by several people.
-The next version, 0.3, is planned with HyperSpace 3D's milestone 25:
-names for models and groups, the language and direction of text, a
-lighter model shown far away, and more of the scene API.
 
 ## 12. Security considerations
 
@@ -1569,9 +1754,10 @@ motion, and what an author can do.
   (a `panel`) rather than as pictures, and keep a page usable without
   its scripts' sounds.
 
-What HoloML 0.2 lacks: a model or a group has no name of its own for
-screen readers (they hear its id or its file's name), and a page cannot
-say which language its text is in. Both are planned for 0.3.
+- (0.3) A model and a group can have a name of their own (`label`), which
+  screen readers hear in place of its id or its file's name; and text
+  says which language it is in (`lang`), so that a screen reader reads
+  it in that language's voice.
 
 ## 15. Internationalization considerations
 
@@ -1583,10 +1769,12 @@ say which language its text is in. Both are planned for 0.3.
   (section 5).
 - Numbers in attributes are written with `.` and no grouping, whatever
   the viewer's language; lengths are in metres and angles in degrees.
-- A renderer shows text with the fonts and writing directions of the
-  viewer's system. HoloML 0.2 cannot say which language a page's text is
-  in, or that it runs right to left (`lang` and `dir` in HTML); both are
-  planned for 0.3.
+- (0.3) A page says which language its text is in, and which way it
+  runs, with `lang` and `dir`, as HTML does (section 7, "Language and
+  direction"); a renderer draws right-to-left text from right to left,
+  with the fonts of the viewer's system. A 0.1 or 0.2 page cannot say
+  so: its text is in no stated language, and runs left to right, as
+  written.
 
 ## Appendix A. The formal grammar
 
@@ -1680,7 +1868,7 @@ flag, written alone, is an attribute with an empty value.
 
 <!-- spec/holoml.rnc -->
 ```rnc
-# HoloML 0.2: the structure of a page, in RELAX NG's compact syntax
+# HoloML 0.3: the structure of a page, in RELAX NG's compact syntax
 # (ISO/IEC 19757-2). Made from the checker's table and its patterns
 # (packages/schema/src/rules.ts) by packages/schema/src/relaxng.ts:
 # do not edit; run `pnpm grammar:update`. Informative: SPEC.md and the
@@ -1695,7 +1883,9 @@ start = holoml
 
 holoml =
   element holoml {
-    attribute version { string "0.1" | string "0.2" },
+    attribute version { string "0.1" | string "0.2" | string "0.3" },
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     head?, scene
   }
 
@@ -1706,6 +1896,8 @@ head =
 
 title =
   element title {
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
@@ -1728,6 +1920,8 @@ scene =
     attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute environment { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute sky { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint* & hud* & slider* & choice* & plan? & water?)
   }
 
@@ -1741,6 +1935,9 @@ group =
     attribute shadows { flag }?,  # (0.2)
     attribute load { string "page" | string "near" }?,  # (0.2)
     attribute near { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.3)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     (group* & model* & light* & label* & a* & animate* & sound* & panel*)
   }
 
@@ -1756,6 +1953,11 @@ model =
     attribute solid { flag }?,  # (0.2)
     attribute shadows { flag }?,  # (0.2)
     attribute stand-in { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.3)
+    attribute far { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.3)
+    attribute far-from { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,  # (0.3)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     material*
   }
 
@@ -1785,6 +1987,8 @@ viewpoint =
     attribute crosshair { flag }?,  # (0.2)
     attribute speed { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0.5" maxInclusive = "10" } }?,  # (0.2)
     attribute turn-speed { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "10" maxInclusive = "720" } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -1808,17 +2012,22 @@ label =
     attribute position { list { number, number, number } }?,
     attribute size { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
 a =
   element a {
     attribute href { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}]+" } },
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     (model* & group* & label* & panel*)
   }
 
 animate =
   element animate {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.3)
     attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } },
     attribute \attribute { string "position" | string "rotation" | string "scale" | string "intensity" | string "color" | string "background" },
     attribute from { text }?,
@@ -1829,6 +2038,8 @@ animate =
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
     attribute toggle { flag }?,  # (0.2)
     attribute label { xsd:token { minLength = "1" } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -1844,6 +2055,8 @@ sound =  # (0.2)
     attribute begin { string "load" | string "click" }?,
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute label { xsd:token { minLength = "1" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -1853,6 +2066,8 @@ hud =  # (0.2)
     attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
     attribute size { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # may be empty
   }
 
@@ -1864,6 +2079,8 @@ slider =  # (0.2)
     attribute max { number }?,
     attribute step { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute value { number }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
@@ -1875,6 +2092,8 @@ choice =  # (0.2)
     attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute material { xsd:token { minLength = "1" } }?,
     attribute value { xsd:token { minLength = "1" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     option+
   }
 
@@ -1889,6 +2108,8 @@ option =  # (0.2)
     attribute normal-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute roughness-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
@@ -1901,11 +2122,14 @@ panel =  # (0.2)
     attribute size { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
 water =  # (0.2)
   element water {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.3)
     attribute position { list { number, number, number } }?,
     attribute size { list { more-than-0, more-than-0, more-than-0 } },
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
@@ -1922,6 +2146,8 @@ plan =  # (0.2)
     attribute area { list { number, number, number, number } },
     attribute width { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute label { xsd:token { minLength = "1" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -1942,7 +2168,7 @@ section 10's tables the same.
 
 <!-- spec/holoml.webidl -->
 ```webidl
-// HoloML 0.2: the scene API (SPEC.md section 10), in Web IDL. A page's
+// HoloML 0.3: the scene API (SPEC.md section 10), in Web IDL. A page's
 // scripts reach it as the global `holoml`. Vectors are arrays of three
 // numbers: metres for positions, degrees for rotations. One that a
 // thing or the viewer gives is frozen (FrozenArray): a script sets the
@@ -1974,6 +2200,10 @@ interface HoloMLViewer {
   undefined lookAt(sequence<double> point);
   attribute double speed;
   attribute double turnSpeed;
+  // (0.3) The id of the place the viewer last arrived at, or null.
+  readonly attribute DOMString? place;
+  // (0.3) Goes to the place with this id; any other id is an error.
+  undefined goTo(DOMString id);
 };
 
 // Where a click or the crosshair hit: `point` and `normal` are in the
@@ -1997,6 +2227,8 @@ dictionary HoloMLEvent {
   double dt;
   (double or DOMString) value;
   boolean loaded;
+  // (0.3) The place the viewer arrived at, for a "place" event.
+  DOMString place;
 };
 
 [Exposed=Window]
@@ -2018,6 +2250,8 @@ interface ModelThing : Thing {
   attribute double animationSpeed;
   readonly attribute boolean loaded;
   undefined material(DOMString name, HoloMLMaterialChange change);
+  // (0.3) Its name, as screen readers hear it.
+  attribute DOMString? label;
 };
 
 dictionary HoloMLMaterialChange {
@@ -2035,6 +2269,8 @@ interface GroupThing : Thing {
   attribute boolean visible;
   attribute boolean solid;
   readonly attribute boolean loaded;
+  // (0.3) Its name, as screen readers hear it.
+  attribute DOMString? label;
 };
 
 [Exposed=Window]
@@ -2063,7 +2299,8 @@ interface PanelThing : Thing {
 [Exposed=Window]
 interface SoundThing : Thing {
   // Null for a sound that has no place. Setting a place gives it one;
-  // setting null is an error (a TypeError).
+  // setting null is an error (a TypeError) in a 0.2 page, and takes the
+  // place away in a 0.3 page.
   attribute FrozenArray<double>? position;
   undefined play();
   undefined stop();
@@ -2091,6 +2328,28 @@ interface ChoiceThing : Thing {
   attribute DOMString text;
   attribute DOMString value;
   readonly attribute FrozenArray<DOMString> options;
+};
+
+// (0.3) An animate element, found by its id.
+[Exposed=Window]
+interface AnimateThing : Thing {
+  undefined start();
+  undefined stop();
+  readonly attribute boolean running;
+};
+
+// (0.3) The scene's water, found by its id.
+[Exposed=Window]
+interface WaterThing : Thing {
+  attribute DOMString color;
+  // More than 0; any other value is an error.
+  attribute double clarity;
+};
+
+// (0.3) The floor plan, found by its id.
+[Exposed=Window]
+interface PlanThing : Thing {
+  attribute boolean visible;
 };
 ```
 <!-- /spec/holoml.webidl -->
@@ -2137,6 +2396,27 @@ Change controller: The HoloML Authors
 ## Appendix C. Changes
 
 *This appendix is non-normative.*
+
+- 0.3, first edition (2026-10-07). New in 0.3: `label` on `model` and
+  `group`; `lang` and `dir` (section 7, "Language and direction");
+  `far` and `far-from` on `model` (section 7, "A lighter model far
+  away"); `id` on `animate` and `water`; and in the scene API (section
+  10): `viewer.place`, `viewer.goTo`, the `place` event, `start()`,
+  `stop()`, and `running` for an `animate`, a water's `color` and
+  `clarity`, the floor plan as a thing, a model's and a group's
+  `label`, `animate`, `panel`, and `a` in `holoml.add`, and a sound's
+  `position` set to `null`.
+
+  For every version, written down where earlier editions left it to
+  each renderer:
+  - How a scene looks (section 9, "Drawing"): colour and tone mapping,
+    how bright a light of an `intensity` is, the light of a scene
+    without lights and of the surroundings, and the field of view.
+  - The least every renderer has to manage (section 9, "Limits").
+  - A further copy of an element a page may have only once is reported
+    as `too-many` each time (section 8); before, only the second was.
+  - An element's text is all its texts joined, a comment between them
+    leaving nothing (section 5).
 
 - 0.2, third edition (2026-09-30): the same language. This edition
   corrects places where the document disagreed with itself, with
@@ -2277,15 +2557,19 @@ Change controller: The HoloML Authors
 - `content`: [`meta`](#meta)
 - `corner`: [`choice`](#choice), [`hud`](#hud), [`plan`](#plan), [`slider`](#slider)
 - `crosshair`: [`viewpoint`](#viewpoint)
+- `dir`: [`a`](#a), [`animate`](#animate), [`choice`](#choice), [`group`](#group), [`holoml`](#holoml), [`hud`](#hud), [`label`](#label), [`model`](#model), [`option`](#option), [`panel`](#panel), [`plan`](#plan), [`scene`](#scene), [`slider`](#slider), [`sound`](#sound), [`title`](#title), [`viewpoint`](#viewpoint)
 - `duration`: [`animate`](#animate)
 - `environment`: [`scene`](#scene)
+- `far`: [`model`](#model)
+- `far-from`: [`model`](#model)
 - `from`: [`animate`](#animate)
 - `gravity`: [`viewpoint`](#viewpoint)
 - `href`: [`a`](#a)
-- `id`: [`choice`](#choice), [`group`](#group), [`hud`](#hud), [`label`](#label), [`light`](#light), [`model`](#model), [`panel`](#panel), [`plan`](#plan), [`scene`](#scene), [`slider`](#slider), [`sound`](#sound), [`viewpoint`](#viewpoint)
+- `id`: [`animate`](#animate), [`choice`](#choice), [`group`](#group), [`hud`](#hud), [`label`](#label), [`light`](#light), [`model`](#model), [`panel`](#panel), [`plan`](#plan), [`scene`](#scene), [`slider`](#slider), [`sound`](#sound), [`viewpoint`](#viewpoint), [`water`](#water)
 - `intensity`: [`light`](#light)
 - `jump`: [`viewpoint`](#viewpoint)
-- `label`: [`animate`](#animate), [`choice`](#choice), [`plan`](#plan), [`sound`](#sound), [`viewpoint`](#viewpoint)
+- `label`: [`animate`](#animate), [`choice`](#choice), [`group`](#group), [`model`](#model), [`plan`](#plan), [`sound`](#sound), [`viewpoint`](#viewpoint)
+- `lang`: [`a`](#a), [`animate`](#animate), [`choice`](#choice), [`group`](#group), [`holoml`](#holoml), [`hud`](#hud), [`label`](#label), [`model`](#model), [`option`](#option), [`panel`](#panel), [`plan`](#plan), [`scene`](#scene), [`slider`](#slider), [`sound`](#sound), [`title`](#title), [`viewpoint`](#viewpoint)
 - `load`: [`group`](#group)
 - `look-at`: [`light`](#light), [`viewpoint`](#viewpoint)
 - `loop`: [`sound`](#sound)
@@ -2377,6 +2661,8 @@ site](#3-terminology), [thing](#3-terminology),
 
 - [ECMASCRIPT] ECMAScript Language Specification. Ecma International.
   https://tc39.es/ecma262/
+- [BCP47] Tags for Identifying Languages. A. Phillips, M. Davis (editors).
+  IETF, September 2009. https://www.rfc-editor.org/info/bcp47
 - [GLTF] glTF 2.0 Specification. The Khronos Group.
   https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html
 - [RFC2119] Key words for use in RFCs to Indicate Requirement Levels. S.
@@ -2385,11 +2671,17 @@ site](#3-terminology), [thing](#3-terminology),
   IETF, November 2003. https://www.rfc-editor.org/rfc/rfc3629
 - [RFC8174] Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words. B.
   Leiba. IETF, May 2017. https://www.rfc-editor.org/rfc/rfc8174
+- [UAX9] Unicode Bidirectional Algorithm. Unicode Standard Annex #9. The
+  Unicode Consortium. https://www.unicode.org/reports/tr9/
 - [URL] URL Standard. WHATWG. https://url.spec.whatwg.org/
 - [WEBIDL] Web IDL Standard. WHATWG. https://webidl.spec.whatwg.org/
 
 ### Informative references
 
+- [ACES] Academy Color Encoding System: the reference rendering
+  transform's filmic tone curve. Academy of Motion Picture Arts and
+  Sciences. https://www.oscars.org/science-technology/sci-tech-projects/aces
+- [HTML] HTML Standard. WHATWG. https://html.spec.whatwg.org/
 - [RELAXNG] RELAX NG Compact Syntax. OASIS, 2002; ISO/IEC 19757-2.
   https://relaxng.org/compact-20021121.html
 - [RFC5234] Augmented BNF for Syntax Specifications: ABNF. D. Crocker, P.

@@ -51,7 +51,7 @@ describe('Y5: the site has its parts at their addresses', () => {
       expect(existsSync(join(out, site, 'index.html')), site).toBe(true);
       expect(existsSync(join(out, site, 'tools')), `${site}/tools`).toBe(false);
     }
-    expect(EXAMPLES).toHaveLength(6);
+    expect(EXAMPLES).toHaveLength(7);
     // What the examples' tools share, and the tests of their scripts, are not a site.
     expect(existsSync(join(out, 'tools'))).toBe(false);
   });

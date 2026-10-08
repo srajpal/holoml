@@ -1,6 +1,8 @@
 // Writes the showroom's pages: the hall (index.holoml), a page for each
 // car in each of its colours, and the about page. The pages are plain
-// HoloML 0.1; this script only keeps fifteen similar car pages in step.
+// HoloML 0.3, with no scripts (a 0.1 site until HyperSpace 3D's
+// milestone 25, which gave every model a screen reader reaches a name);
+// this script only keeps fifteen similar car pages in step.
 //
 //   node examples/showroom/tools/make-pages.mjs
 import { writeFileSync } from 'node:fs';
@@ -68,16 +70,20 @@ const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 /** A car's page in one of its colours; the first colour is the car's own page. */
 export const pageOf = (car, i) => (i === 0 ? `${car.id}.holoml` : `${car.id}-${slug(car.colours[i][0])}.holoml`);
 
-const HEAD = (title, description) => `<holoml version="0.1">
+const HEAD = (title, description) => `<holoml version="0.3" lang="en">
   <head>
     <title>${title}</title>
     <meta name="description" content="${description}" />
     <meta name="author" content="The HoloML Authors" />
   </head>`;
 
-/** The car on its plinth, 1.8 times the kit's size (about 4.6 m long), facing +z like the kit's cars. */
-const car = (c, colour, indent) => `${indent}<model src="models/plinth.gltf" />
-${indent}<model src="models/${c.id}.glb" position="0 0.25 0" scale="1.8">
+/**
+ * The car on its plinth, 1.8 times the kit's size (about 4.6 m long), facing +z like the kit's cars. A car on its
+ * own page has a name for screen readers (`name`, HoloML 0.3); in the hall, each car is inside its link, which its
+ * label names, and a name there would be heard twice.
+ */
+const car = (c, colour, indent, name) => `${indent}<model src="models/plinth.gltf"${name ? ' label="Plinth"' : ''} />
+${indent}<model src="models/${c.id}.glb"${name ? ` label="${name}"` : ''} position="0 0.25 0" scale="1.8">
 ${indent}  <material name="Paint" color="${colour}" metalness="0.5" roughness="0.45" />
 ${indent}  <material name="Glass" opacity="0.55" />
 ${indent}</model>`;
@@ -117,7 +123,7 @@ const hall = `${HEAD('HoloML showroom', 'Five cars in a round hall. Orbit around
     <viewpoint position="0 3 15" look-at="0 1.8 -3" mode="orbit" />
     <light type="ambient" intensity="0.3" />
     <light type="directional" position="6 14 12" look-at="0 0 0" intensity="0.6" />
-    <model src="models/hall.gltf" />
+    <model src="models/hall.gltf" label="The hall" />
 
     <label position="0 5.2 -13" size="1" color="#7fd8ff">HoloML showroom</label>
     <label position="0 4.2 -13" size="0.4">Choose a car to walk around it</label>
@@ -149,9 +155,9 @@ for (const c of CARS) {
     <light type="ambient" intensity="0.35" />
     <light type="directional" position="5 12 9" look-at="0 0 0" intensity="0.7" />
     <light type="spot" position="0 9 0" look-at="0 0 0" angle="22" range="16" intensity="9" color="#fff4e0" />
-    <model src="models/hall.gltf" />
+    <model src="models/hall.gltf" label="The hall" />
 
-${car(c, colour, '    ')}
+${car(c, colour, '    ', `${c.name} in ${colourName.toLowerCase()}`)}
     <label id="name" position="0 4 0" size="0.6">${c.name}</label>
     <label position="0 3.45 0" size="0.24" color="#b8c4e0">${c.line}</label>
     <label position="0 3.1 0" size="0.2" color="#b8c4e0">${c.facts}</label>
@@ -176,10 +182,10 @@ const about = `${HEAD('About the HoloML showroom', 'What this showroom is, what 
   <scene background="#07090f">
     <viewpoint position="0 2 9" look-at="0 2 0" mode="orbit" />
     <light type="ambient" intensity="0.6" />
-    <model src="models/hall.gltf" />
+    <model src="models/hall.gltf" label="The hall" />
 
     <label position="0 4.4 0" size="0.6" color="#7fd8ff">About this showroom</label>
-    <label position="0 3.6 0" size="0.22">Every page here is HoloML 0.1: plain markup, like HTML, for 3D.</label>
+    <label position="0 3.6 0" size="0.22">Every page here is HoloML 0.3: plain markup, like HTML, for 3D.</label>
     <label position="0 3.2 0" size="0.22">Models, lights, labels, links, colours, and the turntable are all written in the page.</label>
     <label position="0 2.8 0" size="0.22">The cars come from Kenney's Car Kit (kenney.nl, CC0). Their names and numbers are made up.</label>
     <label position="0 2.4 0" size="0.22">The hall and plinths were made for this showroom.</label>

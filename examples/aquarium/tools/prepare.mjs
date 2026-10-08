@@ -424,19 +424,23 @@ function starts() {
   return out;
 }
 
+/** From how far, in metres, a fish is drawn from its lighter version (HoloML 0.3 `far-from`). */
+const FAR_FROM = 10;
+
 function page() {
   const decorLines = [
-    ...[...ROCKS, ...ROCKWORK].map((r) => `<model src="models/boulder.glb" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
-    ...LOGS.map((r) => `<model src="models/log.glb" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
-    ...SHELLS.map((r) => `<model src="models/shell.glb" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
-    ...AIRSTONES.map((a) => `<model src="models/airstone.glb" position="${vec(...a)}" />`),
+    ...[...ROCKS, ...ROCKWORK].map((r) => `<model src="models/boulder.glb" label="Rock" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
+    ...LOGS.map((r) => `<model src="models/log.glb" label="Log" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
+    ...SHELLS.map((r) => `<model src="models/shell.glb" label="Shell" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
+    ...AIRSTONES.map((a) => `<model src="models/airstone.glb" label="Air stone" position="${vec(...a)}" />`),
   ];
-  const plantLines = PLANTS.map((p) => `<model src="models/${p.kind}.glb" position="${vec(...p.at)}" rotation="0 ${fixed(p.turn)} 0" animation="Sway" autoplay />`);
+  const plantLines = PLANTS.map((p) => `<model src="models/${p.kind}.glb" label="${p.kind === 'kelp' ? 'Kelp' : 'Seagrass'}" position="${vec(...p.at)}" rotation="0 ${fixed(p.turn)} 0" animation="Sway" autoplay />`);
   const soundLines = AIRSTONES.map((a, i) => `<sound id="bubbler-${i + 1}" src="sounds/bubbles.wav" position="${vec(a[0], a[1] + 0.3, a[2])}" range="9" volume="0.8" loop autoplay />`);
   const fishLines = [];
   const buttons = [];
   for (const f of starts()) {
-    fishLines.push(`<model id="${f.id}" src="models/${f.kind.kind}.glb" position="${vec(...f.at)}" rotation="0 ${fixed(f.turn)} 0" animation="Swim" autoplay />`);
+    // HoloML 0.3 (milestone 25): each fish named for screen readers, and a lighter version past FAR_FROM (tools/far.mjs).
+    fishLines.push(`<model id="${f.id}" src="models/${f.kind.kind}.glb" far="models/${f.kind.kind}-far.glb" far-from="${FAR_FROM}" label="${f.kind.name}" position="${vec(...f.at)}" rotation="0 ${fixed(f.turn)} 0" animation="Swim" autoplay />`);
     // Each kind's first fish is a button in the outline too: for the keyboard and screen readers, "About" it.
     if (f.id.endsWith('-1')) buttons.push(`<sound src="sounds/blip.wav" begin="click" trigger="#${f.id}" label="About ${f.kind.about}" volume="0.5" />`);
   }
@@ -458,7 +462,9 @@ function credits() {
     'made drawable by three.js, turned, sized, and centred, its pictures made',
     'smaller, where its file had no swim, given a skeleton and one (made',
     'here), and the great white shark and the mackerel made lighter (fewer',
-    'triangles).',
+    'triangles). Each also has a lighter version for far away,',
+    '<fish>-far.glb, made from it by tools/far.mjs (HoloML 0.3, HyperSpace 3D',
+    'milestone 25), under the same licence.',
     '',
     ...FISH.map((f) => `- ${f.id}.glb, ${f.name}: "${f.credit.title}" by ${f.credit.author}, ${f.credit.source}, ${f.credit.licence}.`),
     '',

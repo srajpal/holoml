@@ -7,10 +7,12 @@ import {
   ID_PATTERN,
   IDREF_PATTERN,
   INDEFINITE,
+  LANGUAGE_PATTERN,
   NOT_IN_ADDRESS_RNC,
   NUMBER_PATTERN,
   VERSION,
   VERSIONS,
+  atLeast,
   type AttributeRule,
   type ElementRule,
   type ValueKind,
@@ -119,6 +121,8 @@ function value(kind: ValueKind): string {
       return `xsd:string { pattern = "${ID_PATTERN}" }`;
     case 'idref':
       return `xsd:string { pattern = "${IDREF_PATTERN}" }`;
+    case 'language':
+      return `xsd:string { pattern = "${LANGUAGE_PATTERN}" }`;
     case 'choice':
       return kind.values.map((v) => `string "${v}"`).join(' | ');
     case 'flag':
@@ -138,7 +142,9 @@ function content(name: string, rule: ElementRule): Part {
   // The root's head comes before its scene (the checker's wrong-order).
   if (name === 'holoml') return { code: 'head?, scene' };
   const counted = rule.children.map((child) => {
-    const once = rule.once?.includes(child) && !(rule.manyFrom?.[child] === VERSION);
+    // The newest version's rule: a child a later version allows several times is many, from that version on.
+    const many = rule.manyFrom?.[child];
+    const once = rule.once?.includes(child) && !(many !== undefined && atLeast(VERSION, many));
     const needed = rule.needs?.includes(child);
     return `${child}${once ? (needed ? '' : '?') : needed ? '+' : '*'}`;
   });

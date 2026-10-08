@@ -259,7 +259,10 @@ export function definitions(idl = read('spec/holoml.webidl')): Map<string, Defin
   return out;
 }
 
-const KINDS = { model: 'ModelThing', group: 'GroupThing', light: 'LightThing', label: 'LabelThing', panel: 'PanelThing', sound: 'SoundThing', hud: 'HudThing', slider: 'SliderThing', choice: 'ChoiceThing' } as const;
+/** A cell of the things table: its kinds, without the version that added one ("(0.3) plan"). */
+const kindsOf = (cell: string): string[] => cell.split(', ').map((k) => k.replace(/^\(\d+\.\d+\) /, ''));
+
+const KINDS = { model: 'ModelThing', group: 'GroupThing', light: 'LightThing', label: 'LabelThing', panel: 'PanelThing', sound: 'SoundThing', hud: 'HudThing', slider: 'SliderThing', choice: 'ChoiceThing', animate: 'AnimateThing', water: 'WaterThing', plan: 'PlanThing' } as const;
 
 export function apiPage(spec = read('SPEC.md'), idl = read('spec/holoml.webidl')): string {
   const defs = definitions(idl);
@@ -285,11 +288,11 @@ export function apiPage(spec = read('SPEC.md'), idl = read('spec/holoml.webidl')
   const things = table(section(spec, '### Things'), 'Member').rows;
   const common = things.filter((r) => r[1] === 'all').flatMap((r) => names(r[0]!));
   const byKind = Object.entries(KINDS).map(([kind, iface]) => {
-    const members = things.filter((r) => r[1]!.split(', ').includes(kind)).flatMap((r) => names(r[0]!));
+    const members = things.filter((r) => kindsOf(r[1]!).includes(kind)).flatMap((r) => names(r[0]!));
     return `| \`${kind}\` | \`${iface}\` | ${[...new Set(members)].map((m) => code(defs.get(iface)!.members.find((x) => x.name === m)?.declaration.includes('(') ? `${m}()` : m)).join(', ')} |`;
   });
   const thingRows = things.map((r) => {
-    const kinds = r[1]!.split(', ');
+    const kinds = kindsOf(r[1]!);
     const ifaces = kinds.map((k) => (k === 'all' ? 'Thing' : KINDS[k as keyof typeof KINDS]));
     return `| ${r[0]} | ${r[1]} | ${decls(names(r[0]!).flatMap((n) => ifaces.map((i) => declaration(i, n))))} | ${fromReference(r[2]!)} |`;
   });

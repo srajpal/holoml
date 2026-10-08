@@ -9,7 +9,7 @@ shows the scene as a space to orbit or walk around.
 
 HoloML is experimental. It has one renderer so far, HyperSpace 3D, and
 until version 1.0 a later version may change or remove what an earlier
-one has. What a page written for 0.1 or 0.2 means will not change.
+one has. What a page written for 0.1, 0.2, or 0.3 means will not change.
 
 ```holoml
 <holoml version="0.2">
@@ -30,7 +30,7 @@ one has. What a page written for 0.1 or 0.2 means will not change.
 
 ## Read
 
-- [The specification](../SPEC.md): HoloML 0.2, the language as a
+- [The specification](../SPEC.md): HoloML 0.3, the language as a
   standard, with its grammar and the scene API.
 - [Tutorials](tutorials/index.md): lessons that build a first page, then
   a first script.
@@ -47,7 +47,7 @@ Each is a HoloML site you can open in HyperSpace 3D, and its source is
 in the repository.
 
 - ![The showroom: five cars in a round hall](../site/pictures/showroom.jpg)
-  [The showroom](https://srajpal.github.io/holoml/showroom/) (0.1): five
+  [The showroom](https://srajpal.github.io/holoml/showroom/): five
   cars in a round hall, one on a turntable, each to walk around in three
   colours. [Source](../examples/showroom/).
 - ![Blockworld: an island of blocks, from above one corner](../site/pictures/blockworld.jpg)
@@ -70,6 +70,10 @@ in the repository.
   [The ocean tunnel](https://srajpal.github.io/holoml/aquarium/): an
   aquarium to walk through, with 30 fish, water, and feeding.
   [Source](../examples/aquarium/).
+- ![Words in a room: welcome signs in Arabic, English, and Hebrew on three walls](../site/pictures/words.jpg)
+  [Words in a room](https://srajpal.github.io/holoml/words/) (0.3):
+  welcome signs in English, Arabic, and Hebrew, each in its own language
+  and direction. [Source](../examples/words/).
 
 The pictures were taken in HyperSpace 3D; the models in them are
 credited in each site's `models/CREDITS.md`.

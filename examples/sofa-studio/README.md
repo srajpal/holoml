@@ -1,6 +1,6 @@
 # Sofa studio
 
-A small shop page in HoloML 0.2: one sofa in a sunlit room.
+A small shop page in HoloML 0.3: one sofa in a sunlit room.
 Choose its fabric and its wood in place, watch the price follow, switch
 the room to evening light, and go on to an ordinary web page to "add it
 to the cart" (there is no shop behind it).
@@ -14,11 +14,14 @@ to the cart" (there is no shop behind it).
   choices; "About this studio" says what the page is made of.
 
 Published at https://srajpal.github.io/holoml/sofa-studio/ (open
-`index.holoml` there in a browser that shows HoloML 0.2, such as
+`index.holoml` there in a browser that shows HoloML 0.3, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)).
 
-## What it shows of HoloML 0.2
+## What it shows of HoloML
 
+- Names (HoloML 0.3): the sofa and the room's furniture have a
+  `label`, which screen readers say and the page's list of things
+  shows.
 - `choice` and `option`: the Fabric and Wood choices name the sofa's
   materials (`target="#sofa" material="Fabric"`), and each option gives
   the material's pictures (`map`, `normal-map`, `roughness-map`) and how

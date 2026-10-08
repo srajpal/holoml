@@ -25,6 +25,6 @@ describe('where text that may not be there is reported (review 134, L7)', () => 
   });
 
   it('after a byte order mark, places on line 1 count from the first character after it', () => {
-    expect(problems('\uFEFF<holoml version="0.3"><scene fog="1" /></holoml>')).toEqual(['unsupported-version 1:9', 'unknown-attribute 1:30']);
+    expect(problems('\uFEFF<holoml version="9.9"><scene fog="1" /></holoml>')).toEqual(['unsupported-version 1:9', 'unknown-attribute 1:30']);
   });
 });

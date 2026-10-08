@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>Sneaker store</title>
-    <meta name="description" content="A sneaker store to walk through: one shoe in ten colourways on its walls, each loaded as you come near. Open one to turn it over, choose its colour and size, and add it to your cart. A HoloML 0.2 shop." />
+    <meta name="description" content="A sneaker store to walk through: one shoe in ten colourways on its walls, each loaded as you come near. Open one to turn it over, choose its colour and size, and add it to your cart. A HoloML 0.3 shop." />
     <meta name="author" content="The HoloML Authors" />
     <script src="store.js" />
   </head>
@@ -197,47 +197,47 @@
     </panel>
 
     <group shadows>
-      <model src="models/floor.glb" />
+      <model src="models/floor.glb" label="Floor" />
       <!-- prepare.mjs: the ledges -->
-      <model src="models/ledge.glb" position="-5 0 -4" rotation="0 90 0" />
-      <model src="models/ledge.glb" position="-5 0 -8.5" rotation="0 90 0" />
-      <model src="models/ledge.glb" position="-5 0 -13" rotation="0 90 0" />
-      <model src="models/ledge.glb" position="-5 0 -17.5" rotation="0 90 0" />
-      <model src="models/ledge.glb" position="-5 0 -22" rotation="0 90 0" />
-      <model src="models/ledge.glb" position="5 0 -4" rotation="0 -90 0" />
-      <model src="models/ledge.glb" position="5 0 -8.5" rotation="0 -90 0" />
-      <model src="models/ledge.glb" position="5 0 -13" rotation="0 -90 0" />
-      <model src="models/ledge.glb" position="5 0 -17.5" rotation="0 -90 0" />
-      <model src="models/ledge.glb" position="5 0 -22" rotation="0 -90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="-5 0 -4" rotation="0 90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="-5 0 -8.5" rotation="0 90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="-5 0 -13" rotation="0 90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="-5 0 -17.5" rotation="0 90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="-5 0 -22" rotation="0 90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="5 0 -4" rotation="0 -90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="5 0 -8.5" rotation="0 -90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="5 0 -13" rotation="0 -90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="5 0 -17.5" rotation="0 -90 0" />
+      <model src="models/ledge.glb" label="Ledge" position="5 0 -22" rotation="0 -90 0" />
       <!-- end of the ledges -->
       <group solid>
-        <model src="models/bench.glb" position="0 0 -13" />
-        <model src="models/counter.glb" position="0 0 -23.9" />
-        <model src="models/plant.glb" position="-4.2 0 -1.1" />
-        <model src="models/plant.glb" position="4.2 0 -1.1" />
-        <model src="models/plant.glb" position="-4.3 0 -25.2" />
-        <model src="models/plant.glb" position="4.3 0 -25.2" />
-        <model src="models/sign.glb" position="1.6 0 -6.2" />
+        <model src="models/bench.glb" label="Bench" position="0 0 -13" />
+        <model src="models/counter.glb" label="Counter" position="0 0 -23.9" />
+        <model src="models/plant.glb" label="Plant" position="-4.2 0 -1.1" />
+        <model src="models/plant.glb" label="Plant" position="4.2 0 -1.1" />
+        <model src="models/plant.glb" label="Plant" position="-4.3 0 -25.2" />
+        <model src="models/plant.glb" label="Plant" position="4.3 0 -25.2" />
+        <model src="models/sign.glb" label="Sign" position="1.6 0 -6.2" />
       </group>
     </group>
-    <model src="models/ceiling.glb" />
-    <model src="models/entrance.glb" />
+    <model src="models/ceiling.glb" label="Ceiling" />
+    <model src="models/entrance.glb" label="Entrance" />
     <group solid>
-      <model src="models/wall.glb" position="-5.1 0 -13" scale="0.2 4.2 26.4" />
-      <model src="models/wall.glb" position="5.1 0 -13" scale="0.2 4.2 26.4" />
-      <model src="models/wall.glb" position="0 0 -26.1" scale="10.4 4.2 0.2" />
-      <model src="models/wall.glb" position="0 0 0.1" scale="10.4 4.2 0.2" />
+      <model src="models/wall.glb" label="Wall" position="-5.1 0 -13" scale="0.2 4.2 26.4" />
+      <model src="models/wall.glb" label="Wall" position="5.1 0 -13" scale="0.2 4.2 26.4" />
+      <model src="models/wall.glb" label="Wall" position="0 0 -26.1" scale="10.4 4.2 0.2" />
+      <model src="models/wall.glb" label="Wall" position="0 0 0.1" scale="10.4 4.2 0.2" />
       <!-- prepare.mjs: the bays -->
-      <model src="models/bay.glb" position="-5 0 -4" rotation="0 90 0" />
-      <model src="models/bay.glb" position="-5 0 -8.5" rotation="0 90 0" />
-      <model src="models/bay.glb" position="-5 0 -13" rotation="0 90 0" />
-      <model src="models/bay.glb" position="-5 0 -17.5" rotation="0 90 0" />
-      <model src="models/bay.glb" position="-5 0 -22" rotation="0 90 0" />
-      <model src="models/bay.glb" position="5 0 -4" rotation="0 -90 0" />
-      <model src="models/bay.glb" position="5 0 -8.5" rotation="0 -90 0" />
-      <model src="models/bay.glb" position="5 0 -13" rotation="0 -90 0" />
-      <model src="models/bay.glb" position="5 0 -17.5" rotation="0 -90 0" />
-      <model src="models/bay.glb" position="5 0 -22" rotation="0 -90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="-5 0 -4" rotation="0 90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="-5 0 -8.5" rotation="0 90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="-5 0 -13" rotation="0 90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="-5 0 -17.5" rotation="0 90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="-5 0 -22" rotation="0 90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="5 0 -4" rotation="0 -90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="5 0 -8.5" rotation="0 -90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="5 0 -13" rotation="0 -90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="5 0 -17.5" rotation="0 -90 0" />
+      <model src="models/bay.glb" label="Shelf bay" position="5 0 -22" rotation="0 -90 0" />
       <!-- end of the bays -->
     </group>
   </scene>

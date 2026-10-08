@@ -121,6 +121,30 @@ Walk down the hall from the entrance: each bay's shoes take the place of
 their stand-ins as you come within 7.5 m, and the stand-ins come back
 behind you once you are 11.25 m away.
 
+## Show a lighter model far away
+
+A model with `far` and `far-from` (0.3) is drawn from the lighter
+file while the viewer is that far or farther, and from its own when
+nearer. A shark across the tank needs a tenth of the triangles of one
+over your head:
+
+```holoml-scene
+<model id="shark-1" src="fish/shark.glb" far="fish/shark-far.glb" far-from="12"
+       label="Blacktip reef shark" position="-10.9 4.2 11.9" animation="Swim" autoplay />
+```
+
+- Only the file the view needs loads at first; the other loads when the
+  viewer comes near the line, and the model swaps once it is in.
+- The swap waits a little past the line each way, so standing at the
+  line does not make the model flicker.
+- The far model plays the model's animation if it has one of the same
+  name, takes its `material` changes, and is solid, casts shadows, and
+  takes clicks as the model does.
+- With loading by area, the stand-in shows until the group comes near;
+  then the far model or the model itself, by the distance.
+
+Make the far file with [Prepare glTF models](preparing-models.md#make-a-lighter-version-for-far-away).
+
 ## See also
 
 - The specification: [loading by area](../../SPEC.md#loading-by-area),

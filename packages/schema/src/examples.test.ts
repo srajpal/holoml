@@ -331,7 +331,7 @@ describe('examples', () => {
   it("the aquarium's water, bubbling from its air stones, and Feed button", () => {
     const page = readFileSync(join(EXAMPLES, 'aquarium/index.holoml'), 'utf8');
     expect(page).toMatch(/<water [^>]*size="24 6\.8 34"[^>]* caustics \/>/);
-    const stones = [...page.matchAll(/<model src="models\/airstone\.glb" position="([^"]+)"/g)].map((m) => m[1]!.split(' ').map(Number));
+    const stones = [...page.matchAll(/<model src="models\/airstone\.glb"[^>]* position="([^"]+)"/g)].map((m) => m[1]!.split(' ').map(Number));
     const bubblers = [...page.matchAll(/<sound id="bubbler-\d" src="sounds\/bubbles\.wav" position="([^"]+)" range="(\d+)"/g)];
     expect(stones.length).toBeGreaterThan(0);
     expect(bubblers).toHaveLength(stones.length);

@@ -1,0 +1,8 @@
+<holoml version="0.2" lang="en">
+  <scene>
+    <model src="models/lion.glb" label="A lion" far="models/lion-far.glb" far-from="20" />
+    <group label="Statues" dir="ltr" />
+    <animate id="turn" target="#x" attribute="rotation" to="0 1 0" duration="1s" />
+    <water id="pool" size="1 1 1" />
+  </scene>
+</holoml>

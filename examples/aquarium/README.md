@@ -1,6 +1,6 @@
 # Ocean tunnel
 
-An aquarium to walk through, in HoloML 0.2: a glass tunnel along the
+An aquarium to walk through, in HoloML 0.3: a glass tunnel along the
 floor of a tank 24 m wide, 34 m long, and 6.5 m deep. Great white
 sharks, a hawksbill sea turtle, tuna, barramundi, and schools of bream,
 mackerel, snapper, clownfish, and copperband butterflyfish swim over
@@ -22,10 +22,17 @@ fish, and click one to read about it.
   and feeding puts the food down and says that the fish have eaten.
 
 Published at https://srajpal.github.io/holoml/aquarium/ (open
-`index.holoml` there in a browser that shows HoloML 0.2, such as
+`index.holoml` there in a browser that shows HoloML 0.3, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)).
 
-## What it shows of HoloML 0.2
+## What it shows of HoloML
+
+- A lighter fish far away (HoloML 0.3): each fish has `far`, a version
+  with about a fifth of its triangles (the mackerel, 29 per cent) and
+  smaller pictures, drawn from `far-from` (10 m) on, so the tank draws
+  much less of what is too far to see well. A fish keeps its swim either way.
+- Names (HoloML 0.3): each fish has a `label`, its kind, which screen
+  readers say and the page's list of things shows.
 
 - Water: one `water` element fills the tank. What is seen through it
   fades into its colour with how far the view goes through the water
@@ -64,11 +71,14 @@ Published at https://srajpal.github.io/holoml/aquarium/ (open
   `licence.mjs` (both tools stop when a file's own licence stamp is not
   the licence its credit gives, or is not CC BY 4.0 or CC0), `fit.mjs`
   and `rig.mjs` (fitting a fish for the tank, and giving a swim to a
-  fish or a turtle that has none), `shapes.mjs`, and `glb.mjs`:
+  fish or a turtle that has none), `shapes.mjs`, and `glb.mjs`;
+  `far.mjs` makes each fish's lighter version, with glTF Transform (a
+  development package of this repository):
 
   ```
   node examples/aquarium/tools/download.mjs
   electron examples/aquarium/tools/prepare.mjs
+  node examples/aquarium/tools/far.mjs
   ```
 
   `prepare.mjs` rewrites the parts of `index.holoml` between its

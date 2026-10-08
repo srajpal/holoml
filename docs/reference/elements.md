@@ -46,7 +46,9 @@ The root element. [In the specification](../../SPEC.md#holoml).
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
-| `version` | `"0.1"` or `"0.2"` (required) |  | The HoloML version the page is written for ([section 11](../../SPEC.md#11-versions)) |
+| `version` | `"0.1"`, `"0.2"`, or `"0.3"` (required) |  | The HoloML version the page is written for ([section 11](../../SPEC.md#11-versions)) |
+| `lang` (0.3) | language tag |  | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` |  | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `head`
 
@@ -62,7 +64,11 @@ The page's title, shown in the browser's tab and history. [In the specification]
 
 - Holds: text.
 - May be in: [`head`](#head).
-- Attributes: none.
+
+| Attribute | Value | Default | Meaning |
+|---|---|---|---|
+| `lang` (0.3) | language tag |  | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` |  | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `meta`
 
@@ -100,6 +106,8 @@ Everything that is shown. [In the specification](../../SPEC.md#scene).
 | `background` | colour | the renderer's | The colour behind everything |
 | `environment` (0.2) | address | none | A panorama of the surroundings (an HDR, PNG, or JPEG picture, from the page's own site) that lights the scene: shiny and soft materials alike take their light and reflections from it. Without it, the renderer's own soft light. Its brightness follows the ambient lights (see `light`) |
 | `sky` (0.2) | address | none | A panorama (an HDR, PNG, or JPEG picture, from the page's own site) drawn behind everything, in place of the background colour: the view out of the windows, or the sky over a field. Its brightness follows the ambient lights, as the surroundings' light does. It may be the same file as `environment` |
+| `lang` (0.3) | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `group`
 
@@ -118,6 +126,9 @@ Places several things together, so they move, turn, and scale as one. [In the sp
 | `shadows` (0.2) | flag | off | Every model in it casts and receives shadows (see "Shadows") |
 | `load` (0.2) | `page` or `near` | `page` | When its models load: with the page, or only while the viewer is near (see "Loading by area") |
 | `near` (0.2) | number, more than 0 | `10` | With `load="near"`: how near, in metres, the viewer comes for its models to load |
+| `label` (0.3) | text | none | (0.3) Its name, heard by screen readers and shown in the text view |
+| `lang` (0.3) | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `model`
 
@@ -138,6 +149,11 @@ A 3D model from a glTF 2.0 file. [In the specification](../../SPEC.md#model).
 | `solid` (0.2) | flag | off | The walker cannot pass through it (see "Walls and gravity") |
 | `shadows` (0.2) | flag | off | It casts and receives shadows (see "Shadows") |
 | `stand-in` (0.2) | address | none | A lighter model shown in its place until it has loaded, and again once it is let go (see "Loading by area") |
+| `label` (0.3) | text | none | (0.3) Its name, heard by screen readers and shown in the text view; without it, its `id`, then its file's name |
+| `far` (0.3) | address | none | (0.3) A lighter model shown in its place from `far-from` metres away (see [A lighter model far away](../../SPEC.md#a-lighter-model-far-away)) |
+| `far-from` (0.3) | number, more than 0 | none | (0.3) The distance, in metres from the viewer, from which `far` is shown |
+| `lang` (0.3) | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `material`
 
@@ -177,6 +193,8 @@ Where the viewer starts, and how they move. [In the specification](../../SPEC.md
 | `crosshair` (0.2) | flag | off | A small cross in the middle of the view, for aiming with the keyboard (section 10, `holoml.aim()`) |
 | `speed` (0.2) | number, 0.5 to 10 | `2.2` | Walk only: how fast the viewer walks, in metres a second. A renderer's key for running (HyperSpace 3D: Shift) goes faster than this |
 | `turn-speed` (0.2) | number, 10 to 720 | `90` | Walk only: how fast the viewer turns, and looks up and down, from the keyboard, in degrees a second |
+| `lang` (0.3) | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `light`
 
@@ -206,6 +224,7 @@ A light. [In the specification](../../SPEC.md#light).
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
+| `id` | id | none | (0.3) A name, for scripts to change it |
 | `position` | vector | `"0 0 0"` | The middle of the water's floor |
 | `size` | three numbers more than 0 (required) |  | Its width (x), height (y), and depth (z), in metres; its top is the surface |
 | `color` | colour | `"#1f6f8b"` | The colour that things seen through the water fade into |
@@ -225,6 +244,8 @@ Text in the scene. [In the specification](../../SPEC.md#label).
 | `position` | vector | `"0 0 0"` | Where its centre is |
 | `size` | number, more than 0 | `0.2` | The height of a line of text, in metres |
 | `color` | colour | the renderer's | The colour of the text |
+| `lang` (0.3) | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `panel`
 
@@ -242,6 +263,8 @@ Text in the scene. [In the specification](../../SPEC.md#label).
 | `size` | number, more than 0 | `0.06` | The height of a line of text, in metres |
 | `color` | colour | the renderer's | The colour of the text; by default one that reads well on the board, or on the scene's background without one |
 | `background` | colour | none | The colour of the board behind the text; without it, the text alone |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `a`
 
@@ -253,6 +276,8 @@ A link, as in HTML. [In the specification](../../SPEC.md#a).
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
 | `href` | address (required) |  | Another HoloML page, or any web page |
+| `lang` (0.3) | language tag |  | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` |  | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `animate`
 
@@ -263,6 +288,7 @@ Changes the position, rotation, or scale of an element over time, starting when 
 
 | Attribute | Value | Default | Meaning |
 |---|---|---|---|
+| `id` (0.3) | id | none | (0.3) A name, for scripts to start and stop it |
 | `target` | id reference (required) |  | The element to change |
 | `attribute` | `position`, `rotation`, or `scale`; (0.2) `intensity`, `color`, or `background` (required) |  | What to change |
 | `from` | as `to` | the target's own value | Where to start |
@@ -273,6 +299,8 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `trigger` (0.2) | id reference | its target | With `begin="click"`: the element whose click runs it, a `model`, `group`, `label`, or `panel` |
 | `toggle` (0.2) | flag | off | With `begin="click"`: each click runs it forward, and the next back, so that a door opens and closes |
 | `label` (0.2) | text | the trigger's id | With `begin="click"`: its name for the keyboard and screen readers, such as "Bedroom door" |
+| `lang` (0.3) | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` (0.3) | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `sound`
 
@@ -293,6 +321,8 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `begin` | `load` or `click` | `load` | With `click`, it plays each time its trigger is clicked (see "Click actions"); such a sound has no `autoplay` |
 | `trigger` | id reference | none | With `begin="click"`, and needed then: the element whose click plays it |
 | `label` | text | the trigger's id | With `begin="click"`: its name for the keyboard and screen readers |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `hud`
 
@@ -307,6 +337,8 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `corner` | `top-left`, `top-right`, `bottom-left`, or `bottom-right` | `top-left` | Where on the screen |
 | `size` | number, more than 0 | `18` | The height of its text, in CSS pixels |
 | `color` | colour | the renderer's | The colour of the text |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `slider`
 
@@ -323,6 +355,8 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `max` | number, more than `min` | `1` | The largest value |
 | `step` | number, more than 0 | a hundredth of the range | The steps between values |
 | `value` | number, from `min` to `max` | `min` | The value at the start |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `choice`
 
@@ -339,6 +373,8 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `target` | id reference | none | The `model` whose material it changes (with `material`) |
 | `material` | text | none | The name of that material in the model's glTF file (with `target`) |
 | `value` | text | the first option's | The value of the option chosen at the start |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `option`
 
@@ -358,6 +394,8 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `normal-map` | address | the material's | A picture of fine bumps |
 | `roughness-map` | address | the material's | A picture of how rough each point is |
 | `repeat` | tiling | `"1"` | How many times the pictures tile |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |
 
 ## `plan`
 
@@ -374,3 +412,5 @@ Changes the position, rotation, or scale of an element over time, starting when 
 | `area` | area (required) |  | The rectangle of the ground the picture shows |
 | `width` | number, more than 0 | `200` | How wide it is on the screen, in CSS pixels; its height follows the picture |
 | `label` | text | `"Floor plan"` | Its name for screen readers |
+| `lang` | language tag | from the element around it | (0.3) The language of its text, as in HTML; see [Language and direction](../../SPEC.md#language-and-direction) |
+| `dir` | `ltr`, `rtl`, or `auto` | from the element around it | (0.3) The direction its text runs; see [Language and direction](../../SPEC.md#language-and-direction) |

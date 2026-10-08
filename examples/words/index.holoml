@@ -1,0 +1,42 @@
+<holoml version="0.3" lang="en">
+  <head>
+    <title>Words in a room</title>
+    <meta name="description" content="A room of welcome signs in English, Arabic, and Hebrew: each in its own language and direction, read by screen readers in its own voice. A HoloML 0.3 page." />
+    <meta name="author" content="The HoloML Authors" />
+  </head>
+  <!-- HoloML 0.3's lang and dir (HyperSpace 3D milestone 25): three walls of signs, one language each. A page
+       says its language once, on the root; each wall says its own; right-to-left text runs from the right. -->
+  <scene background="#20242c">
+    <viewpoint id="middle" label="The middle of the room" position="0 1.6 2.4" look-at="0 1.5 -1" mode="walk" />
+    <light type="ambient" intensity="0.7" />
+    <light type="directional" intensity="0.6" position="2 6 5" />
+    <hud corner="top-left" dir="auto">Walk with the arrow keys or W, A, S, D, and drag to look around</hud>
+
+    <group id="english" label="The English wall" position="0 0 -2.4">
+      <label position="0 2.45 0" size="0.3">Welcome</label>
+      <panel position="0 1.5 0" width="2" size="0.11" color="#1b1b1b" background="#f5f2eb">
+        Every sign in this room says the same thing, in its own language.
+
+        A screen reader reads each one in that language's voice.
+      </panel>
+    </group>
+
+    <group id="arabic" label="الجدار العربي" lang="ar" dir="rtl" position="-2.7 0 -0.4" rotation="0 55 0">
+      <label position="0 2.45 0" size="0.3">أهلاً وسهلاً</label>
+      <panel position="0 1.5 0" width="2" size="0.12" color="#1b1b1b" background="#f5f2eb">
+        كل لافتة في هذه الغرفة تقول الشيء نفسه، بلغتها الخاصة.
+
+        يقرأ قارئ الشاشة كل واحدة بصوت لغتها.
+      </panel>
+    </group>
+
+    <group id="hebrew" label="הקיר העברי" lang="he" dir="rtl" position="2.7 0 -0.4" rotation="0 -55 0">
+      <label position="0 2.45 0" size="0.3">ברוכים הבאים</label>
+      <panel position="0 1.5 0" width="2" size="0.12" color="#1b1b1b" background="#f5f2eb">
+        כל שלט בחדר הזה אומר את אותו הדבר, בשפה שלו.
+
+        קורא המסך קורא כל אחד בקול של השפה שלו.
+      </panel>
+    </group>
+  </scene>
+</holoml>

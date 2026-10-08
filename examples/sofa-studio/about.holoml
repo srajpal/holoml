@@ -1,4 +1,4 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>About the sofa studio</title>
     <meta name="description" content="What this sofa studio is, what it is made of, and where to find HoloML." />
@@ -8,12 +8,12 @@
     <viewpoint position="0 1.45 2.6" look-at="0 1.35 -0.8" />
     <light type="ambient" intensity="0.3" />
     <light type="directional" position="-3.4 3.3 1.6" look-at="0 0.3 -0.2" intensity="2" color="#fff3e2" />
-    <model src="models/room.gltf">
+    <model src="models/room.gltf" label="The studio">
       <material name="Wall" color="#d6cdc0" />
     </model>
 
     <label position="0 2.35 -0.7" size="0.16" color="#1d6fa5">About this studio</label>
-    <label position="0 2.08 -0.7" size="0.055" color="#2b3140">Every page here is HoloML 0.2: the room, its lights and shadows, and the choices are written in the page.</label>
+    <label position="0 2.08 -0.7" size="0.055" color="#2b3140">Every page here is HoloML 0.3: the room, its lights and shadows, and the choices are written in the page.</label>
     <label position="0 1.96 -0.7" size="0.055" color="#2b3140">A short script, studio.js, keeps the price and switches the light between day and evening.</label>
     <label position="0 1.84 -0.7" size="0.055" color="#2b3140">The sofa, the furniture, the fabrics, the floor, and the studio's light are from Poly Haven (polyhaven.com, CC0),</label>
     <label position="0 1.72 -0.7" size="0.055" color="#2b3140">by Kirill Sannikov, Amin, James Ray Cock, Mateusz Sadek, Rico Cilliers, colormass, Rob Tuytel, and Sergej Majboroda.</label>

@@ -52,6 +52,40 @@ const BOUNDS = new Map();
 // ---- Pictures ------------------------------------------------------------------
 
 /** A JPEG again at web quality, at most `size` pixels wide (normal maps a little higher: their errors show as bumps). */
+
+/** The furniture's names (HoloML 0.3 `label`, milestone 25), by model file; walls, glass, and the like have none. */
+const NAMES = {
+  sofa: 'Sofa',
+  'lounge-chair': 'Lounge chair',
+  'coffee-table': 'Coffee table',
+  rug: 'Rug',
+  plant: 'Plant',
+  stool: 'Stool',
+  'dining-chair': 'Dining chair',
+  'dining-table': 'Dining table',
+  books: 'Books',
+  'books-2': 'Books',
+  'bedside-table': 'Bedside table',
+  wardrobe: 'Wardrobe',
+  vanity: 'Vanity',
+  toilet: 'Toilet',
+  'tall-table': 'Tall table',
+  sideboard: 'Sideboard',
+  shower: 'Shower',
+  shelves: 'Shelves',
+  pillows: 'Pillows',
+  picture: 'Picture',
+  kitchen: 'Kitchen',
+  island: 'Kitchen island',
+  desk: 'Desk',
+  'desk-chair': 'Desk chair',
+  bed: 'Bed',
+  bath: 'Bath',
+  'bath-tiles': 'Bathroom tiles'
+};
+/** The windows' names (HoloML 0.3), by their models' files. */
+const WINDOW_NAMES = { 'window-tall.glb': 'Tall window', 'window.glb': 'Window', 'window-small.glb': 'Small window' };
+
 function reencode(from, quality, size = 1024) {
   let image = nativeImage.createFromPath(from);
   if (image.isEmpty()) throw new Error(`${from}: not a picture Electron can read`);
@@ -972,29 +1006,31 @@ function markup() {
     for (const b of wallBoxes(w)) {
       const centre = [0, 1, 2].map((k) => (b.min[k] + b.max[k]) / 2);
       const size = [0, 1, 2].map((k) => b.max[k] - b.min[k]);
-      lines.push(`  <model src="models/wall.glb" position="${vec(centre)}" scale="${vec(size)}" />`);
+      lines.push(`  <model src="models/wall.glb" label="Wall" position="${vec(centre)}" scale="${vec(size)}" />`);
     }
   }
-  lines.push('  <model src="models/brick-wall.glb" />');
+  lines.push('  <model src="models/brick-wall.glb" label="Brick wall" />');
   lines.push('</group>');
   lines.push('<!-- The floor, the ceiling, the windows, and the furniture. -->');
   lines.push('<group shadows>');
-  lines.push('  <model src="models/floor.glb" />');
-  lines.push('  <model id="ceiling" src="models/ceiling.glb" />');
+  lines.push('  <model src="models/floor.glb" label="Floor" />');
+  lines.push('  <model id="ceiling" src="models/ceiling.glb" label="Ceiling" />');
   const wins = windowsInWalls();
-  for (const w of wins) lines.push(`  <model src="models/${w.file}" position="${vec(w.at)}" rotation="0 ${num(w.turn)} 0" />`);
+  for (const w of wins) lines.push(`  <model src="models/${w.file}" label="${WINDOW_NAMES[w.file]}" position="${vec(w.at)}" rotation="0 ${num(w.turn)} 0" />`);
   for (const f of FURNITURE) {
     const turn = f.turn ? ` rotation="0 ${num(f.turn)} 0"` : '';
     const scale = f.scale === undefined ? '' : ` scale="${Array.isArray(f.scale) ? vec(f.scale) : num(f.scale)}"`;
-    lines.push(`  <model src="models/${f.src}.glb" position="${vec(f.at)}"${turn}${scale}${f.solid ? ' solid' : ''} />`);
+    // HoloML 0.3 (milestone 25): the furniture named for screen readers and the text view.
+    const label = NAMES[f.src] ? ` label="${NAMES[f.src]}"` : '';
+    lines.push(`  <model src="models/${f.src}.glb"${label} position="${vec(f.at)}"${turn}${scale}${f.solid ? ' solid' : ''} />`);
   }
   lines.push('</group>');
   lines.push("<!-- The glass: outside the shadows, so the sun comes through. -->");
   for (const w of wins) {
     const centre = [w.at[0], w.at[1] + w.height / 2, w.at[2]];
-    lines.push(`<model src="models/${w.frosted ? 'frosted' : 'glass'}.glb" position="${vec(centre)}" rotation="0 ${num(w.turn)} 0" scale="${vec([w.width, w.height, 1])}" />`);
+    lines.push(`<model src="models/${w.frosted ? 'frosted' : 'glass'}.glb" label="${w.frosted ? 'Frosted glass' : 'Glass'}" position="${vec(centre)}" rotation="0 ${num(w.turn)} 0" scale="${vec([w.width, w.height, 1])}" />`);
   }
-  for (const s of SCREENS) lines.push(`<model src="models/glass.glb" position="${vec(s.at)}" rotation="0 ${num(s.turn)} 0" scale="${vec([s.width, s.height, 1])}" solid />`);
+  for (const s of SCREENS) lines.push(`<model src="models/glass.glb" label="Glass" position="${vec(s.at)}" rotation="0 ${num(s.turn)} 0" scale="${vec([s.width, s.height, 1])}" solid />`);
   return lines;
 }
 

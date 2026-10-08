@@ -6,7 +6,9 @@ Each fish was fitted for the tank by tools/prepare.mjs: its materials
 made drawable by three.js, turned, sized, and centred, its pictures made
 smaller, where its file had no swim, given a skeleton and one (made
 here), and the great white shark and the mackerel made lighter (fewer
-triangles).
+triangles). Each also has a lighter version for far away,
+<fish>-far.glb, made from it by tools/far.mjs (HoloML 0.3, HyperSpace 3D
+milestone 25), under the same licence.
 
 - shark.glb, Great white shark: "shark.glb" by the Babylon.js authors, https://github.com/BabylonJS/Assets/blob/master/meshes/shark.glb, CC BY 4.0.
 - turtle.glb, Hawksbill sea turtle: "Hawksbill Turtle" by Bindestrek, https://sketchfab.com/3d-models/bd6c9327fd52469782f055a182659bd2, CC BY 4.0.

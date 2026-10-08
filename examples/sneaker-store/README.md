@@ -1,6 +1,6 @@
 # Sneaker store
 
-A sneaker store to walk through, in HoloML 0.2: one shoe, the
+A sneaker store to walk through, in HoloML 0.3: one shoe, the
 Everyday Runner, in ten colourways on the walls of a bright hall. Each
 bay's shoes load as you come near; until then a lighter copy of each
 stands in. Open a shoe to see it close up on a turntable: go around it,
@@ -21,11 +21,15 @@ up).
   counter, and on each shoe's page) opens `checkout.html`.
 
 Published at https://srajpal.github.io/holoml/sneaker-store/ (open
-`index.holoml` there in a browser that shows HoloML 0.2, such as
+`index.holoml` there in a browser that shows HoloML 0.3, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)).
 
-## What it shows of HoloML 0.2
+## What it shows of HoloML
 
+- Compressed models and names (HoloML 0.3): the shoes' shapes are
+  compressed with Draco, so the store downloads less, and the hall's
+  models have names (`label`) for screen readers; each bay's shoes are
+  inside its link, which its panel names.
 - Loading by area: each bay's six shoes are in a `group` with
   `load="near"` and `near="7.5"`. The group loads its models only while
   the viewer is within 7.5 m of it, and lets them go (their memory, and
@@ -56,8 +60,11 @@ other seven are made from its picture. The mark on its heel tab and the
 lettering on its midsole are painted out (its licence leaves out logos
 and trademarks). The hall, the bays, the bench, the counter, the plants,
 the turntable, and the chime are made by `tools/prepare.mjs`. The store
-loads about 2.4 MB in 24 files at first, and each bay's shoes about
-0.7 MB more as you come near.
+loads about 0.8 MB in 24 files at first, and each bay's shoes about
+0.23 MB more as you come near: their shapes are compressed with Draco
+(`tools/compress.mjs`, which `prepare.mjs` runs last; before, 2.4 MB
+at first and 0.7 MB a bay). (A browser reads a compressed model in a page of any version
+that knows the extension.)
 
 ## Making it again
 

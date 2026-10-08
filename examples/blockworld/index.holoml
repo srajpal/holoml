@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>Blockworld</title>
-    <meta name="description" content="A small island of blocks: break them, build with them, and find the five gems hidden in the stone. A HoloML 0.2 game." />
+    <meta name="description" content="A small island of blocks: break them, build with them, and find the five gems hidden in the stone. A HoloML 0.3 game." />
     <meta name="author" content="The HoloML Authors" />
     <script src="game.js" />
   </head>
@@ -23,7 +23,7 @@
     <light id="torch-7" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
     <light id="torch-8" type="point" position="0 -50 0" range="7" intensity="0" color="#ffb450" />
 
-    <model id="chest" src="models/chest.gltf" position="0 -50 0" solid />
+    <model id="chest" src="models/chest.gltf" label="The chest" position="0 -50 0" solid />
 
     <sound id="step-1" src="sounds/step-1.ogg" volume="0.35" />
     <sound id="step-2" src="sounds/step-2.ogg" volume="0.35" />
