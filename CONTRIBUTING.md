@@ -8,7 +8,7 @@ https://srajpal.github.io/holoml/.
 
 ## Set up and test
 
-You need Node.js 22.13 or newer (`.nvmrc` names the line) and pnpm
+You need Node.js 24 (`.nvmrc` names the line; 22.13 or newer still works for now) and pnpm
 12.4.1 (pinned in package.json; `corepack enable` gives you that
 version). Then:
 

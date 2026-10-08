@@ -42,7 +42,7 @@ for fully 3D websites; files use the extension `.holoml`.
 ## Installing
 
 The extension is not in the VS Code Marketplace. Build it from a copy of
-the holoml repository (Node 22.13 or newer, pnpm 12):
+the holoml repository (Node 24, pnpm 12):
 
 ```
 pnpm install --frozen-lockfile

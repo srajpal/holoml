@@ -43,8 +43,10 @@ The rules in the browser repo's AGENTS.md apply here in full. In short:
 9. Keep the README and other docs current with every change.
 10. Mark run and test steps "not checked yet" until they have run here.
 11. Commit after each completed, approved change with a clear message.
-    Do not push unless asked. When five or more commits are waiting to
-    be pushed, remind the owner.
+    Push before starting a milestone and after finishing one, as the
+    browser repository does (owner, prompt 161); otherwise push only
+    when asked. When five or more commits are waiting to be pushed,
+    remind the owner. Never rewrite published history.
 12. One active agent session per working tree at a time. Owner prompts
     are logged in the browser repo's PROMPTS.md; read its last heading
     before appending.
@@ -87,7 +89,9 @@ Where tests live:
 How to run (from the repository root; recorded 2026-09-26 on Windows 11
 after they ran; on Windows and Linux in GitHub Actions,
 .github/workflows/ci.yml):
-- Toolchain: Node 22.13 or newer; pnpm 12.4.1, pinned in package.json.
+- Toolchain: Node 24 (the automatic builds; 22.13 or newer still
+  installs until `engines` is raised, owner, prompt 161); pnpm 12.4.1,
+  pinned in package.json.
 - Install: `pnpm install --frozen-lockfile`
 - Unit, conformance, documentation, site, and extension tests: `pnpm
   test` (Vitest; 834 tests passed on 2026-10-03)
