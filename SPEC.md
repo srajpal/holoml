@@ -1448,6 +1448,13 @@ and true of every version):
   room around the scene, at 0.45 of its full strength; with one, the
   panorama at full strength. Both then follow the ambient lights, as
   `light` says.
+- **Panoramas.** An `environment` and a `sky` are equirectangular
+  pictures: across their width the whole way round (360 degrees), down
+  their height from straight up to straight down (180 degrees). Halfway
+  across, the picture faces +x; a quarter across, it faces -z, the way a
+  viewpoint looks unless told otherwise; three quarters across, +z; and
+  its left and right edges meet at -x. Seen from above, going rightwards
+  across the picture turns clockwise. Its top row is straight up.
 - **The eyes.** The viewer's view is 50 degrees from top to bottom,
   and as wide as the page's window makes it. A renderer MAY leave out
   what is nearer than 0.05 metres to the eyes, or farther than 2,000.
