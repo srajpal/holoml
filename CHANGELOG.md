@@ -15,8 +15,54 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
+HoloML 0.3, first edition, 2026-10-07 (HyperSpace 3D's milestone 25):
+a page says `version="0.3"` to use what is new. What a 0.1 or 0.2 page
+means is unchanged.
+
 ### Added
 
+- HoloML 0.3, in the specification, the grammar (ABNF, RELAX NG, Web
+  IDL), the checker, and the conformance samples:
+  - `label` on `model` and `group`: a name of its own, which screen
+    readers hear in place of its id or its file's name; a link is
+    named by the labels of the models and groups in it too.
+  - `lang` and `dir` on `holoml` and on every element that holds or
+    shows text, taken from the nearest element that says so, as in
+    HTML.
+  - `far` and `far-from` on `model`: a lighter version, shown from
+    that distance on; only what is shown is loaded.
+  - `id` on `animate` and `water`, and more of the scene API: an
+    animation's `start()`, `stop()`, and `running`; the viewer's
+    `place` and `goTo()`, and a `place` event; the water's `color`
+    and `clarity`; the floor plan's `visible`; a model's and a
+    group's `label`; `holoml.add` taking animations, panels, and
+    links, with click actions; and a sound's place taken away
+    (`position = null`).
+- For every version, written down where 0.2 left it to the renderer:
+  how a scene is lit and seen (colour, tone mapping, lights' strength,
+  the light a page without lights gets, the eyes' field of view and
+  reach), which way a panorama faces, the least every renderer must
+  allow (a table of minimum limits), what a further copy of a
+  once-only element is (`too-many`), and that text on both sides of a
+  comment is one text.
+- A guide, [Names and languages](docs/how-to/names-and-languages.md),
+  and additions to the guides on preparing models (compressed models,
+  far versions), big sites, places and plans, doors and lamps, and
+  water.
+- The RELAX NG schema is checked by Jing, the reference validator
+  (tools/jing/, BSD licence; its tests need Java), against every valid
+  sample and the problem samples a grammar can express. It found a
+  fault in the schema made for 0.3 (it allowed one `viewpoint` at
+  most), fixed before this release.
+- The example sites take up 0.3 where it fits them: names for every
+  model a screen reader reaches (Harbour Loft, the ocean tunnel, the
+  sneaker store, the sofa studio, Blockworld), a lighter version of
+  each fish for far away (the ocean tunnel, `tools/far.mjs`), and the
+  sneaker store's shoes compressed with Draco (`tools/compress.mjs`:
+  2.4 MB at first to 0.8 MB). A new short page, Words in a room
+  (examples/words), shows `lang` and `dir` in English, Arabic, and
+  Hebrew. glTF Transform and its Draco encoder are development packages
+  for these tools.
 - A VS Code extension, `packages/vscode` (HyperSpace 3D's milestone 23):
   syntax colours; mistakes as you type, from the parser and the checker;
   suggestions of the elements, attributes, and values the page's version

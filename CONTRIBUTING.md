@@ -10,7 +10,8 @@ https://srajpal.github.io/holoml/.
 
 You need Node.js 24 or newer (`.nvmrc` names the line) and pnpm
 12.4.1 (pinned in package.json; `corepack enable` gives you that
-version). Then:
+version). The RELAX NG checks run Jing, which needs Java; without it
+they are skipped. Then:
 
 ```
 pnpm install --frozen-lockfile
