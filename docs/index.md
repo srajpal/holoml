@@ -70,6 +70,10 @@ in the repository.
   [The ocean tunnel](https://srajpal.github.io/holoml/aquarium/): an
   aquarium to walk through, with 30 fish, water, and feeding.
   [Source](../examples/aquarium/).
+- ![Words in a room: welcome signs in Arabic, English, and Hebrew on three walls](../site/pictures/words.jpg)
+  [Words in a room](https://srajpal.github.io/holoml/words/) (0.3):
+  welcome signs in English, Arabic, and Hebrew, each in its own language
+  and direction. [Source](../examples/words/).
 
 The pictures were taken in HyperSpace 3D; the models in them are
 credited in each site's `models/CREDITS.md`.
