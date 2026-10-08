@@ -7,10 +7,10 @@ walk or orbit around.
 
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
-**Status: experimental; versions 0.1 and 0.2 are written down.** HoloML
-has one renderer so far, and until version 1.0 a later version may
-change or remove what an earlier one has; what a page written for 0.1 or
-0.2 means will not change.
+**Status: experimental; versions 0.1, 0.2, and 0.3 are written down.**
+HoloML has one renderer so far, and until version 1.0 a later version
+may change or remove what an earlier one has; what a page written for
+0.1, 0.2, or 0.3 means will not change.
 [SPEC.md](SPEC.md) describes the language, in the form of W3C
 specifications, with its grammar and its scene API in Web IDL; this
 repository also has a parser, a checker, conformance samples, guides,
@@ -26,7 +26,10 @@ animation of lights, shadows, textured materials, choices that change a
 material in place, light from the surroundings, text of more than one
 line on a board, doors and lamps that work with a click, places to go
 to, a sky, a floor plan, models that load as the viewer comes near,
-water, and sounds from a place. Files use the extension `.holoml`.
+water, and sounds from a place. Version 0.3 gives things names for
+screen readers, a lighter model for far away, text in any language and
+direction, compressed models, and minimum limits that every browser
+meets. Files use the extension `.holoml`.
 
 ## Why a new language
 
@@ -68,7 +71,12 @@ to on one page, a sky, a floor plan on the screen, groups of models
 that load only while the viewer is near, with lighter stand-ins until
 then, water that things are seen through, with light from its waves,
 and sounds that come from a place; a page says `version="0.2"` to use
-them. The syntax is strict: a mistake stops with its line and column.
+them. Version 0.3 adds a `label` that names a model or a group, a
+lighter model shown beyond a distance (`far` and `far-from`), `lang`
+and `dir` on every text element, compressed glTF files (Draco, meshopt,
+and KTX2 pictures), the limits every browser must allow at least, how a
+scene is lit and seen, and more of the scene API (places, animations,
+water, the floor plan, and adding links and panels). The syntax is strict: a mistake stops with its line and column.
 Later versions: movement along paths, physics, and spaces shared by
 several people.
 
@@ -76,7 +84,7 @@ several people.
 
 ```
 holoml/
-  SPEC.md            the language: versions 0.1 and 0.2 (0.2's third edition)
+  SPEC.md            the language: versions 0.1, 0.2, and 0.3
   CHANGELOG.md       what changed with each release
   spec/              its grammar: the syntax in ABNF, the structure in RELAX NG, the scene API in Web IDL
   docs/              the guides: tutorials, how-to guides, reference, and explanation
@@ -86,13 +94,15 @@ holoml/
     schema/          @holoml/schema: checks a tree against the spec and lists problems
     vscode/          the VS Code extension: colours, mistakes as you type, suggestions, hover
   conformance/       sample documents and the result any reader must give for each
+  tools/jing/        Jing, the RELAX NG validator the tests check the schema with (BSD licence)
   examples/
     showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
-    blockworld/      a HoloML 0.2 game: a small island of blocks, sound, day and night, a speed slider
-    sofa-studio/     a HoloML 0.2 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
-    harbour-loft/    a HoloML 0.2 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
-    sneaker-store/   a HoloML 0.2 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart
-    aquarium/        a HoloML 0.2 ocean tunnel: 30 fish swum by a script, water, light from the waves, bubbles, feeding
+    blockworld/      a HoloML 0.3 game: a small island of blocks, sound, day and night, a speed slider
+    sofa-studio/     a HoloML 0.3 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
+    harbour-loft/    a HoloML 0.3 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
+    sneaker-store/   a HoloML 0.2 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart, the shoes compressed with Draco
+    aquarium/        a HoloML 0.3 ocean tunnel: 30 fish swum by a script, lighter far away, water, light from the waves, bubbles, feeding
+    words/           a HoloML 0.3 page: welcome signs in English, Arabic, and Hebrew, each in its own language and direction
     tools/           what the examples' own tools share, and the tests of their scripts (not published)
 ```
 
@@ -101,8 +111,9 @@ https://srajpal.github.io/holoml/showroom/,
 https://srajpal.github.io/holoml/blockworld/,
 https://srajpal.github.io/holoml/sofa-studio/,
 https://srajpal.github.io/holoml/harbour-loft/,
-https://srajpal.github.io/holoml/sneaker-store/, and
-https://srajpal.github.io/holoml/aquarium/. Open an example's
+https://srajpal.github.io/holoml/sneaker-store/,
+https://srajpal.github.io/holoml/aquarium/, and
+https://srajpal.github.io/holoml/words/. Open an example's
 `index.holoml` in a browser that shows HoloML, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
 where they are also listed under "HoloML examples".
@@ -133,8 +144,11 @@ pnpm lint
 pnpm typecheck
 ```
 
-834 unit, conformance, documentation, site, example, and VS Code
-extension tests passed on 2026-10-03 on Windows 11. GitHub Actions runs
+883 unit, conformance, documentation, site, example, and VS Code
+extension tests passed on 2026-10-07 on Windows 11. The RELAX NG
+schema is also checked by Jing, the reference validator (a copy in
+`tools/jing/`), which needs Java (run with Java 17 here); without Java those checks
+are skipped and say so (GitHub's machines have it). GitHub Actions runs
 them on Windows and Linux for every push, and the site is published from
 `main` only after they pass there too. The extension's tests inside a
 real VS Code run with `pnpm --filter holoml-vscode test:vscode` (on a

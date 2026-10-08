@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>Harbour Loft</title>
-    <meta name="description" content="A loft by the harbour to tour: walk through its rooms, open the doors, switch the lamps on, read about each room, see where you are on the plan, and go up to the roof terrace. A HoloML 0.2 page for an estate agent." />
+    <meta name="description" content="A loft by the harbour to tour: walk through its rooms, open the doors, switch the lamps on, read about each room, see where you are on the plan, and go up to the roof terrace. A HoloML 0.3 page for an estate agent." />
     <meta name="author" content="The HoloML Authors" />
     <script src="loft.js" />
   </head>
@@ -227,45 +227,45 @@
       <model src="models/window.glb" position="-6.1 0.9 -2.5" rotation="0 90 0" />
       <model src="models/window-small.glb" position="6.1 1.5 -2.2" rotation="0 -90 0" />
       <model src="models/window.glb" position="6.1 0.9 0.95" rotation="0 -90 0" />
-      <model src="models/sofa.glb" position="-1 0 0.9" solid />
-      <model src="models/pillows.glb" position="-1 0.42 0.72" />
-      <model src="models/rug.glb" position="-1 0 2.05" />
-      <model src="models/coffee-table.glb" position="-1 0 2.15" solid />
-      <model src="models/lounge-chair.glb" position="0.62 0 2.2" rotation="0 -90 0" solid />
-      <model src="models/tall-table.glb" position="0.55 0 3.22" solid />
-      <model src="models/sideboard.glb" position="1.68 0 1.83" rotation="0 -90 0" solid />
-      <model src="models/picture.glb" position="1.935 1.55 1.83" rotation="0 -90 0" />
-      <model src="models/plant.glb" position="1.65 0 3.42" scale="2.8" solid />
-      <model src="models/plant.glb" position="1.7 0.68 2.72" />
-      <model src="models/kitchen.glb" position="-6 0 -1.19" solid />
-      <model src="models/island.glb" position="-3.95 0 0.8" solid />
-      <model src="models/stool.glb" position="-4.55 0 1.47" scale="0.8" solid />
-      <model src="models/stool.glb" position="-3.95 0 1.47" scale="0.8" solid />
-      <model src="models/stool.glb" position="-3.35 0 1.47" scale="0.8" solid />
-      <model src="models/dining-table.glb" position="-4.3 0 2.85" scale="0.85 0.75 0.85" solid />
-      <model src="models/dining-chair.glb" position="-4.3 0 2.1" solid />
-      <model src="models/dining-chair.glb" position="-5.05 0 2.85" rotation="0 90 0" solid />
-      <model src="models/dining-chair.glb" position="-3.55 0 2.85" rotation="0 -90 0" solid />
-      <model src="models/plant.glb" position="-5.68 0 3.42" scale="2.8" solid />
-      <model src="models/desk.glb" position="-5.53 0 -2.53" rotation="0 90 0" solid />
-      <model src="models/desk-chair.glb" position="-4.72 0 -2.5" rotation="0 -90 0" solid />
-      <model src="models/shelves.glb" position="-3.4 0 -3.5" solid />
-      <model src="models/books.glb" position="-3.4 0.125 -3.52" />
-      <model src="models/books-2.glb" position="-3.4 0.625 -3.52" />
-      <model src="models/books.glb" position="-3.35 1.135 -3.52" />
-      <model src="models/books-2.glb" position="-3.45 1.645 -3.52" />
-      <model src="models/plant.glb" position="-5.78 0.79 -1.75" />
-      <model src="models/bed.glb" position="4.1 0 -0.69" solid />
-      <model src="models/bedside-table.glb" position="2.8 0 -0.44" solid />
-      <model src="models/bedside-table.glb" position="5.4 0 -0.44" solid />
-      <model src="models/wardrobe.glb" position="6 0 2.85" rotation="0 -90 0" solid />
-      <model src="models/plant.glb" position="2.45 0 3.42" scale="2.8" solid />
-      <model src="models/bath.glb" position="5.6 0 -2.9" solid />
-      <model src="models/shower.glb" position="5.5 0 -1.31" />
-      <model src="models/vanity.glb" position="3.4 0 -0.81" rotation="0 180 0" solid />
-      <model src="models/toilet.glb" position="2.06 0 -1.6" rotation="0 90 0" solid />
+      <model src="models/sofa.glb" label="Sofa" position="-1 0 0.9" solid />
+      <model src="models/pillows.glb" label="Pillows" position="-1 0.42 0.72" />
+      <model src="models/rug.glb" label="Rug" position="-1 0 2.05" />
+      <model src="models/coffee-table.glb" label="Coffee table" position="-1 0 2.15" solid />
+      <model src="models/lounge-chair.glb" label="Lounge chair" position="0.62 0 2.2" rotation="0 -90 0" solid />
+      <model src="models/tall-table.glb" label="Tall table" position="0.55 0 3.22" solid />
+      <model src="models/sideboard.glb" label="Sideboard" position="1.68 0 1.83" rotation="0 -90 0" solid />
+      <model src="models/picture.glb" label="Picture" position="1.935 1.55 1.83" rotation="0 -90 0" />
+      <model src="models/plant.glb" label="Plant" position="1.65 0 3.42" scale="2.8" solid />
+      <model src="models/plant.glb" label="Plant" position="1.7 0.68 2.72" />
+      <model src="models/kitchen.glb" label="Kitchen" position="-6 0 -1.19" solid />
+      <model src="models/island.glb" label="Kitchen island" position="-3.95 0 0.8" solid />
+      <model src="models/stool.glb" label="Stool" position="-4.55 0 1.47" scale="0.8" solid />
+      <model src="models/stool.glb" label="Stool" position="-3.95 0 1.47" scale="0.8" solid />
+      <model src="models/stool.glb" label="Stool" position="-3.35 0 1.47" scale="0.8" solid />
+      <model src="models/dining-table.glb" label="Dining table" position="-4.3 0 2.85" scale="0.85 0.75 0.85" solid />
+      <model src="models/dining-chair.glb" label="Dining chair" position="-4.3 0 2.1" solid />
+      <model src="models/dining-chair.glb" label="Dining chair" position="-5.05 0 2.85" rotation="0 90 0" solid />
+      <model src="models/dining-chair.glb" label="Dining chair" position="-3.55 0 2.85" rotation="0 -90 0" solid />
+      <model src="models/plant.glb" label="Plant" position="-5.68 0 3.42" scale="2.8" solid />
+      <model src="models/desk.glb" label="Desk" position="-5.53 0 -2.53" rotation="0 90 0" solid />
+      <model src="models/desk-chair.glb" label="Desk chair" position="-4.72 0 -2.5" rotation="0 -90 0" solid />
+      <model src="models/shelves.glb" label="Shelves" position="-3.4 0 -3.5" solid />
+      <model src="models/books.glb" label="Books" position="-3.4 0.125 -3.52" />
+      <model src="models/books-2.glb" label="Books" position="-3.4 0.625 -3.52" />
+      <model src="models/books.glb" label="Books" position="-3.35 1.135 -3.52" />
+      <model src="models/books-2.glb" label="Books" position="-3.45 1.645 -3.52" />
+      <model src="models/plant.glb" label="Plant" position="-5.78 0.79 -1.75" />
+      <model src="models/bed.glb" label="Bed" position="4.1 0 -0.69" solid />
+      <model src="models/bedside-table.glb" label="Bedside table" position="2.8 0 -0.44" solid />
+      <model src="models/bedside-table.glb" label="Bedside table" position="5.4 0 -0.44" solid />
+      <model src="models/wardrobe.glb" label="Wardrobe" position="6 0 2.85" rotation="0 -90 0" solid />
+      <model src="models/plant.glb" label="Plant" position="2.45 0 3.42" scale="2.8" solid />
+      <model src="models/bath.glb" label="Bath" position="5.6 0 -2.9" solid />
+      <model src="models/shower.glb" label="Shower" position="5.5 0 -1.31" />
+      <model src="models/vanity.glb" label="Vanity" position="3.4 0 -0.81" rotation="0 180 0" solid />
+      <model src="models/toilet.glb" label="Toilet" position="2.06 0 -1.6" rotation="0 90 0" solid />
       <model src="models/bath-tiles.glb" position="0 0 0" />
-      <model src="models/plant.glb" position="-1.62 0 -3.42" scale="2.8" solid />
+      <model src="models/plant.glb" label="Plant" position="-1.62 0 -3.42" scale="2.8" solid />
     </group>
     <!-- The glass: outside the shadows, so the sun comes through. -->
     <model src="models/glass.glb" position="-4.6 1.5 3.85" rotation="0 180 0" scale="1.6 2.4 1" />

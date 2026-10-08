@@ -10,7 +10,9 @@
 // - models/shoe.glb (the shoe page's shoe, its pictures at 1024 pixels),
 //   models/shoe-<colour>.glb (the store's, at 512), and
 //   models/shoe-<colour>-far.glb (their stand-ins: about a ninth of the
-//   triangles, and a picture of 64 pixels);
+//   triangles, and a picture of 64 pixels), all with their shapes
+//   compressed with Draco by compress.mjs, last (HyperSpace 3D milestone
+//   25);
 // - colours/<colour>.jpg (the shoe page's colour choice);
 // - the store's room, walls, bays, bench, counter, plants, and entrance,
 //   and the shoe page's turntable, each one .glb file;
@@ -754,7 +756,7 @@ repository's licence (Apache 2.0).
 }
 
 // Not awaited at the top: Electron fires "ready" only once this module has loaded.
-void app.whenReady().then(() => {
+void app.whenReady().then(async () => {
   try {
     const problem = cacheProblem(cache, ['shoe'], 'examples/sneaker-store/tools/download.mjs');
     if (problem) throw new Error(problem);
@@ -791,6 +793,8 @@ void app.whenReady().then(() => {
     shoePage();
     putInPlace(making.models, MODELS);
     putInPlace(making.colours, COLOURS);
+    // The shoes' shapes compressed with Draco (milestone 25), in place.
+    await import('./compress.mjs');
     console.log(`the shoe: ${sizes.triangles} triangles, its stand-in ${sizes.standInTriangles}; the colourways' models ${(total / 1048576).toFixed(1)} MB`);
     console.log('done');
   } catch (e) {

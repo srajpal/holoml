@@ -57,7 +57,10 @@ lettering on its midsole are painted out (its licence leaves out logos
 and trademarks). The hall, the bays, the bench, the counter, the plants,
 the turntable, and the chime are made by `tools/prepare.mjs`. The store
 loads about 2.4 MB in 24 files at first, and each bay's shoes about
-0.7 MB more as you come near.
+0.23 MB more as you come near: their shapes are compressed with Draco
+(`tools/compress.mjs`, which `prepare.mjs` runs last; 0.7 MB a bay
+before). The store's page stays HoloML 0.2: a browser reads a
+compressed model in a page of any version that knows the extension.
 
 ## Making it again
 

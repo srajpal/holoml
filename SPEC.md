@@ -912,6 +912,11 @@ the viewer asked for reduced motion).
 A renderer SHOULD show which things are links, for example by the
 pointer and a highlight.
 
+The keyboard and screen readers reach a link by its words: the text of
+the labels and the first paragraph of the panels in it, in order, and
+(0.3) the `label` of the models and groups in it. A renderer SHOULD name
+a link with none of these by its address.
+
 ```holoml-scene
 <a href="coupe.holoml">
   <model src="models/coupe.glb" />

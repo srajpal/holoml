@@ -9,7 +9,7 @@ shows the scene as a space to orbit or walk around.
 
 HoloML is experimental. It has one renderer so far, HyperSpace 3D, and
 until version 1.0 a later version may change or remove what an earlier
-one has. What a page written for 0.1 or 0.2 means will not change.
+one has. What a page written for 0.1, 0.2, or 0.3 means will not change.
 
 ```holoml
 <holoml version="0.2">
@@ -30,7 +30,7 @@ one has. What a page written for 0.1 or 0.2 means will not change.
 
 ## Read
 
-- [The specification](../SPEC.md): HoloML 0.2, the language as a
+- [The specification](../SPEC.md): HoloML 0.3, the language as a
   standard, with its grammar and the scene API.
 - [Tutorials](tutorials/index.md): lessons that build a first page, then
   a first script.

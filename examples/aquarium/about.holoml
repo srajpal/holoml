@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>About the ocean tunnel</title>
-    <meta name="description" content="What this aquarium is, what it shows of HoloML 0.2, what it is made of, and where to find HoloML." />
+    <meta name="description" content="What this aquarium is, what it shows of HoloML 0.3, what it is made of, and where to find HoloML." />
     <meta name="author" content="The HoloML Authors" />
   </head>
   <scene background="#0e2633">
@@ -21,7 +21,7 @@
     <panel position="-0.62 1.6 -0.7" width="1.1" size="0.04" color="#1f2328" background="#f4f7f8">
       About this aquarium
 
-      The ocean tunnel is an example of HoloML 0.2, an open markup language for 3D pages. The tank, the tunnel, the gallery, the rocks, the plants, and this page are written in HoloML: the water that everything is seen through, the light that plays over the sand, the bubbles heard from where they rise, the places to go to, and the Feed button. One script swims the fish, lets the bubbles rise, and drops the food.
+      The ocean tunnel is an example of HoloML 0.3, an open markup language for 3D pages. The tank, the tunnel, the gallery, the rocks, the plants, and this page are written in HoloML: the water that everything is seen through, the light that plays over the sand, the bubbles heard from where they rise, the places to go to, and the Feed button. One script swims the fish, lets the bubbles rise, and drops the food.
 
       The fish are real kinds, and what the board says of them is true; the aquarium is made up.
     </panel>

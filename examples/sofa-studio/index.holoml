@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>Sofa studio</title>
-    <meta name="description" content="A sofa in a sunlit room: choose its fabric and its wood in place, see the price follow, and switch to evening light. A HoloML 0.2 shop page." />
+    <meta name="description" content="A sofa in a sunlit room: choose its fabric and its wood in place, see the price follow, and switch to evening light. A HoloML 0.3 shop page." />
     <meta name="author" content="The HoloML Authors" />
     <script src="studio.js" />
   </head>
@@ -17,17 +17,17 @@
     <light id="lamp-glow" type="point" position="1.13 0.86 -0.45" range="1.6" intensity="0" color="#ffb45e" />
 
     <group shadows>
-      <model src="models/room.gltf">
+      <model src="models/room.gltf" label="The studio">
         <material name="Wall" color="#d6cdc0" />
       </model>
-      <model src="models/rug.gltf" position="0 0 0.45" />
+      <model src="models/rug.gltf" label="Rug" position="0 0 0.45" />
       <!-- The sofa: its "Fabric" and "Wood" materials are what the choices change. -->
-      <model id="sofa" src="models/sofa.gltf" position="0 0 -0.42" />
-      <model src="models/coffee-table.gltf" position="-0.3 0 0.95" rotation="0 90 0" />
-      <model src="models/vase.gltf" position="-0.62 0.39 0.93" />
-      <model src="models/side-table.gltf" position="1.2 0 -0.45" />
-      <model src="models/lamp.gltf" position="1.2 0.548 -0.5" rotation="0 -30 0" />
-      <model src="models/plant.gltf" position="-1.4 0 -0.45" />
+      <model id="sofa" src="models/sofa.gltf" label="Sofa" position="0 0 -0.42" />
+      <model src="models/coffee-table.gltf" label="Coffee table" position="-0.3 0 0.95" rotation="0 90 0" />
+      <model src="models/vase.gltf" label="Vase" position="-0.62 0.39 0.93" />
+      <model src="models/side-table.gltf" label="Side table" position="1.2 0 -0.45" />
+      <model src="models/lamp.gltf" label="Lamp" position="1.2 0.548 -0.5" rotation="0 -30 0" />
+      <model src="models/plant.gltf" label="Plant" position="-1.4 0 -0.45" />
     </group>
 
     <!-- The links, above the sofa: clear of the choices in the screen's corners (lighter in the evening, studio.js). -->

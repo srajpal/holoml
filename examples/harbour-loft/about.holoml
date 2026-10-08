@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>About Harbour Loft</title>
-    <meta name="description" content="What this tour is, what it shows of HoloML 0.2, what it is made of, and where to find HoloML." />
+    <meta name="description" content="What this tour is, what it shows of HoloML 0.3, what it is made of, and where to find HoloML." />
     <meta name="author" content="The HoloML Authors" />
   </head>
   <scene background="#9fb4c4" sky="light/sky.jpg" environment="light/harbour.hdr">
@@ -15,7 +15,7 @@
     <panel position="-0.62 1.62 -0.7" width="1.1" size="0.042" color="#1f2328" background="#f7f4ee">
       About this tour
 
-      Harbour Loft is an example of HoloML 0.2, an open markup language for 3D pages. The flat, its roof terrace, and this page are written in HoloML: the rooms and their light, the panels, the doors and lamps that work with a click, the places to go to, and the floor plan. A short script, loft.js, turns the day to evening.
+      Harbour Loft is an example of HoloML 0.3, an open markup language for 3D pages. The flat, its roof terrace, and this page are written in HoloML: the rooms and their light, the panels, the doors and lamps that work with a click, the places to go to, and the floor plan. A short script, loft.js, turns the day to evening.
 
       The flat, its price, and the agent are made up. The booking page sends nothing.
     </panel>

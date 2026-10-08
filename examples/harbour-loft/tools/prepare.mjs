@@ -52,6 +52,37 @@ const BOUNDS = new Map();
 // ---- Pictures ------------------------------------------------------------------
 
 /** A JPEG again at web quality, at most `size` pixels wide (normal maps a little higher: their errors show as bumps). */
+
+/** The furniture's names (HoloML 0.3 `label`, milestone 25), by model file; walls, glass, and the like have none. */
+const NAMES = {
+  sofa: 'Sofa',
+  'lounge-chair': 'Lounge chair',
+  'coffee-table': 'Coffee table',
+  rug: 'Rug',
+  plant: 'Plant',
+  stool: 'Stool',
+  'dining-chair': 'Dining chair',
+  'dining-table': 'Dining table',
+  books: 'Books',
+  'books-2': 'Books',
+  'bedside-table': 'Bedside table',
+  wardrobe: 'Wardrobe',
+  vanity: 'Vanity',
+  toilet: 'Toilet',
+  'tall-table': 'Tall table',
+  sideboard: 'Sideboard',
+  shower: 'Shower',
+  shelves: 'Shelves',
+  pillows: 'Pillows',
+  picture: 'Picture',
+  kitchen: 'Kitchen',
+  island: 'Kitchen island',
+  desk: 'Desk',
+  'desk-chair': 'Desk chair',
+  bed: 'Bed',
+  bath: 'Bath'
+};
+
 function reencode(from, quality, size = 1024) {
   let image = nativeImage.createFromPath(from);
   if (image.isEmpty()) throw new Error(`${from}: not a picture Electron can read`);
@@ -986,7 +1017,9 @@ function markup() {
   for (const f of FURNITURE) {
     const turn = f.turn ? ` rotation="0 ${num(f.turn)} 0"` : '';
     const scale = f.scale === undefined ? '' : ` scale="${Array.isArray(f.scale) ? vec(f.scale) : num(f.scale)}"`;
-    lines.push(`  <model src="models/${f.src}.glb" position="${vec(f.at)}"${turn}${scale}${f.solid ? ' solid' : ''} />`);
+    // HoloML 0.3 (milestone 25): the furniture named for screen readers and the text view.
+    const label = NAMES[f.src] ? ` label="${NAMES[f.src]}"` : '';
+    lines.push(`  <model src="models/${f.src}.glb"${label} position="${vec(f.at)}"${turn}${scale}${f.solid ? ' solid' : ''} />`);
   }
   lines.push('</group>');
   lines.push("<!-- The glass: outside the shadows, so the sun comes through. -->");
