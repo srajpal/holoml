@@ -1,7 +1,7 @@
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>Harbour Loft: the roof terrace</title>
-    <meta name="description" content="Harbour Loft's roof terrace, with the whole harbour around it. A HoloML 0.2 page." />
+    <meta name="description" content="Harbour Loft's roof terrace, with the whole harbour around it. A HoloML 0.3 page." />
     <meta name="author" content="The HoloML Authors" />
     <script src="loft.js" />
   </head>
@@ -16,22 +16,22 @@
     <light id="sun" type="directional" position="10.4 11.8 12.4" look-at="0 0 0" intensity="3" color="#fff1dc" shadows />
 
     <group shadows>
-      <model src="models/deck.glb" />
-      <model src="models/stair-house.glb" solid />
-      <model src="models/outdoor-set.glb" position="3 0 -1.4" rotation="0 90 0" solid />
-      <model src="models/lounger.glb" position="-0.6 0 0.5" solid />
-      <model src="models/lounger.glb" position="0.4 0 0.5" solid />
-      <model src="models/planter.glb" position="-0.4 0 -2.85" solid />
-      <model src="models/planter.glb" position="1.2 0 -2.85" solid />
-      <model src="models/planter.glb" position="4.15 0 1.8" rotation="0 90 0" solid />
+      <model src="models/deck.glb" label="Deck" />
+      <model src="models/stair-house.glb" label="Stair house" solid />
+      <model src="models/outdoor-set.glb" label="Table and chairs" position="3 0 -1.4" rotation="0 90 0" solid />
+      <model src="models/lounger.glb" label="Lounger" position="-0.6 0 0.5" solid />
+      <model src="models/lounger.glb" label="Lounger" position="0.4 0 0.5" solid />
+      <model src="models/planter.glb" label="Planter" position="-0.4 0 -2.85" solid />
+      <model src="models/planter.glb" label="Planter" position="1.2 0 -2.85" solid />
+      <model src="models/planter.glb" label="Planter" position="4.15 0 1.8" rotation="0 90 0" solid />
     </group>
 
     <!-- Glass railings on every side, each its own solid model (one
          around the whole deck would hold the walker inside its box). -->
-    <model src="models/railing.glb" position="-4.5 0 3.2" scale="9 1 1" solid />
-    <model src="models/railing.glb" position="4.5 0 3.2" rotation="0 90 0" scale="6.4 1 1" solid />
-    <model src="models/railing.glb" position="-1.9 0 -3.2" scale="6.4 1 1" solid />
-    <model src="models/railing.glb" position="-4.5 0 3.2" rotation="0 90 0" scale="4.2 1 1" solid />
+    <model src="models/railing.glb" label="Railing" position="-4.5 0 3.2" scale="9 1 1" solid />
+    <model src="models/railing.glb" label="Railing" position="4.5 0 3.2" rotation="0 90 0" scale="6.4 1 1" solid />
+    <model src="models/railing.glb" label="Railing" position="-1.9 0 -3.2" scale="6.4 1 1" solid />
+    <model src="models/railing.glb" label="Railing" position="-4.5 0 3.2" rotation="0 90 0" scale="4.2 1 1" solid />
 
     <panel position="-1.885 1.5 -2.05" rotation="0 90 0" width="0.9" size="0.05" color="#1f2328" background="#f7f4ee">
       Roof terrace, 50 m²

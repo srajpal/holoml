@@ -1,6 +1,6 @@
 # Harbour Loft
 
-A flat to tour, for an estate agent, in HoloML 0.2: the top floor
+A flat to tour, for an estate agent, in HoloML 0.3: the top floor
 of an old sail loft on a harbour. Walk through its rooms, open the doors,
 switch the lamps on, read about each room on a panel, see where you are
 on the floor plan, look out at the marina, go up to the roof terrace, and
@@ -21,11 +21,14 @@ book a viewing (the flat, its price, and the agent are made up).
   with a fade, and the stair house's door there comes back down.
 
 Published at https://srajpal.github.io/holoml/harbour-loft/ (open
-`index.holoml` there in a browser that shows HoloML 0.2, such as
+`index.holoml` there in a browser that shows HoloML 0.3, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)).
 
-## What it shows of HoloML 0.2
+## What it shows of HoloML
 
+- Names (HoloML 0.3): every model and door has a `label` ("Sofa",
+  "Study door", "Tall window"), which screen readers say and the page's
+  list of things shows, in place of a file's name.
 - `panel`: the estate agent's words on a board in each room, wrapped to
   the board's width, with paragraphs; Find in page, screen readers, and
   the text view read them. Panels in a link are the page's buttons.

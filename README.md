@@ -100,7 +100,7 @@ holoml/
     blockworld/      a HoloML 0.3 game: a small island of blocks, sound, day and night, a speed slider
     sofa-studio/     a HoloML 0.3 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
     harbour-loft/    a HoloML 0.3 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace
-    sneaker-store/   a HoloML 0.2 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart, the shoes compressed with Draco
+    sneaker-store/   a HoloML 0.3 shop: a shoe in ten colourways on shelves that load as you come near, a turntable, a cart, the shoes compressed with Draco
     aquarium/        a HoloML 0.3 ocean tunnel: 30 fish swum by a script, lighter far away, water, light from the waves, bubbles, feeding
     words/           a HoloML 0.3 page: welcome signs in English, Arabic, and Hebrew, each in its own language and direction
     tools/           what the examples' own tools share, and the tests of their scripts (not published)

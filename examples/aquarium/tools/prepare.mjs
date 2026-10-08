@@ -429,12 +429,12 @@ const FAR_FROM = 10;
 
 function page() {
   const decorLines = [
-    ...[...ROCKS, ...ROCKWORK].map((r) => `<model src="models/boulder.glb" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
-    ...LOGS.map((r) => `<model src="models/log.glb" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
-    ...SHELLS.map((r) => `<model src="models/shell.glb" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
-    ...AIRSTONES.map((a) => `<model src="models/airstone.glb" position="${vec(...a)}" />`),
+    ...[...ROCKS, ...ROCKWORK].map((r) => `<model src="models/boulder.glb" label="Rock" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
+    ...LOGS.map((r) => `<model src="models/log.glb" label="Log" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
+    ...SHELLS.map((r) => `<model src="models/shell.glb" label="Shell" position="${vec(...r.at)}" rotation="0 ${fixed(r.turn)} 0" scale="${fixed(r.scale)}" />`),
+    ...AIRSTONES.map((a) => `<model src="models/airstone.glb" label="Air stone" position="${vec(...a)}" />`),
   ];
-  const plantLines = PLANTS.map((p) => `<model src="models/${p.kind}.glb" position="${vec(...p.at)}" rotation="0 ${fixed(p.turn)} 0" animation="Sway" autoplay />`);
+  const plantLines = PLANTS.map((p) => `<model src="models/${p.kind}.glb" label="${p.kind === 'kelp' ? 'Kelp' : 'Seagrass'}" position="${vec(...p.at)}" rotation="0 ${fixed(p.turn)} 0" animation="Sway" autoplay />`);
   const soundLines = AIRSTONES.map((a, i) => `<sound id="bubbler-${i + 1}" src="sounds/bubbles.wav" position="${vec(a[0], a[1] + 0.3, a[2])}" range="9" volume="0.8" loop autoplay />`);
   const fishLines = [];
   const buttons = [];

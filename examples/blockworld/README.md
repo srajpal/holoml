@@ -1,6 +1,6 @@
 # Blockworld
 
-A very small block game in HoloML 0.2: an island of blocks made
+A very small block game in HoloML 0.3: an island of blocks made
 by the page's script from a seed. Break blocks, place them, and find the
 five gems hidden in the stone before bringing them to the chest. A day
 lasts four minutes; at night, torches give light.
@@ -19,11 +19,13 @@ lasts four minutes; at night, torches give light.
   start in the evening. With reduced motion, the clock stands still.
 
 Published at https://srajpal.github.io/holoml/blockworld/ (open
-`index.holoml` there in a browser that shows HoloML 0.2, such as
+`index.holoml` there in a browser that shows HoloML 0.3, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)).
 
-## What it shows of HoloML 0.2
+## What it shows of HoloML
 
+- Names (HoloML 0.3): the chest has a `label`, "The chest", which
+  screen readers say and the page's list of things shows.
 - `index.holoml` holds the sky, the sun, eight torch lights, the chest,
   the sounds, and the text on the screen (`hud`); `game.js` does the
   rest through the scene API (`holoml`, SPEC.md section 10): it adds the

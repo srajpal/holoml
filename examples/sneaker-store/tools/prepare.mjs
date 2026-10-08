@@ -677,8 +677,8 @@ function storePage() {
       `      </a>`,
       `    </group>`,
     );
-    bayModels.push(`      <model src="models/bay.glb" position="${vec(b.wallX, 0, b.z)}" rotation="0 ${b.turn} 0" />`);
-    ledges.push(`      <model src="models/ledge.glb" position="${vec(b.wallX, 0, b.z)}" rotation="0 ${b.turn} 0" />`);
+    bayModels.push(`      <model src="models/bay.glb" label="Shelf bay" position="${vec(b.wallX, 0, b.z)}" rotation="0 ${b.turn} 0" />`);
+    ledges.push(`      <model src="models/ledge.glb" label="Ledge" position="${vec(b.wallX, 0, b.z)}" rotation="0 ${b.turn} 0" />`);
   }
   between('index.holoml', '<!-- prepare.mjs: the places and the shelves', '<!-- end of prepare.mjs', [...places, '', ...shelves]);
   between('index.holoml', '<!-- prepare.mjs: the bays', '<!-- end of the bays', bayModels);
