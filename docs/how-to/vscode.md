@@ -7,7 +7,7 @@ it does while you type, and what it leaves to the browser.
 ## Install the extension
 
 The extension is not in the VS Code Marketplace; it is built from the
-holoml repository and installed from a file. You need Node 22.13 or
+holoml repository and installed from a file. You need Node 24 or
 newer, pnpm 12, and VS Code 1.96 or newer.
 
 1. In a copy of the repository, install its packages and make the

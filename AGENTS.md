@@ -89,9 +89,8 @@ Where tests live:
 How to run (from the repository root; recorded 2026-09-26 on Windows 11
 after they ran; on Windows and Linux in GitHub Actions,
 .github/workflows/ci.yml):
-- Toolchain: Node 24 (the automatic builds; 22.13 or newer still
-  installs until `engines` is raised, owner, prompt 161); pnpm 12.4.1,
-  pinned in package.json.
+- Toolchain: Node 24 or newer (the automatic builds run 24; owner,
+  prompts 161 and 164); pnpm 12.4.1, pinned in package.json.
 - Install: `pnpm install --frozen-lockfile`
 - Unit, conformance, documentation, site, and extension tests: `pnpm
   test` (Vitest; 834 tests passed on 2026-10-03)
