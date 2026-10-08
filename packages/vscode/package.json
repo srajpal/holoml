@@ -102,7 +102,7 @@
     "@vscode/vsce": "4.0.0",
     "esbuild": "0.28.2",
     "vscode-oniguruma": "2.0.1",
-    "vscode-textmate": "7.0.4",
+    "vscode-textmate": "9.3.2",
     "vscode-tmgrammar-test": "0.1.3"
   }
 }
