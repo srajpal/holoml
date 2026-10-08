@@ -1,9 +1,13 @@
 // Makes each fish's lighter version for far away (HyperSpace 3D milestone
 // 25, Q6 a; HoloML 0.3's `far`): models/<fish>-far.glb, from
-// models/<fish>.glb, with about a fifth of its triangles and its pictures
-// at 256 pixels at most, by glTF Transform (`simplify`, then `resize`). It
-// keeps the fish's skeleton and its "Swim" animation, so a far fish swims
-// as a near one does. The fish's licences and credits are its model's
+// models/<fish>.glb, with under a third of its triangles (about a fifth;
+// the mackerel, whose seams hold on to its corners, 29 per cent) and its
+// pictures at 256 pixels at most, by glTF Transform (`weld`, `simplify`,
+// then `resize`). `simplify`'s ratio counts corners, not triangles, so a
+// fish still too heavy is simplified again with a smaller ratio; a fish
+// that never gets light enough stops the tool. It keeps the fish's
+// skeleton and its "Swim" animation, so a far fish swims as a near one
+// does. The fish's licences and credits are its model's
 // (models/CREDITS.md).
 //
 //   node examples/aquarium/tools/far.mjs
@@ -35,10 +39,18 @@ try {
   for (const fish of FISH) {
     const near = join(MODELS, `${fish}.glb`);
     const far = join(MODELS, `${fish}-far.glb`);
+    const welded = join(work, `${fish}-welded.glb`);
     const simpler = join(work, `${fish}.glb`);
-    run('simplify', near, simpler, '--ratio', '0.2', '--error', '0.01');
+    run('weld', near, welded);
+    const a = facts(near);
+    // Under a third of the triangles: a smaller ratio each time, down to 0.05.
+    for (let ratio = 0.2; ; ratio = Math.round((ratio - 0.05) * 100) / 100) {
+      run('simplify', welded, simpler, '--ratio', String(ratio), '--error', '0.01');
+      if (facts(simpler).triangles < a.triangles / 3) break;
+      if (ratio <= 0.05) throw new Error(`${fish}: not light enough at a ratio of ${ratio}`);
+    }
     run('resize', simpler, far, '--width', '256', '--height', '256');
-    const [a, b] = [facts(near), facts(far)];
+    const b = facts(far);
     // What a far fish must keep: its skeleton and its animation.
     if (b.skins !== a.skins || b.animations.join() !== a.animations.join()) throw new Error(`${fish}: the far version lost its skeleton or its animation`);
     console.log(`${fish}: ${a.triangles} triangles to ${b.triangles}; ${(statSync(near).size / 1024).toFixed(0)} KB to ${(statSync(far).size / 1024).toFixed(0)} KB`);

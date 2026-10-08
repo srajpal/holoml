@@ -62,7 +62,7 @@
       <panel position="1.25 1.5 -3.735" width="0.5" size="0.06" color="#ffffff" background="#5b6472">About this tour</panel>
     </a>
     <a href="terrace.holoml">
-      <model id="stairs-door" src="models/door.glb" label="Door to the roof terrace" position="-6.1 0 0.42" rotation="0 -90 0">
+      <model id="stairs-door" src="models/door.glb" position="-6.1 0 0.42" rotation="0 -90 0">
         <material name="DoorPaint" color="#2f3d36" />
       </model>
       <panel position="-5.985 1.6 1.95" rotation="0 90 0" width="0.62" size="0.05" color="#f7f4ee" background="#2f3d36">Up to the roof terrace</panel>

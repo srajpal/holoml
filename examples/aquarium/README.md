@@ -28,9 +28,9 @@ Published at https://srajpal.github.io/holoml/aquarium/ (open
 ## What it shows of HoloML
 
 - A lighter fish far away (HoloML 0.3): each fish has `far`, a version
-  with about a fifth of its triangles and smaller pictures, drawn from
-  `far-from` (10 m) on, so the tank draws much less of what is too far
-  to see well. A fish keeps its swim either way.
+  with about a fifth of its triangles (the mackerel, 29 per cent) and
+  smaller pictures, drawn from `far-from` (10 m) on, so the tank draws
+  much less of what is too far to see well. A fish keeps its swim either way.
 - Names (HoloML 0.3): each fish has a `label`, its kind, which screen
   readers say and the page's list of things shows.
 

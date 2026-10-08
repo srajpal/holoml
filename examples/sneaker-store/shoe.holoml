@@ -36,8 +36,8 @@
       <model src="models/studio.glb" label="Studio" />
       <model src="models/turntable.glb" label="Turntable" />
       <!-- The shoe turns on the turntable (spin); turned over, about its middle (flip). -->
-      <group id="spin" position="0 0.035 0">
-        <group id="flip" position="0 0.077 0">
+      <group id="spin" label="On the turntable" position="0 0.035 0">
+        <group id="flip" label="The shoe" position="0 0.077 0">
           <model id="shoe" src="models/shoe.glb" label="Everyday Runner" position="-0.0016 -0.077 -0.0048" />
         </group>
       </group>
