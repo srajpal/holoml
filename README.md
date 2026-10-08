@@ -96,7 +96,7 @@ holoml/
   conformance/       sample documents and the result any reader must give for each
   tools/jing/        Jing, the RELAX NG validator the tests check the schema with (BSD licence)
   examples/
-    showroom/        a HoloML 0.1 site: five cars in a hall, each to walk around
+    showroom/        a HoloML 0.3 site without scripts: five cars in a hall, each to walk around
     blockworld/      a HoloML 0.3 game: a small island of blocks, sound, day and night, a speed slider
     sofa-studio/     a HoloML 0.3 shop page: a sofa whose fabric and wood change in place, shadows, a studio's light
     harbour-loft/    a HoloML 0.3 flat to tour: panels, doors and lamps to click, places, a sky, a floor plan, a roof terrace

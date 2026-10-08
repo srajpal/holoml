@@ -1,4 +1,4 @@
-<holoml version="0.1">
+<holoml version="0.3" lang="en">
   <head>
     <title>About the HoloML showroom</title>
     <meta name="description" content="What this showroom is, what it is made of, and where to find HoloML." />
@@ -7,10 +7,10 @@
   <scene background="#07090f">
     <viewpoint position="0 2 9" look-at="0 2 0" mode="orbit" />
     <light type="ambient" intensity="0.6" />
-    <model src="models/hall.gltf" />
+    <model src="models/hall.gltf" label="The hall" />
 
     <label position="0 4.4 0" size="0.6" color="#7fd8ff">About this showroom</label>
-    <label position="0 3.6 0" size="0.22">Every page here is HoloML 0.1: plain markup, like HTML, for 3D.</label>
+    <label position="0 3.6 0" size="0.22">Every page here is HoloML 0.3: plain markup, like HTML, for 3D.</label>
     <label position="0 3.2 0" size="0.22">Models, lights, labels, links, colours, and the turntable are all written in the page.</label>
     <label position="0 2.8 0" size="0.22">The cars come from Kenney's Car Kit (kenney.nl, CC0). Their names and numbers are made up.</label>
     <label position="0 2.4 0" size="0.22">The hall and plinths were made for this showroom.</label>

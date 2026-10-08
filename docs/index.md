@@ -47,7 +47,7 @@ Each is a HoloML site you can open in HyperSpace 3D, and its source is
 in the repository.
 
 - ![The showroom: five cars in a round hall](../site/pictures/showroom.jpg)
-  [The showroom](https://srajpal.github.io/holoml/showroom/) (0.1): five
+  [The showroom](https://srajpal.github.io/holoml/showroom/): five
   cars in a round hall, one on a turntable, each to walk around in three
   colours. [Source](../examples/showroom/).
 - ![Blockworld: an island of blocks, from above one corner](../site/pictures/blockworld.jpg)

@@ -1,4 +1,4 @@
-<holoml version="0.1">
+<holoml version="0.3" lang="en">
   <head>
     <title>HoloML showroom</title>
     <meta name="description" content="Five cars in a round hall. Orbit around them, and choose one to walk around it." />
@@ -8,7 +8,7 @@
     <viewpoint position="0 3 15" look-at="0 1.8 -3" mode="orbit" />
     <light type="ambient" intensity="0.3" />
     <light type="directional" position="6 14 12" look-at="0 0 0" intensity="0.6" />
-    <model src="models/hall.gltf" />
+    <model src="models/hall.gltf" label="The hall" />
 
     <label position="0 5.2 -13" size="1" color="#7fd8ff">HoloML showroom</label>
     <label position="0 4.2 -13" size="0.4">Choose a car to walk around it</label>

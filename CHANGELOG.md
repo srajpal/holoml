@@ -56,7 +56,8 @@ means is unchanged.
   most), fixed before this release.
 - The example sites take up 0.3 where it fits them: names for every
   model a screen reader reaches (Harbour Loft, the ocean tunnel, the
-  sneaker store, the sofa studio, Blockworld), a lighter version of
+  sneaker store, the sofa studio, Blockworld, and the showroom, a 0.1
+  site until now), a lighter version of
   each fish for far away (the ocean tunnel, `tools/far.mjs`), and the
   sneaker store's shoes compressed with Draco (`tools/compress.mjs`:
   2.4 MB at first to 0.8 MB). A new short page, Words in a room
