@@ -7,7 +7,7 @@ example sites. The format follows
 
 A release has two numbers. The language's version (0.1, 0.2) is what a
 page declares, and what a page written for it means does not change.
-The release's own number (0.2.2) counts the editions of the
+The release's own number (0.2.2, 0.3.0) counts the editions of the
 specification and the fixes to the parser and the checker between
 language versions; [Versions](docs/explanation/versions.md) explains
 both. The specification's own list of changes is its
@@ -15,7 +15,10 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
-HoloML 0.3, first edition, 2026-10-07 (HyperSpace 3D's milestone 25):
+## [0.3.0] - 2026-10-08
+
+HoloML 0.3, first edition, 2026-10-07 (HyperSpace 3D's milestone 25),
+tagged v0.3.0 on 2026-10-08:
 a page says `version="0.3"` to use what is new. What a 0.1 or 0.2 page
 means is unchanged.
 
@@ -280,7 +283,8 @@ lights, labels, links, materials, the animation of position, rotation,
 and scale, and orbiting and walking; the parser, the checker, and the
 conformance samples.
 
-[Unreleased]: https://github.com/srajpal/holoml/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/srajpal/holoml/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/srajpal/holoml/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/srajpal/holoml/compare/v0.2.0...v0.2.2
 [0.2.1]: https://github.com/srajpal/holoml/compare/v0.2.0...v0.2.2
 [0.2.0]: https://github.com/srajpal/holoml/compare/v0.1.1...v0.2.0
