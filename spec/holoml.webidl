@@ -1,4 +1,4 @@
-// HoloML 0.2: the scene API (SPEC.md section 10), in Web IDL. A page's
+// HoloML 0.3: the scene API (SPEC.md section 10), in Web IDL. A page's
 // scripts reach it as the global `holoml`. Vectors are arrays of three
 // numbers: metres for positions, degrees for rotations. One that a
 // thing or the viewer gives is frozen (FrozenArray): a script sets the
@@ -30,6 +30,10 @@ interface HoloMLViewer {
   undefined lookAt(sequence<double> point);
   attribute double speed;
   attribute double turnSpeed;
+  // (0.3) The id of the place the viewer last arrived at, or null.
+  readonly attribute DOMString? place;
+  // (0.3) Goes to the place with this id; any other id is an error.
+  undefined goTo(DOMString id);
 };
 
 // Where a click or the crosshair hit: `point` and `normal` are in the
@@ -53,6 +57,8 @@ dictionary HoloMLEvent {
   double dt;
   (double or DOMString) value;
   boolean loaded;
+  // (0.3) The place the viewer arrived at, for a "place" event.
+  DOMString place;
 };
 
 [Exposed=Window]
@@ -74,6 +80,8 @@ interface ModelThing : Thing {
   attribute double animationSpeed;
   readonly attribute boolean loaded;
   undefined material(DOMString name, HoloMLMaterialChange change);
+  // (0.3) Its name, as screen readers hear it.
+  attribute DOMString? label;
 };
 
 dictionary HoloMLMaterialChange {
@@ -91,6 +99,8 @@ interface GroupThing : Thing {
   attribute boolean visible;
   attribute boolean solid;
   readonly attribute boolean loaded;
+  // (0.3) Its name, as screen readers hear it.
+  attribute DOMString? label;
 };
 
 [Exposed=Window]
@@ -119,7 +129,8 @@ interface PanelThing : Thing {
 [Exposed=Window]
 interface SoundThing : Thing {
   // Null for a sound that has no place. Setting a place gives it one;
-  // setting null is an error (a TypeError).
+  // setting null is an error (a TypeError) in a 0.2 page, and takes the
+  // place away in a 0.3 page.
   attribute FrozenArray<double>? position;
   undefined play();
   undefined stop();
@@ -147,4 +158,26 @@ interface ChoiceThing : Thing {
   attribute DOMString text;
   attribute DOMString value;
   readonly attribute FrozenArray<DOMString> options;
+};
+
+// (0.3) An animate element, found by its id.
+[Exposed=Window]
+interface AnimateThing : Thing {
+  undefined start();
+  undefined stop();
+  readonly attribute boolean running;
+};
+
+// (0.3) The scene's water, found by its id.
+[Exposed=Window]
+interface WaterThing : Thing {
+  attribute DOMString color;
+  // More than 0; any other value is an error.
+  attribute double clarity;
+};
+
+// (0.3) The floor plan, found by its id.
+[Exposed=Window]
+interface PlanThing : Thing {
+  attribute boolean visible;
 };

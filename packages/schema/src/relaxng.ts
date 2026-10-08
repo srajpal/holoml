@@ -7,6 +7,7 @@ import {
   ID_PATTERN,
   IDREF_PATTERN,
   INDEFINITE,
+  LANGUAGE_PATTERN,
   NOT_IN_ADDRESS_RNC,
   NUMBER_PATTERN,
   VERSION,
@@ -119,6 +120,8 @@ function value(kind: ValueKind): string {
       return `xsd:string { pattern = "${ID_PATTERN}" }`;
     case 'idref':
       return `xsd:string { pattern = "${IDREF_PATTERN}" }`;
+    case 'language':
+      return `xsd:string { pattern = "${LANGUAGE_PATTERN}" }`;
     case 'choice':
       return kind.values.map((v) => `string "${v}"`).join(' | ');
     case 'flag':

@@ -1,13 +1,13 @@
 import { parse, serialize, type ElementNode, type HoloDocument } from '@holoml/parser';
-import { check } from './index.ts';
+import { VERSION, check } from './index.ts';
 
 /**
  * The HoloML examples in a Markdown text (SPEC.md and the guides), by the
  * language their code block names:
  *
  *   holoml         a whole page
- *   holoml-scene   what a scene holds, checked in a 0.2 page
- *   holoml-head    what a head holds, checked in a 0.2 page
+ *   holoml-scene   what a scene holds, checked in a page of the newest version
+ *   holoml-head    what a head holds, checked in a page of the newest version
  *   holoml-each    elements a scene may hold, each checked alone (for
  *                  alternatives, such as several ways to write a viewpoint)
  *
@@ -35,7 +35,8 @@ export function examplesIn(markdown: string): Example[] {
   return out;
 }
 
-const page = (head: string, scene: string) => `<holoml version="0.2">\n<head>${head}</head>\n<scene>\n${scene}\n</scene>\n</holoml>`;
+// The newest version: every older one's elements mean the same in it.
+const page = (head: string, scene: string) => `<holoml version="${VERSION}">\n<head>${head}</head>\n<scene>\n${scene}\n</scene>\n</holoml>`;
 
 /** What is wrong with an example: its syntax error or its problems, as text; empty when it is right. */
 export function examplesProblems(example: Example): string[] {

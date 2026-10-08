@@ -1,0 +1,29 @@
+<holoml version="0.3" lang="en" dir="ltr">
+  <head>
+    <title lang="en-GB" dir="ltr">A gallery in three languages</title>
+    <meta name="description" content="Labels in English, Arabic, and Hebrew, a lighter model far away, and names for screen readers." />
+  </head>
+  <scene lang="en" dir="auto">
+    <viewpoint id="hall" label="The hall" lang="en" dir="ltr" position="0 1.6 6" />
+    <viewpoint id="garden" label="الحديقة" lang="ar" dir="rtl" position="0 1.6 -6" />
+    <group id="statues" label="Three statues" lang="en" dir="ltr">
+      <model id="lion" src="models/lion.glb" far="models/lion-far.glb" far-from="25"
+             label="A stone lion" lang="en" dir="ltr" />
+      <model src="models/bird.glb" label="ציפור" lang="he" dir="rtl" position="2 0 0" />
+    </group>
+    <label position="0 2.4 0" lang="ar" dir="rtl">أهلاً وسهلاً</label>
+    <panel position="3 1.5 0" lang="he" dir="rtl">ברוכים הבאים לגלריה.</panel>
+    <a href="next.holoml" lang="en" dir="ltr"><label position="-3 1 0">Next room</label></a>
+    <animate id="turn" target="#lion" attribute="rotation" to="0 360 0" duration="20s"
+             begin="click" trigger="#lion" label="Turn the lion" lang="en" dir="ltr" />
+    <sound src="sounds/fountain.ogg" begin="click" trigger="#lion" label="صوت النافورة" lang="ar" dir="rtl" />
+    <hud lang="en" dir="ltr">Welcome</hud>
+    <slider min="0" max="1" lang="he" dir="rtl">עוצמה</slider>
+    <choice label="Stone" lang="en" dir="ltr">
+      <option lang="ar" dir="rtl">حجر</option>
+      <option lang="en" dir="ltr">Marble</option>
+    </choice>
+    <plan src="plans/gallery.png" area="-10 -10 10 10" label="The gallery" lang="en" dir="ltr" />
+    <water id="pool" size="4 0.5 4" position="0 0 -8" />
+  </scene>
+</holoml>

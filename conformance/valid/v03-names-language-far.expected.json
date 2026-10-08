@@ -1,0 +1,619 @@
+{
+  "tree": {
+    "element": "holoml",
+    "at": "1:1",
+    "attributes": [
+      [
+        "version",
+        "0.3",
+        "1:9"
+      ],
+      [
+        "lang",
+        "en",
+        "1:23"
+      ],
+      [
+        "dir",
+        "ltr",
+        "1:33"
+      ]
+    ],
+    "children": [
+      {
+        "element": "head",
+        "at": "2:3",
+        "attributes": [],
+        "children": [
+          {
+            "element": "title",
+            "at": "3:5",
+            "attributes": [
+              [
+                "lang",
+                "en-GB",
+                "3:12"
+              ],
+              [
+                "dir",
+                "ltr",
+                "3:25"
+              ]
+            ],
+            "children": [
+              {
+                "text": "A gallery in three languages",
+                "at": "3:35"
+              }
+            ]
+          },
+          {
+            "element": "meta",
+            "at": "4:5",
+            "attributes": [
+              [
+                "name",
+                "description",
+                "4:11"
+              ],
+              [
+                "content",
+                "Labels in English, Arabic, and Hebrew, a lighter model far away, and names for screen readers.",
+                "4:30"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "element": "scene",
+        "at": "6:3",
+        "attributes": [
+          [
+            "lang",
+            "en",
+            "6:10"
+          ],
+          [
+            "dir",
+            "auto",
+            "6:20"
+          ]
+        ],
+        "children": [
+          {
+            "element": "viewpoint",
+            "at": "7:5",
+            "attributes": [
+              [
+                "id",
+                "hall",
+                "7:16"
+              ],
+              [
+                "label",
+                "The hall",
+                "7:26"
+              ],
+              [
+                "lang",
+                "en",
+                "7:43"
+              ],
+              [
+                "dir",
+                "ltr",
+                "7:53"
+              ],
+              [
+                "position",
+                "0 1.6 6",
+                "7:63"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "viewpoint",
+            "at": "8:5",
+            "attributes": [
+              [
+                "id",
+                "garden",
+                "8:16"
+              ],
+              [
+                "label",
+                "الحديقة",
+                "8:28"
+              ],
+              [
+                "lang",
+                "ar",
+                "8:44"
+              ],
+              [
+                "dir",
+                "rtl",
+                "8:54"
+              ],
+              [
+                "position",
+                "0 1.6 -6",
+                "8:64"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "group",
+            "at": "9:5",
+            "attributes": [
+              [
+                "id",
+                "statues",
+                "9:12"
+              ],
+              [
+                "label",
+                "Three statues",
+                "9:25"
+              ],
+              [
+                "lang",
+                "en",
+                "9:47"
+              ],
+              [
+                "dir",
+                "ltr",
+                "9:57"
+              ]
+            ],
+            "children": [
+              {
+                "element": "model",
+                "at": "10:7",
+                "attributes": [
+                  [
+                    "id",
+                    "lion",
+                    "10:14"
+                  ],
+                  [
+                    "src",
+                    "models/lion.glb",
+                    "10:24"
+                  ],
+                  [
+                    "far",
+                    "models/lion-far.glb",
+                    "10:46"
+                  ],
+                  [
+                    "far-from",
+                    "25",
+                    "10:72"
+                  ],
+                  [
+                    "label",
+                    "A stone lion",
+                    "11:14"
+                  ],
+                  [
+                    "lang",
+                    "en",
+                    "11:35"
+                  ],
+                  [
+                    "dir",
+                    "ltr",
+                    "11:45"
+                  ]
+                ],
+                "children": []
+              },
+              {
+                "element": "model",
+                "at": "12:7",
+                "attributes": [
+                  [
+                    "src",
+                    "models/bird.glb",
+                    "12:14"
+                  ],
+                  [
+                    "label",
+                    "ציפור",
+                    "12:36"
+                  ],
+                  [
+                    "lang",
+                    "he",
+                    "12:50"
+                  ],
+                  [
+                    "dir",
+                    "rtl",
+                    "12:60"
+                  ],
+                  [
+                    "position",
+                    "2 0 0",
+                    "12:70"
+                  ]
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "element": "label",
+            "at": "14:5",
+            "attributes": [
+              [
+                "position",
+                "0 2.4 0",
+                "14:12"
+              ],
+              [
+                "lang",
+                "ar",
+                "14:31"
+              ],
+              [
+                "dir",
+                "rtl",
+                "14:41"
+              ]
+            ],
+            "children": [
+              {
+                "text": "أهلاً وسهلاً",
+                "at": "14:51"
+              }
+            ]
+          },
+          {
+            "element": "panel",
+            "at": "15:5",
+            "attributes": [
+              [
+                "position",
+                "3 1.5 0",
+                "15:12"
+              ],
+              [
+                "lang",
+                "he",
+                "15:31"
+              ],
+              [
+                "dir",
+                "rtl",
+                "15:41"
+              ]
+            ],
+            "children": [
+              {
+                "text": "ברוכים הבאים לגלריה.",
+                "at": "15:51"
+              }
+            ]
+          },
+          {
+            "element": "a",
+            "at": "16:5",
+            "attributes": [
+              [
+                "href",
+                "next.holoml",
+                "16:8"
+              ],
+              [
+                "lang",
+                "en",
+                "16:27"
+              ],
+              [
+                "dir",
+                "ltr",
+                "16:37"
+              ]
+            ],
+            "children": [
+              {
+                "element": "label",
+                "at": "16:47",
+                "attributes": [
+                  [
+                    "position",
+                    "-3 1 0",
+                    "16:54"
+                  ]
+                ],
+                "children": [
+                  {
+                    "text": "Next room",
+                    "at": "16:72"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "element": "animate",
+            "at": "17:5",
+            "attributes": [
+              [
+                "id",
+                "turn",
+                "17:14"
+              ],
+              [
+                "target",
+                "#lion",
+                "17:24"
+              ],
+              [
+                "attribute",
+                "rotation",
+                "17:39"
+              ],
+              [
+                "to",
+                "0 360 0",
+                "17:60"
+              ],
+              [
+                "duration",
+                "20s",
+                "17:73"
+              ],
+              [
+                "begin",
+                "click",
+                "18:14"
+              ],
+              [
+                "trigger",
+                "#lion",
+                "18:28"
+              ],
+              [
+                "label",
+                "Turn the lion",
+                "18:44"
+              ],
+              [
+                "lang",
+                "en",
+                "18:66"
+              ],
+              [
+                "dir",
+                "ltr",
+                "18:76"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "sound",
+            "at": "19:5",
+            "attributes": [
+              [
+                "src",
+                "sounds/fountain.ogg",
+                "19:12"
+              ],
+              [
+                "begin",
+                "click",
+                "19:38"
+              ],
+              [
+                "trigger",
+                "#lion",
+                "19:52"
+              ],
+              [
+                "label",
+                "صوت النافورة",
+                "19:68"
+              ],
+              [
+                "lang",
+                "ar",
+                "19:89"
+              ],
+              [
+                "dir",
+                "rtl",
+                "19:99"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "hud",
+            "at": "20:5",
+            "attributes": [
+              [
+                "lang",
+                "en",
+                "20:10"
+              ],
+              [
+                "dir",
+                "ltr",
+                "20:20"
+              ]
+            ],
+            "children": [
+              {
+                "text": "Welcome",
+                "at": "20:30"
+              }
+            ]
+          },
+          {
+            "element": "slider",
+            "at": "21:5",
+            "attributes": [
+              [
+                "min",
+                "0",
+                "21:13"
+              ],
+              [
+                "max",
+                "1",
+                "21:21"
+              ],
+              [
+                "lang",
+                "he",
+                "21:29"
+              ],
+              [
+                "dir",
+                "rtl",
+                "21:39"
+              ]
+            ],
+            "children": [
+              {
+                "text": "עוצמה",
+                "at": "21:49"
+              }
+            ]
+          },
+          {
+            "element": "choice",
+            "at": "22:5",
+            "attributes": [
+              [
+                "label",
+                "Stone",
+                "22:13"
+              ],
+              [
+                "lang",
+                "en",
+                "22:27"
+              ],
+              [
+                "dir",
+                "ltr",
+                "22:37"
+              ]
+            ],
+            "children": [
+              {
+                "element": "option",
+                "at": "23:7",
+                "attributes": [
+                  [
+                    "lang",
+                    "ar",
+                    "23:15"
+                  ],
+                  [
+                    "dir",
+                    "rtl",
+                    "23:25"
+                  ]
+                ],
+                "children": [
+                  {
+                    "text": "حجر",
+                    "at": "23:35"
+                  }
+                ]
+              },
+              {
+                "element": "option",
+                "at": "24:7",
+                "attributes": [
+                  [
+                    "lang",
+                    "en",
+                    "24:15"
+                  ],
+                  [
+                    "dir",
+                    "ltr",
+                    "24:25"
+                  ]
+                ],
+                "children": [
+                  {
+                    "text": "Marble",
+                    "at": "24:35"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "element": "plan",
+            "at": "26:5",
+            "attributes": [
+              [
+                "src",
+                "plans/gallery.png",
+                "26:11"
+              ],
+              [
+                "area",
+                "-10 -10 10 10",
+                "26:35"
+              ],
+              [
+                "label",
+                "The gallery",
+                "26:56"
+              ],
+              [
+                "lang",
+                "en",
+                "26:76"
+              ],
+              [
+                "dir",
+                "ltr",
+                "26:86"
+              ]
+            ],
+            "children": []
+          },
+          {
+            "element": "water",
+            "at": "27:5",
+            "attributes": [
+              [
+                "id",
+                "pool",
+                "27:12"
+              ],
+              [
+                "size",
+                "4 0.5 4",
+                "27:22"
+              ],
+              [
+                "position",
+                "0 0 -8",
+                "27:37"
+              ]
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "problems": []
+}

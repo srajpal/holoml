@@ -36,7 +36,7 @@ const rows = (text: string) =>
     .map((l) => l.split('|').map((c) => c.trim()));
 const names = (cell: string) => [...cell.matchAll(/`(?:holoml\.)?(\w+)/g)].map((m) => m[1]!);
 
-const KIND = { model: 'ModelThing', group: 'GroupThing', light: 'LightThing', label: 'LabelThing', panel: 'PanelThing', sound: 'SoundThing', hud: 'HudThing', slider: 'SliderThing', choice: 'ChoiceThing' } as const;
+const KIND = { model: 'ModelThing', group: 'GroupThing', light: 'LightThing', label: 'LabelThing', panel: 'PanelThing', sound: 'SoundThing', hud: 'HudThing', slider: 'SliderThing', choice: 'ChoiceThing', animate: 'AnimateThing', water: 'WaterThing', plan: 'PlanThing' } as const;
 
 describe('Y3: the scene API in Web IDL and in the tables (browser milestone 22)', () => {
   const defs = definitions();
@@ -60,7 +60,8 @@ describe('Y3: the scene API in Web IDL and in the tables (browser milestone 22)'
     const listed = new Map<string, Set<string>>([['Thing', new Set()], ...Object.values(KIND).map((k) => [k, new Set<string>()] as [string, Set<string>])]);
     for (const r of table) {
       const members = names(r[1]!);
-      const kinds = r[2]!.split(',').map((k) => k.trim());
+      // A kind a later version added says so: "(0.3) plan".
+      const kinds = r[2]!.split(',').map((k) => k.trim().replace(/^\(\d+\.\d+\) /, ''));
       for (const kind of kinds) {
         const iface = kind === 'all' ? 'Thing' : KIND[kind as keyof typeof KIND];
         expect(iface, `the kind "${kind}"`).toBeDefined();

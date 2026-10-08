@@ -65,7 +65,7 @@ describe('a version the reader does not know (SPEC.md section 11; review 134, L8
   const page = (version: string) => `<holoml${version}>\n<scene>\n<hud>Score</hud>\n<cube />\n</scene>\n</holoml>`;
 
   it('is reported, and the rest of the page is checked by the newest version the reader knows', () => {
-    expect(problems(page(' version="0.3"'))).toEqual(['unsupported-version 1:9', 'unknown-element 4:1']);
+    expect(problems(page(' version="9.9"'))).toEqual(['unsupported-version 1:9', 'unknown-element 4:1']);
     expect(problems(page(' version="0.2 "'))).toEqual(['unsupported-version 1:9', 'unknown-element 4:1']);
     // A reader that knows only 0.1 goes by 0.1, where a hud is unknown too.
     const older = check(parse(page(' version="0.2"')), { versions: ['0.1'] }).map((p) => `${p.code} ${p.line}:${p.column}`);

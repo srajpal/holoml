@@ -18,8 +18,8 @@ This page is made by `pnpm reference:update`; do not edit it by hand.
 |---|---|---|
 | `holoml.version` | `readonly attribute DOMString version` | The version the page declares, such as `"0.2"` |
 | `holoml.ready` | `readonly attribute Promise<undefined> ready` | A promise, kept when the page is ready: when every file it loads with the page (models, sounds, and pictures; section 9, "Loading") has loaded or been left out |
-| `holoml.find(id)` | `Thing? find(DOMString id)` | The element with this id, as a thing (below), or `null`: when no element has the id, and when the element is not of a kind that is a thing (the scene, a viewpoint, a plan) |
-| `holoml.add(markup, parent)` | `sequence<Thing> add(DOMString markup, optional GroupThing? parent = null)` | Adds elements written in HoloML to the scene, or into the group thing `parent`. The markup's own elements are `group`, `model`, `light`, `label`, and `sound`; a group in it holds what a page's group holds. Returns the new things, one for each of the markup's own elements that was added. The markup is checked like a 0.2 page's: an element with a problem is left out, and the console says why. So is any other element written as the markup's own, and, wherever it is in the markup, an `animate` and a `sound` that begins on a click: what a script adds, the script moves and plays |
+| `holoml.find(id)` | `Thing? find(DOMString id)` | The element with this id, as a thing (below), or `null`: when no element has the id, and when the element is not of a kind that is a thing (the scene, a viewpoint; before 0.3, a plan) |
+| `holoml.add(markup, parent)` | `sequence<Thing> add(DOMString markup, optional GroupThing? parent = null)` | Adds elements written in HoloML to the scene, or into the group thing `parent`. The markup's own elements are `group`, `model`, `light`, `label`, and `sound`; a group in it holds what a page's group holds. Returns the new things, one for each of the markup's own elements that was added. The markup is checked like a page of the page's version: an element with a problem is left out, and the console says why. So is any other element written as the markup's own. In a 0.2 page, so is, wherever it is in the markup, an `animate` and a `sound` that begins on a click: what a script adds, the script moves and plays. (0.3) In a 0.3 page the markup's own elements are also `animate`, `panel`, and `a`, and what it holds may have click actions; an `animate` or a click action whose target or trigger is not in the scene once the markup is added is left out |
 | `holoml.remove(thing)` | `undefined remove(Thing thing)` | Removes an element and everything in it |
 | `holoml.on(type, listener)` | `HoloMLStop on(DOMString type, HoloMLListener listener)` | Calls `listener` with each event of that type (below). Returns a function that stops it |
 | `holoml.aim()` | `HoloMLHit? aim()` | What is in the middle of the view, under the crosshair: `{ thing, point, normal }` as for a click, or `null` |
@@ -36,6 +36,8 @@ This page is made by `pnpm reference:update`; do not edit it by hand.
 | `lookAt(point)` | `undefined lookAt(sequence<double> point)` | Turns them to look at a point |
 | `speed` | `attribute double speed` | For walking: how fast, in metres a second, from 0.5 to 10; starts as the `viewpoint` says, and can be set. A value outside the range is an error |
 | `turnSpeed` | `attribute double turnSpeed` | For walking: how fast they turn, in degrees a second, from 10 to 720; starts as the `viewpoint` says, and can be set. A value outside the range is an error |
+| `place` | `readonly attribute DOMString? place` | (0.3) The `id` of the place (the `viewpoint`) the viewer last arrived at: the first one when the scene is shown, or the one the page's address names; then each one the viewer goes to by a link to `#name`, the renderer's list of places, or `goTo`. Walking does not change it. `null` when the scene's viewpoints have no ids. Read only |
+| `goTo(id)` | `undefined goTo(DOMString id)` | (0.3) Takes the viewer to the place with this `id`, as a link to `#id` does (through a fade, unless the viewer asked for reduced motion). An id that is not a place's is an error |
 
 ## Things
 
@@ -46,8 +48,8 @@ each kind has more. A member a thing's kind does not have is
 
 | Kind | Interface | Its own members |
 |---|---|---|
-| `model` | `ModelThing` | `position`, `rotation`, `scale`, `visible`, `solid`, `animationSpeed`, `loaded`, `material()` |
-| `group` | `GroupThing` | `position`, `rotation`, `scale`, `visible`, `solid`, `loaded` |
+| `model` | `ModelThing` | `position`, `rotation`, `scale`, `visible`, `solid`, `animationSpeed`, `loaded`, `label`, `material()` |
+| `group` | `GroupThing` | `position`, `rotation`, `scale`, `visible`, `solid`, `loaded`, `label` |
 | `light` | `LightThing` | `position`, `color`, `intensity` |
 | `label` | `LabelThing` | `position`, `visible`, `text`, `color` |
 | `panel` | `PanelThing` | `position`, `rotation`, `visible`, `text` |
@@ -55,21 +57,27 @@ each kind has more. A member a thing's kind does not have is
 | `hud` | `HudThing` | `text`, `color` |
 | `slider` | `SliderThing` | `text`, `value`, `min`, `max`, `step` |
 | `choice` | `ChoiceThing` | `text`, `value`, `options` |
+| `animate` | `AnimateThing` | `start()`, `stop()`, `running` |
+| `water` | `WaterThing` | `color`, `clarity` |
+| `plan` | `PlanThing` | `visible` |
 
 | Member | Kinds | Web IDL | What it is |
 |---|---|---|---|
 | `id` | all | `readonly attribute DOMString? id` | Its id, or `null` |
-| `kind` | all | `readonly attribute DOMString kind` | `"model"`, `"group"`, `"light"`, `"label"`, `"panel"`, `"sound"`, `"hud"`, `"slider"`, or `"choice"` |
+| `kind` | all | `readonly attribute DOMString kind` | `"model"`, `"group"`, `"light"`, `"label"`, `"panel"`, `"sound"`, `"hud"`, `"slider"`, `"choice"`, (0.3) `"animate"`, `"water"`, or `"plan"` |
 | `parent` | all | `readonly attribute GroupThing? parent` | The nearest group it is in, as a thing, or `null` when it is in none. A link is not a thing, and does not count: a model in a link in a group has that group as its parent |
-| `position` | model, group, label, panel, light, sound | `attribute FrozenArray<double> position`<br>`attribute FrozenArray<double>? position` | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says), and setting `null` is an error: a sound that has a place keeps one |
+| `position` | model, group, label, panel, light, sound | `attribute FrozenArray<double> position`<br>`attribute FrozenArray<double>? position` | Where it is; can be set. For a sound, where it comes from, or `null` for one that has no place; setting a place gives it one (with its `range`, 20 metres unless the page says). In a 0.2 page, setting `null` is an error: a sound that has a place keeps one; (0.3) in a 0.3 page, setting `null` takes its place away, and it is heard as a sound without a place again |
 | `rotation` | model, group, panel | `attribute FrozenArray<double> rotation` | How it is turned; can be set |
 | `scale` | model, group | `attribute FrozenArray<double> scale` | How big; can be set |
-| `visible` | model, group, label, panel | `attribute boolean visible` | Whether it is shown; can be set. A thing that is not shown, by its own `visible` or that of a group around it, takes no clicks (a click, the crosshair, and `holoml.aim()` go through it to what is behind) and does not stop the walker, whatever its `solid` |
+| `visible` | model, group, label, panel, (0.3) plan | `attribute boolean visible` | Whether it is shown; can be set. A thing that is not shown, by its own `visible` or that of a group around it, takes no clicks (a click, the crosshair, and `holoml.aim()` go through it to what is behind) and does not stop the walker, whatever its `solid` |
 | `solid` | model, group | `attribute boolean solid` | Whether the walker is stopped by it; can be set |
 | `animationSpeed` | model | `attribute double animationSpeed` | How fast its own animation plays: `1` as it was made, `2` twice as fast, `0.5` half as fast, `0` held still; from 0 to 4; can be set. A value outside that range is an error. A model that plays no animation keeps the value for when it does |
 | `loaded` | model, group | `readonly attribute boolean loaded` | (Read only) Whether its file has loaded (a model); whether every model in it that is near enough to load has loaded or been left out (a group). A group that loads by area, or is in one, is not loaded while it is let go |
 | `text` | label, panel, hud, slider, choice | `attribute DOMString text` | Its words (for a `hud`, lines separated by `"\n"`; for a `panel`, paragraphs separated by `"\n\n"`; for a `slider` or a `choice`, its label); can be set. A renderer may keep only the start of a very long text (HyperSpace 3D keeps 10,000 characters) |
-| `color` | light, label, hud | `attribute DOMString color` | Its colour, as `"#rrggbb"`; can be set |
+| `label` | (0.3) model, group | `attribute DOMString? label` | Its name, as screen readers hear it, or `null` for none; can be set |
+| `color` | light, label, hud, (0.3) water | `attribute DOMString color` | Its colour, as `"#rrggbb"`; can be set |
+| `clarity` | (0.3) water | `attribute double clarity` | How far one can see through it, in metres, more than 0; can be set. A value that is not more than 0 is an error |
+| `start()`, `stop()`, `running` | (0.3) animate | `undefined start()`<br>`undefined stop()`<br>`readonly attribute boolean running` | Starts it from its beginning, as when it begins by itself (with reduced motion, it shows its end at once); stops it where it is, which it keeps; whether it runs. A click action's `animate` still also runs on its clicks |
 | `intensity` | light | `attribute double intensity` | How bright; can be set |
 | `material(name, change)` | model | `undefined material(DOMString name, HoloMLMaterialChange change)` | Changes one of the model's materials; `change` may have `color`, `metalness`, `roughness`, and `opacity`, as `material` has |
 | `play()`, `stop()`, `playing` | sound | `undefined play()`<br>`undefined stop()`<br>`readonly attribute boolean playing` | Plays from the start; stops; whether it plays. Before sounds may play (section 7, `sound`), `play()` does nothing |
@@ -92,6 +100,7 @@ and the members its type lists.
 | `key` | A key goes down or up while the page has the keyboard | `key`, `down`, `repeat` | `key` is the key, as a web page's `KeyboardEvent.key` (`"e"`, `"1"`, `" "`); `down` is `true` or `false`; `repeat` is `true` when the key is held down and repeating, as a web page's `KeyboardEvent.repeat` (clarified). The renderer's own keys (walking, turning) still work. A key pressed together with Ctrl, Alt, or the system's key (Meta) is the renderer's and does not reach scripts, and neither does a key that a slider, a choice, or another of the renderer's controls uses while it has the keyboard |
 | `frame` | Before each frame is drawn | `time`, `dt` | `time` is the milliseconds since the scene was shown. `dt` is how far the scene moves on in this frame, in milliseconds: the time since the last frame, but never more than 100, so that after a slow frame what a script moves by `dt` does not jump; and where there is no last frame to measure from (the first frame, and the first after drawing stopped) it is one frame's usual time, about 16. The sum of `dt` can so fall behind `time`. While a script listens for frames, the renderer must keep drawing, except while the page cannot be seen (for example, while its tab is behind another): then it may stop drawing, and frames with it, until the page is seen again |
 | `change` | The viewer moves a slider, or picks an option of a choice | `thing`, `value` | `thing` is the slider or the choice, and `value` a slider's number or the chosen option's value |
+| `place` | (0.3) The viewer arrives at a place: by a link to `#name`, the renderer's list of places, or `goTo` | `place` | `place` is the place's `id` |
 | `load` | A group that loads by area (`load="near"`) has loaded its models (its `loaded` became `true`), or let them go | `thing`, `loaded` | `thing` is the group, and `loaded` is `true` when its models are in and `false` when they were let go. A model a script adds to a group already in does not make it tell again |
 
 The members, as the Web IDL's `HoloMLEvent` declares them:
@@ -110,3 +119,4 @@ The members, as the Web IDL's `HoloMLEvent` declares them:
 | `dt` | `double dt` |
 | `value` | `(double or DOMString) value` |
 | `loaded` | `boolean loaded` |
+| `place` | `DOMString place` |

@@ -100,6 +100,9 @@ describe('conformance samples (O2, O3, O4)', () => {
         'version-not-exact': 'unsupported-version',
         'unsupported-version-and-more': 'unsupported-version',
         'toggle-repeat': 'bad-value',
+        // HoloML 0.3 (browser milestone 25).
+        'bad-03-attributes': 'bad-value',
+        'not-in-02': 'unknown-attribute',
       };
       expect(codes, s.name).toContain(variants[s.name] ?? s.name);
     }

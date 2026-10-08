@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from '@holoml/parser';
 import { check } from './index.ts';
-import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, INDEFINITE, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN, whole } from './rules.ts';
+import { COLOR_PATTERN, COUNT_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, INDEFINITE, LANGUAGE_PATTERN, NOT_IN_ADDRESS_RNC, NUMBER_PATTERN, whole } from './rules.ts';
 import { relaxNg } from './relaxng.ts';
 
 const scene = (inner: string, version = '0.2') => `<holoml version="${version}"><scene>${inner}</scene></holoml>`;
@@ -85,12 +85,26 @@ describe('the patterns of values take time that grows with the length only (revi
   });
 });
 
+describe('a language tag (0.3)', () => {
+  const LANGUAGE = whole(LANGUAGE_PATTERN);
+  it('takes the forms of BCP 47 tags, and nothing with spaces, underscores, or empty parts', () => {
+    for (const v of ['en', 'ar', 'he', 'pt-BR', 'zh-Hant', 'zh-Hant-TW', 'sr-Latn-RS', 'x-klingon', 'es-419']) expect(LANGUAGE.test(v), v).toBe(true);
+    for (const v of ['', '-', 'en-', '-en', 'en--GB', 'en_GB', 'en GB', ' en', 'englishlanguage', 'en-abcdefghi', '1en', 'é']) expect(LANGUAGE.test(v), JSON.stringify(v)).toBe(false);
+  });
+
+  it('refuses a long run in one pass', () => {
+    const start = performance.now();
+    expect(LANGUAGE.test('a'.repeat(8) + '-a'.repeat(50_000) + '!')).toBe(false);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+});
+
 describe('the RELAX NG schema takes its patterns from the checker (review 134, L9)', () => {
   const schema = relaxNg();
   const written = [...new Set([...schema.matchAll(/pattern = "([^"]*)"/g)].map((m) => m[1]!))];
 
   it("every pattern in the schema is one of the checker's, or an address's", () => {
-    const known = new Set([NUMBER_PATTERN, COLOR_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, `${COUNT_PATTERN}|${INDEFINITE}`]);
+    const known = new Set([NUMBER_PATTERN, COLOR_PATTERN, DURATION_PATTERN, ID_PATTERN, IDREF_PATTERN, LANGUAGE_PATTERN, `${COUNT_PATTERN}|${INDEFINITE}`]);
     const others = written.filter((p) => !known.has(p));
     expect(written.filter((p) => known.has(p)).length).toBe(known.size);
     // What is left are addresses: any characters but those an address may not hold, and for a file its extensions.

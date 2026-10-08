@@ -1,4 +1,4 @@
-# HoloML 0.2: the structure of a page, in RELAX NG's compact syntax
+# HoloML 0.3: the structure of a page, in RELAX NG's compact syntax
 # (ISO/IEC 19757-2). Made from the checker's table and its patterns
 # (packages/schema/src/rules.ts) by packages/schema/src/relaxng.ts:
 # do not edit; run `pnpm grammar:update`. Informative: SPEC.md and the
@@ -13,7 +13,9 @@ start = holoml
 
 holoml =
   element holoml {
-    attribute version { string "0.1" | string "0.2" },
+    attribute version { string "0.1" | string "0.2" | string "0.3" },
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     head?, scene
   }
 
@@ -24,6 +26,8 @@ head =
 
 title =
   element title {
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
@@ -46,7 +50,9 @@ scene =
     attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute environment { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute sky { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([hH][dD][rR]|[pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
-    (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint* & hud* & slider* & choice* & plan? & water?)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
+    (group* & model* & light* & label* & a* & animate* & sound* & panel* & viewpoint? & hud* & slider* & choice* & plan? & water?)
   }
 
 group =
@@ -59,6 +65,9 @@ group =
     attribute shadows { flag }?,  # (0.2)
     attribute load { string "page" | string "near" }?,  # (0.2)
     attribute near { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.3)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     (group* & model* & light* & label* & a* & animate* & sound* & panel*)
   }
 
@@ -74,6 +83,11 @@ model =
     attribute solid { flag }?,  # (0.2)
     attribute shadows { flag }?,  # (0.2)
     attribute stand-in { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
+    attribute label { xsd:token { minLength = "1" } }?,  # (0.3)
+    attribute far { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([gG][lL][tT][fF]|[gG][lL][bB])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.3)
+    attribute far-from { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,  # (0.3)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     material*
   }
 
@@ -103,6 +117,8 @@ viewpoint =
     attribute crosshair { flag }?,  # (0.2)
     attribute speed { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "0.5" maxInclusive = "10" } }?,  # (0.2)
     attribute turn-speed { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minInclusive = "10" maxInclusive = "720" } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -126,17 +142,22 @@ label =
     attribute position { list { number, number, number } }?,
     attribute size { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
 a =
   element a {
     attribute href { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}]+" } },
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     (model* & group* & label* & panel*)
   }
 
 animate =
   element animate {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.3)
     attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } },
     attribute \attribute { string "position" | string "rotation" | string "scale" | string "intensity" | string "color" | string "background" },
     attribute from { text }?,
@@ -147,6 +168,8 @@ animate =
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.2)
     attribute toggle { flag }?,  # (0.2)
     attribute label { xsd:token { minLength = "1" } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -162,6 +185,8 @@ sound =  # (0.2)
     attribute begin { string "load" | string "click" }?,
     attribute trigger { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute label { xsd:token { minLength = "1" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 
@@ -171,6 +196,8 @@ hud =  # (0.2)
     attribute corner { string "top-left" | string "top-right" | string "bottom-left" | string "bottom-right" }?,
     attribute size { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # may be empty
   }
 
@@ -182,6 +209,8 @@ slider =  # (0.2)
     attribute max { number }?,
     attribute step { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute value { number }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
@@ -193,6 +222,8 @@ choice =  # (0.2)
     attribute target { xsd:string { pattern = "#[A-Za-z][A-Za-z0-9_\-]*" } }?,
     attribute material { xsd:token { minLength = "1" } }?,
     attribute value { xsd:token { minLength = "1" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     option+
   }
 
@@ -207,6 +238,8 @@ option =  # (0.2)
     attribute normal-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute roughness-map { xsd:token { pattern = "[^\p{Cc}\p{Z}\x{FEFF}?#]*\.([pP][nN][gG]|[jJ][pP][gG]|[jJ][pP][eE][gG]|[wW][eE][bB][pP])([?#][^\p{Cc}\p{Z}\x{FEFF}]*)?" } }?,  # (0.2)
     attribute repeat { list { more-than-0 } | list { more-than-0, more-than-0 } }?,  # (0.2)
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
@@ -219,11 +252,14 @@ panel =  # (0.2)
     attribute size { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
     attribute background { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     text  # not empty
   }
 
 water =  # (0.2)
   element water {
+    attribute id { xsd:string { pattern = "[A-Za-z][A-Za-z0-9_\-]*" } }?,  # (0.3)
     attribute position { list { number, number, number } }?,
     attribute size { list { more-than-0, more-than-0, more-than-0 } },
     attribute color { xsd:token { pattern = "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})" } }?,
@@ -240,6 +276,8 @@ plan =  # (0.2)
     attribute area { list { number, number, number, number } },
     attribute width { xsd:double { pattern = "-?([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][+\-]?[0-9]+)?" minExclusive = "0" } }?,
     attribute label { xsd:token { minLength = "1" } }?,
+    attribute lang { xsd:string { pattern = "[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" } }?,  # (0.3)
+    attribute dir { string "ltr" | string "rtl" | string "auto" }?,  # (0.3)
     empty
   }
 

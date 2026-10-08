@@ -72,7 +72,7 @@ describe('suggestions', () => {
     expect(model!.textEdit).toMatchObject({ newText: 'model src="$1" />$0' });
     expect(elementSnippet('light', ELEMENTS['light']!, '0.2')).toBe('light type="${1|ambient,directional,point,spot|}" />$0');
     expect(elementSnippet('label', ELEMENTS['label']!, '0.2')).toBe('label>$0</label>');
-    expect(elementSnippet('holoml', ELEMENTS['holoml']!, '0.2')).toBe('holoml version="${1|0.2,0.1|}">$0</holoml>');
+    expect(elementSnippet('holoml', ELEMENTS['holoml']!, '0.2')).toBe('holoml version="${1|0.2,0.1,0.3|}">$0</holoml>');
   });
 
   it('changes only the name of a tag that is already written', () => {
