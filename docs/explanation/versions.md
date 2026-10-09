@@ -14,8 +14,9 @@ labels, links, materials, the animation of position, rotation, and
 scale, and orbiting and walking. HoloML 0.2, of 2026-09-29 (begun
 2026-09-27), adds to it without changing it: every 0.1 page means the
 same in 0.2. HoloML 0.3, of 2026-10-07 (released as 0.3.0 on
-2026-10-08), adds to 0.2 in the same way. All three are fixed: what a
-page written for any of them means will not change.
+2026-10-08; its second edition, 0.3.1, of 2026-10-09), adds to 0.2 in
+the same way. All three are fixed: what a page written for any of them
+means will not change.
 
 ## Why HoloML is experimental
 
@@ -141,8 +142,8 @@ A version's specification can have more than one edition. An edition
 changes the document, not the language: it says what was left unsaid,
 and corrects what was wrong. The releases of HoloML's parser and
 checker are numbered with it: 0.2.0 came with the first edition of 0.2,
-0.2.1 with the second, and 0.2.2 with the third; 0.3.0 comes with the
-first edition of 0.3. The
+0.2.1 with the second, and 0.2.2 with the third; 0.3.0 came with the
+first edition of 0.3, and 0.3.1 with its second. The
 [change log](../../CHANGELOG.md) lists what each release changed.
 
 The second edition, of 2026-09-29, has the same language: no page
