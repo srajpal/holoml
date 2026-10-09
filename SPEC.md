@@ -2,10 +2,11 @@
 
 **A markup language for 3D web pages**
 
-- This version: 0.3, first edition (2026-10-07)
+- This version: 0.3, second edition (2026-10-09)
 - Status: experimental (see "Status of this document")
 - Latest published version: https://srajpal.github.io/holoml/spec/
 - Source: https://github.com/srajpal/holoml/blob/main/SPEC.md
+- First edition of 0.3: https://github.com/srajpal/holoml/blob/v0.3.0/SPEC.md
 - Previous version: 0.2, third edition: https://github.com/srajpal/holoml/blob/v0.2.2/SPEC.md
 - First edition of 0.2: https://github.com/srajpal/holoml/blob/v0.2.0/SPEC.md
 - Editors: The HoloML Authors
@@ -31,8 +32,8 @@ says of its experimental specifications [RFC7841]: HoloML has one
 renderer so far, and until version 1.0 a later version may change or
 remove what an earlier one has.
 
-This document describes HoloML 0.3, in its first edition, of
-2026-10-07. Version 0.3 adds names for models and groups, the language
+This document describes HoloML 0.3, in its second edition, of
+2026-10-09 (the first was of 2026-10-07). Version 0.3 adds names for models and groups, the language
 and direction of text, a lighter model shown far away, and more of the
 scene API; and it writes down, for every version, what earlier editions
 left to each renderer: how a scene looks, the least a renderer has to
@@ -585,6 +586,10 @@ nothing.
 | `repeat` | tiling | (0.2) How many times the pictures tile across the model's own texture coordinates, such as `"3 2"`; default `"1"` |
 
 A name that matches no material in the model changes nothing. (0.2)
+A model may hold more than one `material` with the same name: each
+changes that material in document order, so a later one's attributes
+take the place of an earlier one's, and what none of them gives stays
+the model's own.
 Pictures come from the page's own site, like models, and count toward
 the renderer's limits; `color` multiplies the colour picture. A picture
 given here takes the place of the model's own.
@@ -2397,6 +2402,14 @@ Change controller: The HoloML Authors
 
 *This appendix is non-normative.*
 
+- 0.3, second edition (2026-10-09): the same language. Clarified: a
+  model may hold more than one `material` with the same name, and each
+  changes it in document order (section 7, `material`; HyperSpace 3D
+  applied only the first, its issue #66). HoloML's checker (version
+  0.3.1) now does what section 8 already said: a choice's `value`, and
+  an option's, that is already a `bad-value` by its kind is not
+  reported again as none of its options' or as another option's (issue
+  #42). No page changes its meaning.
 - 0.3, first edition (2026-10-07). New in 0.3: `label` on `model` and
   `group`; `lang` and `dir` (section 7, "Language and direction");
   `far` and `far-from` on `model` (section 7, "A lighter model far

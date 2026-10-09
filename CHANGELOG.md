@@ -15,6 +15,26 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-09
+
+HoloML 0.3, second edition, 2026-10-09: the same language.
+
+### Fixed
+
+- The checker reported a choice's `value`, or an option's, that was
+  already a `bad-value` by its kind (an empty value) a second time, as
+  none of its options' values or as another option's; the
+  specification says it is not (section 8). A new conformance sample,
+  `choice-values-bad-by-kind`, holds the counts and places (#42).
+- The test tools' source-map-js is 1.2.2, through PostCSS 8.5.29
+  (GHSA-68fv-2mgg-jv7q; #43).
+
+### Changed
+
+- The specification says what more than one `material` with the same
+  name does: each changes it, in document order (section 7). HyperSpace
+  3D applied only the first (its issue #66).
+
 ## [0.3.0] - 2026-10-08
 
 HoloML 0.3, first edition, 2026-10-07 (HyperSpace 3D's milestone 25),
@@ -283,7 +303,8 @@ lights, labels, links, materials, the animation of position, rotation,
 and scale, and orbiting and walking; the parser, the checker, and the
 conformance samples.
 
-[Unreleased]: https://github.com/srajpal/holoml/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/srajpal/holoml/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/srajpal/holoml/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/srajpal/holoml/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/srajpal/holoml/compare/v0.2.0...v0.2.2
 [0.2.1]: https://github.com/srajpal/holoml/compare/v0.2.0...v0.2.2
