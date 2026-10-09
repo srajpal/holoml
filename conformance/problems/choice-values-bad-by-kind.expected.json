@@ -1,0 +1,19 @@
+{
+  "problems": [
+    {
+      "code": "bad-value",
+      "line": 4,
+      "column": 13
+    },
+    {
+      "code": "bad-value",
+      "line": 6,
+      "column": 15
+    },
+    {
+      "code": "bad-value",
+      "line": 7,
+      "column": 15
+    }
+  ]
+}

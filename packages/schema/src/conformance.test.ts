@@ -75,6 +75,8 @@ describe('conformance samples (O2, O3, O4)', () => {
         // HoloML 0.2, browser milestone 18.
         'bad-slider': 'bad-value',
         'bad-choice': 'bad-target',
+        // Issue #42: a value bad by its kind is not reported again by a choice's checks.
+        'choice-values-bad-by-kind': 'bad-value',
         // HoloML 0.2, browser milestone 19.
         'bad-click-actions': 'missing-attribute',
         // HoloML 0.2, browser milestone 20.
