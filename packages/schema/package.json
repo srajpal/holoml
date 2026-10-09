@@ -2,7 +2,7 @@
   "name": "@holoml/schema",
   "version": "0.3.0",
   "private": true,
-  "description": "Checks a HoloML tree against the HoloML specification (versions 0.1 and 0.2).",
+  "description": "Checks a HoloML tree against the HoloML specification (versions 0.1, 0.2, and 0.3).",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./src/index.ts",

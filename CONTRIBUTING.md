@@ -1,9 +1,9 @@
 # Contributing to HoloML
 
 HoloML is an open markup language for fully 3D websites, designed
-alongside the HyperSpace 3D browser. Versions 0.1 and 0.2 are written
-down in [SPEC.md](SPEC.md), with a parser, a checker, conformance
-samples, and guides in [docs/](docs/index.md), all published at
+alongside the HyperSpace 3D browser. Versions 0.1, 0.2, and 0.3 are
+written down in [SPEC.md](SPEC.md), with a parser, a checker,
+conformance samples, and guides in [docs/](docs/index.md), all published at
 https://srajpal.github.io/holoml/.
 
 ## Set up and test
