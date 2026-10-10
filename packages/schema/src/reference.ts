@@ -119,7 +119,7 @@ export function elementsPage(spec = read('SPEC.md')): string {
     '# Elements and attributes',
     '',
     ...wrap(
-      'Every element of HoloML 0.2 at a glance: what it is, what it may hold, ' +
+      'Every element of HoloML 0.3 at a glance: what it is, what it may hold, ' +
         'where it may be, and its attributes. Which elements and attributes ' +
         "there are, and where each may be, come from the checker's own table; " +
         'the words come from the [specification](../../SPEC.md#7-elements), which ' +
@@ -127,7 +127,8 @@ export function elementsPage(spec = read('SPEC.md')): string {
         'each element it lists, unless it says otherwise. The kinds of value ' +
         '(number, vector, colour, address, and so on) are defined in ' +
         '[section 6](../../SPEC.md#6-space-units-and-values) of the ' +
-        'specification. "(0.2)" marks what a 0.1 page may not use.',
+        'specification. "(0.2)" marks what a 0.1 page may not use, and ' +
+        '"(0.3)" what a 0.1 or 0.2 page may not use.',
     ),
     '',
     GENERATED,
@@ -304,7 +305,7 @@ export function apiPage(spec = read('SPEC.md'), idl = read('spec/holoml.webidl')
     '# The scene API',
     '',
     ...wrap(
-      "A 0.2 page's scripts reach the scene through one object, `holoml`. This " +
+      "A 0.2 or 0.3 page's scripts reach the scene through one object, `holoml`. This " +
         'page lists what it offers at a glance, each member with its ' +
         'declaration in Web IDL, the notation web standards use to describe ' +
         'APIs. [Section 10](../../SPEC.md#10-scripts-and-the-scene-api) of the ' +

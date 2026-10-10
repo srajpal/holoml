@@ -1,6 +1,6 @@
 # Elements and attributes
 
-Every element of HoloML 0.2 at a glance: what it is, what it may hold,
+Every element of HoloML 0.3 at a glance: what it is, what it may hold,
 where it may be, and its attributes. Which elements and attributes there
 are, and where each may be, come from the checker's own table; the words
 come from the [specification](../../SPEC.md#7-elements), which says
@@ -8,7 +8,8 @@ exactly what each one means. An element may hold any number of each
 element it lists, unless it says otherwise. The kinds of value (number,
 vector, colour, address, and so on) are defined in [section
 6](../../SPEC.md#6-space-units-and-values) of the specification. "(0.2)"
-marks what a 0.1 page may not use.
+marks what a 0.1 page may not use, and "(0.3)" what a 0.1 or 0.2 page
+may not use.
 
 This page is made by `pnpm reference:update`; do not edit it by hand.
 

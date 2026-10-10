@@ -1,10 +1,10 @@
 # The scene API
 
-A 0.2 page's scripts reach the scene through one object, `holoml`. This
-page lists what it offers at a glance, each member with its declaration
-in Web IDL, the notation web standards use to describe APIs. [Section
-10](../../SPEC.md#10-scripts-and-the-scene-api) of the specification
-says exactly what each member does, and [appendix
+A 0.2 or 0.3 page's scripts reach the scene through one object,
+`holoml`. This page lists what it offers at a glance, each member with
+its declaration in Web IDL, the notation web standards use to describe
+APIs. [Section 10](../../SPEC.md#10-scripts-and-the-scene-api) of the
+specification says exactly what each member does, and [appendix
 A.3](../../SPEC.md#a3-the-scene-api-in-web-idl) and
 [holoml.webidl](../../spec/holoml.webidl) give the whole API in Web IDL.
 Vectors are arrays of three numbers, `[x, y, z]`: metres for positions

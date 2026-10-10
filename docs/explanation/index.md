@@ -10,5 +10,5 @@ task.
 - [Safety](safety.md): what a page can and cannot do, and why.
 - [Accessibility in 3D](accessibility.md): how pages reach people who use
   the keyboard, screen readers, or reduced motion.
-- [Versions](versions.md): 0.1, 0.2, what comes next, and how a page says
-  which it is written for.
+- [Versions](versions.md): 0.1, 0.2, and 0.3, what comes next, and how
+  a page says which it is written for.
