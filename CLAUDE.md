@@ -5,6 +5,7 @@ rules. Claude Code loads it through the import below.
 
 @AGENTS.md
 
-Owner-only session automation (Remote Control at session start, the
-prompt-log reminder) lives in CLAUDE.local.md, which is gitignored and
-exists only on the owner's machines. See AGENTS.md, Prompt log.
+Owner-only session automation (Remote Control at session start) lives
+in CLAUDE.local.md, which is gitignored and exists only on the owner's
+machines. Prompts are recorded only when the owner asks (AGENTS.md,
+Prompt log).
