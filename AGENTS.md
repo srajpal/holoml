@@ -16,7 +16,9 @@ language keeps the name HoloML; its files use the extension `.holoml`
   (renamed from hypersol-websurfer-3d; GitHub redirects the old address)
 - The brief, architecture, roadmap, prompt log, and handoff live in the
   browser repo: BRIEF.md, ARCHITECTURE.md (section 6 covers this repo),
-  TODO.md, PROMPTS.md, HANDOFF.md.
+  TODO.md, PROMPTS.md, HANDOFF.md. No more milestones are planned (the
+  browser repo's prompt 203): work continues from the GitHub issues of
+  both repositories.
 - Local layout: this folder and the browser folder sit side by side
   (`holoml/` next to the browser folder, which on the owner's machine
   keeps its old name `hypersol-websurfer-3d/`). Never nest one in the
@@ -29,9 +31,10 @@ The rules in the browser repo's AGENTS.md apply here in full. In short:
 
 1. Work only in this folder, the sibling browser folder, and the session
    scratchpad. Caches that installs write elsewhere by design are allowed.
-2. Build only what the owner has approved: first the milestone plan, then
-   its build, which covers every task in that plan. Check in at marked
-   decision points and at the end.
+2. Build only what the owner has approved: the work on a GitHub issue
+   (for a larger one, its plan first). Check in at decision points and at
+   the end, with a pull request. (Until prompt 203: a milestone's plan,
+   then its build.)
 3. Use only agreed data and services. No new network calls or services
    without separate approval.
 4. Ask before adding software, deleting work, resetting saved data,
@@ -43,18 +46,20 @@ The rules in the browser repo's AGENTS.md apply here in full. In short:
 9. Keep the README and other docs current with every change.
 10. Mark run and test steps "not checked yet" until they have run here.
 11. Commit after each completed, approved change with a clear message.
-    Push before starting a milestone and after finishing one, as the
-    browser repository does (owner, prompt 161); otherwise push only
-    when asked. When five or more commits are waiting to be pushed,
+    Push when an issue's work is ready for its pull request, and when
+    the owner asks, as the browser repository does (prompt 203; before,
+    before and after each milestone, prompt 161); otherwise do not. When five or more commits are waiting to be pushed,
     remind the owner. Never rewrite published history.
-12. One active agent session per working tree at a time. Owner prompts
-    are logged in the browser repo's PROMPTS.md; read its last heading
-    before appending.
+12. One active agent session per working tree at a time. A prompt the
+    owner asks to be recorded goes in the browser repo's PROMPTS.md; read
+    its last heading before appending.
 
 ## Prompt log
 
-Owner prompts are logged, lightly edited, in the browser repo's
-PROMPTS.md, which is the single log for both projects. Do not keep a second log here.
+Owner prompts were logged, lightly edited, in the browser repo's
+PROMPTS.md, the single log for both projects, up to prompt 203; since
+then only one the owner asks to be recorded is added there (owner,
+prompt 203). Do not keep a second log here.
 Contributors do not log prompts. Owner-only session automation lives in
 CLAUDE.local.md, which is gitignored.
 
