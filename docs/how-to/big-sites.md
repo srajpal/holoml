@@ -84,8 +84,10 @@ they are loaded: a renderer should release them when it lets them go,
 and may wait to load a group that would pass a limit until others are
 let go. Stand-ins, and models outside such groups, always count.
 
-The sneaker store loads about 2.4 MB in 24 files at first, and each
-bay's shoes about 0.7 MB more as the viewer comes near.
+The sneaker store loads about 0.8 MB in 24 files at first, and each
+bay's shoes about 0.23 MB more as the viewer comes near (its shapes are
+compressed with Draco; see
+[preparing models](preparing-models.md)).
 
 ## Know in a script when an area is in
 

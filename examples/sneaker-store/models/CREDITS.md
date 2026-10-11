@@ -21,7 +21,10 @@ Changed by ../tools/prepare.mjs, and shared here under the same licence:
 - its pictures re-encoded for the web: at 1024 pixels in shoe.glb and
   the shoe page's colours/, at 512 in each shoe-<colour>.glb;
 - a lighter copy for far away in each shoe-<colour>-far.glb (about
-  2,445 triangles of its 22,700, with a picture of 64 pixels).
+  2,445 triangles of its 22,700, with a picture of 64 pixels);
+- the shapes in every one of these files compressed with Draco
+  (KHR_draco_mesh_compression) by ../tools/compress.mjs, with glTF
+  Transform, which prepare.mjs runs last.
 
 "Everyday Runner", its colourways' names (Midnight, Beach, Street, Forest, Sunset, Lemon, Violet, Sky, Cloud, Ember), and its prices are
 made up for this example; the shoe is Shopify's model.

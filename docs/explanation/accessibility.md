@@ -2,7 +2,7 @@
 
 This page explains how a HoloML page reaches people who use the
 keyboard, screen readers, or reduced motion, what an author can do to
-help, and what version 0.2 cannot yet say. The specification gathers
+help, and what version 0.3 added for them. The specification gathers
 the rules in its accessibility considerations
 ([section 14](../../SPEC.md#14-accessibility-considerations)).
 
@@ -72,8 +72,11 @@ who have turned them off, still need to be able to use it.
 ## What authors can do
 
 - Give ids and labels to what matters: a `label` on each click action
-  ("Study door"), each place ("Kitchen"), and a floor plan ("Floor plan
-  of the loft").
+  ("Study door"), each place ("Kitchen"), a floor plan ("Floor plan
+  of the loft"), and (0.3) each model or group a visitor would ask
+  about ("Blacktip reef shark").
+- Say which language the text is in, and which way it runs (0.3):
+  `lang` on the root, and `lang` and `dir` on any text in another.
 - Write words as text, in labels and panels, rather than as pictures:
   text reaches screen readers, Find in page, and the text view, and a
   picture of words does not.
@@ -87,15 +90,17 @@ who have turned them off, still need to be able to use it.
 - Keep still, with reduced motion, what moves only for effect, and keep
   the page usable without its sounds.
 
-## What 0.2 lacks
+## What 0.3 added
 
-HoloML 0.2 cannot yet say two things. A model or a group has no name
-of its own for screen readers: they hear its id, or its file's name,
-such as `boulder.glb`, so an id that reads well, such as `study-door`,
-helps until then. And a page cannot say which language its text is in,
-or that it runs right to left, as `lang` and `dir` do in HTML; a
-renderer shows text with the fonts and writing directions of the
-viewer's system. Both are planned for version 0.3.
+HoloML 0.2 could not say two things, and 0.3 says both. A model or a
+group can have a name of its own for screen readers, its `label`;
+without one they hear its id, or its file's name, such as
+`boulder.glb`, so an id that reads well, such as `study-door`, still
+helps in a 0.2 page. And a page can say which language its text is in,
+and that it runs right to left, with `lang` and `dir` as in HTML;
+without them a renderer shows text with the fonts and writing
+directions of the viewer's system. The guide
+[names and languages](../how-to/names-and-languages.md) shows both.
 
 ## Read more
 
@@ -105,7 +110,8 @@ viewer's system. Both are planned for version 0.3.
   [`slider`](../../SPEC.md#slider), [`choice`](../../SPEC.md#choice),
   [`plan`](../../SPEC.md#plan), and
   [internationalization](../../SPEC.md#15-internationalization-considerations).
-- How-to guides: [text](../how-to/text.md),
+- How-to guides: [names and languages](../how-to/names-and-languages.md),
+  [text](../how-to/text.md),
   [doors and lamps](../how-to/doors-and-lamps.md),
   [places and a floor plan](../how-to/places-and-plans.md), and
   [sliders and choices](../how-to/sliders-and-choices.md).

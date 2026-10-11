@@ -27,9 +27,11 @@ material in place, light from the surroundings, text of more than one
 line on a board, doors and lamps that work with a click, places to go
 to, a sky, a floor plan, models that load as the viewer comes near,
 water, and sounds from a place. Version 0.3 gives things names for
-screen readers, a lighter model for far away, text in any language and
-direction, compressed models, and minimum limits that every browser
-meets. Files use the extension `.holoml`.
+screen readers, a lighter model for far away, and text in any language
+and direction; written down with it, for every version, are the
+minimum limits every browser meets, and compressed models are glTF
+files a browser may read at any version. Files use the extension
+`.holoml`.
 
 ## Why a new language
 
@@ -73,10 +75,13 @@ then, water that things are seen through, with light from its waves,
 and sounds that come from a place; a page says `version="0.2"` to use
 them. Version 0.3 adds a `label` that names a model or a group, a
 lighter model shown beyond a distance (`far` and `far-from`), `lang`
-and `dir` on every text element, compressed glTF files (Draco, meshopt,
-and KTX2 pictures), the limits every browser must allow at least, how a
-scene is lit and seen, and more of the scene API (places, animations,
-water, the floor plan, and adding links and panels). The syntax is strict: a mistake stops with its line and column.
+and `dir` on every text element, and more of the scene API (places,
+animations, water, the floor plan, and adding links and panels). Its
+first edition also wrote down, for every version, how a scene is lit
+and seen and the limits every browser must allow at least; compressed
+glTF files (Draco, meshopt, and KTX2 pictures) are extensions a
+renderer reads, not part of the language. The syntax is strict: a
+mistake stops with its line and column.
 Later versions: movement along paths, physics, and spaces shared by
 several people.
 
@@ -144,8 +149,8 @@ pnpm lint
 pnpm typecheck
 ```
 
-883 unit, conformance, documentation, site, example, and VS Code
-extension tests passed on 2026-10-07 on Windows 11. The RELAX NG
+885 unit, conformance, documentation, site, example, and VS Code
+extension tests passed on 2026-10-10 on Windows 11. The RELAX NG
 schema is also checked by Jing, the reference validator (a copy in
 `tools/jing/`), which needs Java (run with Java 17 here); without Java those checks
 are skipped and say so (GitHub's machines have it). GitHub Actions runs

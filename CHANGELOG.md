@@ -15,6 +15,18 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
+### Changed
+
+- The documents brought up to date with 0.3 and the browser: the
+  accessibility page says what 0.3 added (names, languages) in place of
+  what 0.2 lacked; HyperSpace 3D reads compressed models (since its
+  milestone 25); the sneaker store's sizes are those after compression,
+  and its credits say its shapes are compressed with Draco; the
+  README separates what 0.3 adds from what its first edition wrote down
+  for every version; the elements reference says HoloML 0.3 and
+  explains "(0.3)", and the scene API reference speaks of 0.2 and 0.3
+  pages.
+
 ## [0.3.1] - 2026-10-09
 
 HoloML 0.3, second edition, 2026-10-09: the same language.

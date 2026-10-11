@@ -53,8 +53,9 @@ sky, and the floor plan. Scripts, sounds, and pictures come only from the page's
 A file that cannot be loaded is left out, and the rest of the scene is
 shown; a renderer should mark where a missing model would have been. So
 is a model whose glTF file needs an extension the renderer does not
-read. HyperSpace 3D, for one, does not yet read files that need
-compressed geometry or compressed pictures. The page is ready (for its
+read. HyperSpace 3D reads compressed geometry and pictures (Draco,
+meshopt, and KTX2) since its milestone 25; another renderer may not.
+The page is ready (for its
 scripts, `holoml.ready`) when every file it loads with the page (its
 models, sounds, and pictures) has loaded or been left out.
 
