@@ -47,7 +47,7 @@ at. See the story in the browser repository's README.
 ## A page
 
 ```
-<holoml version="0.1">
+<holoml version="0.3">
   <scene background="#0b0f1e">
     <viewpoint position="0 1.6 6" look-at="0 0.8 0" mode="orbit" />
     <light type="directional" position="4 8 5" intensity="1.2" />

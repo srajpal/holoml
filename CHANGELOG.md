@@ -26,6 +26,9 @@ both. The specification's own list of changes is its
   for every version; the elements reference says HoloML 0.3 and
   explains "(0.3)", and the scene API reference speaks of 0.2 and 0.3
   pages.
+- The README's and the documentation index's sample pages say
+  `version="0.3"`, the version to write today; they said 0.1 and 0.2
+  (#54).
 
 ## [0.3.1] - 2026-10-09
 
