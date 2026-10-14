@@ -12,7 +12,7 @@ until version 1.0 a later version may change or remove what an earlier
 one has. What a page written for 0.1, 0.2, or 0.3 means will not change.
 
 ```holoml
-<holoml version="0.2">
+<holoml version="0.3">
   <head>
     <title>A red car</title>
   </head>
