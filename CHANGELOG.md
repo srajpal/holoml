@@ -30,6 +30,15 @@ both. The specification's own list of changes is its
   `version="0.3"`, the version to write today; they said 0.1 and 0.2
   (#54).
 
+### Added
+
+- "Open it here" on each example's front page, in the README, and on
+  the documentation's home page: the example in HyperSpace 3D's viewer
+  on a plain web page, so it opens in any browser with WebGL 2
+  (hypersol-hyperspace-3d#91); and a how-to guide, "Show a HoloML page
+  in an ordinary browser", on the link, what a page of another site
+  gets there, and what the viewer sends (#55).
+
 ## [0.3.1] - 2026-10-09
 
 HoloML 0.3, second edition, 2026-10-09: the same language.

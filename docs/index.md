@@ -43,37 +43,47 @@ one has. What a page written for 0.1, 0.2, or 0.3 means will not change.
 
 ## The example sites
 
-Each is a HoloML site you can open in HyperSpace 3D, and its source is
-in the repository.
+Each is a HoloML site you can open in HyperSpace 3D, or in any browser
+with WebGL 2 through HyperSpace 3D's viewer on a plain page ("Open it
+here"; [how it works](how-to/in-a-browser.md)), and its source is in
+the repository.
 
 - ![The showroom: five cars in a round hall](../site/pictures/showroom.jpg)
   [The showroom](https://srajpal.github.io/holoml/showroom/): five
   cars in a round hall, one on a turntable, each to walk around in three
-  colours. [Source](../examples/showroom/).
+  colours. [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/showroom/index.holoml) ·
+  [Source](../examples/showroom/).
 - ![Blockworld: an island of blocks, from above one corner](../site/pictures/blockworld.jpg)
   [Blockworld](https://srajpal.github.io/holoml/blockworld/): a small
   block game, with a script, sound, day and night, and a speed slider.
+  [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/blockworld/index.holoml) ·
   [Source](../examples/blockworld/).
 - ![The sofa studio: a sofa in blue linen, in a sunlit room](../site/pictures/sofa-studio.jpg)
   [The sofa studio](https://srajpal.github.io/holoml/sofa-studio/): a
   shop page, where the sofa's fabric and wood change in place.
+  [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/sofa-studio/index.holoml) ·
   [Source](../examples/sofa-studio/).
 - ![Harbour Loft: the living room, with the harbour through the windows](../site/pictures/harbour-loft.jpg)
   [Harbour Loft](https://srajpal.github.io/holoml/harbour-loft/): a flat
   to tour, with doors and lamps to click, panels, and a floor plan.
+  [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/harbour-loft/index.holoml) ·
   [Source](../examples/harbour-loft/).
 - ![The sneaker store: a bay of blue shoes, the hall beyond](../site/pictures/sneaker-store.jpg)
   [The sneaker store](https://srajpal.github.io/holoml/sneaker-store/): a
   shoe in ten colourways on shelves that load as you come near.
+  [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/sneaker-store/index.holoml) ·
   [Source](../examples/sneaker-store/).
 - ![The ocean tunnel: a shark over the glass of a tunnel under the water](../site/pictures/aquarium.jpg)
   [The ocean tunnel](https://srajpal.github.io/holoml/aquarium/): an
   aquarium to walk through, with 30 fish, water, and feeding.
+  [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/aquarium/index.holoml) ·
   [Source](../examples/aquarium/).
 - ![Words in a room: welcome signs in Arabic, English, and Hebrew on three walls](../site/pictures/words.jpg)
   [Words in a room](https://srajpal.github.io/holoml/words/) (0.3):
   welcome signs in English, Arabic, and Hebrew, each in its own language
-  and direction. [Source](../examples/words/).
+  and direction.
+  [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/words/index.holoml) ·
+  [Source](../examples/words/).
 
 The pictures were taken in HyperSpace 3D; the models in them are
 credited in each site's `models/CREDITS.md`.

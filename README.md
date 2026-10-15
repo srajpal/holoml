@@ -121,7 +121,12 @@ https://srajpal.github.io/holoml/aquarium/, and
 https://srajpal.github.io/holoml/words/. Open an example's
 `index.holoml` in a browser that shows HoloML, such as
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d),
-where they are also listed under "HoloML examples".
+where they are also listed under "HoloML examples"; or open it in any
+browser with WebGL 2 through HyperSpace 3D's viewer on a plain page,
+https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page= followed
+by the example's address (each example's front page has the link;
+[Show a HoloML page in an ordinary browser](docs/how-to/in-a-browser.md)
+explains it, and how to link your own page).
 
 The packages are not published to npm yet.
 
