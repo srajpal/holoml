@@ -30,6 +30,7 @@ Each guide does one thing, assuming you know how a page is put together
 ## Sharing
 
 - [Publish a site](publishing.md)
+- [Show a HoloML page in an ordinary browser](in-a-browser.md)
 
 ## Tools
 
