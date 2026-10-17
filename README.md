@@ -33,6 +33,12 @@ minimum limits every browser meets, and compressed models are glTF
 files a browser may read at any version. Files use the extension
 `.holoml`.
 
+![Nine seconds of Harbour Loft, a HoloML page, in HyperSpace 3D: through the door in the brick wall, up to the roof terrace, and the harbour full of boats](https://raw.githubusercontent.com/srajpal/hypersol-hyperspace-3d/main/docs/video/hyperspace-3d.gif)
+
+*Harbour Loft, one of the examples below, in HyperSpace 3D; the GIF
+and a one-minute tour are made by that repository's `pnpm
+screenshots:video` (its docs/video).*
+
 ## Why a new language
 
 HTML describes documents on a flat page. Existing 3D formats (glTF, USD,
