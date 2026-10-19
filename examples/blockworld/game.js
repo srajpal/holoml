@@ -12,7 +12,8 @@
 // The address can say ?seed=12 for another island, and ?hour=21 to start
 // in the evening.
 
-const params = new URLSearchParams(location.search);
+// The page's own address is document.baseURI: in the viewer on an ordinary browser's page, location is the viewer's.
+const params = new URL(document.baseURI).searchParams;
 const SEED = Number.parseInt(params.get('seed') ?? '7', 10) || 7;
 const HOUR = params.has('hour') ? Math.min(24, Math.max(0, Number(params.get('hour')) || 0)) : null;
 const HALF = 12; // the island is 24 blocks across
