@@ -5,6 +5,14 @@
 // sites; links between them are relative, so _site/index.html also opens
 // from the disk. Every link within the site is checked as it is built.
 //
+// The playground (holoml #58) at /playground/: site/playground/'s page in
+// the same frame as the others, with its script and styles, and HoloML's
+// parser and checker written beside it as plain JavaScript modules by
+// Node's own type stripping. It frames HyperSpace 3D's viewer, published
+// on the same origin at /hypersol-hyperspace-3d/viewer/, so it works
+// only from there (and from a test server that serves both sites side by
+// side), not from the disk.
+//
 //   pnpm site:build          (node site/build.mjs [folder])
 //   node site/build.mjs <folder> --pages-only
 //                            (without the example sites, for HyperSpace 3D's
@@ -16,6 +24,7 @@
 // file in each), and never the repository or a folder of its sources.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { isAbsolute, join, posix, relative as between, resolve } from 'node:path';
+import { stripTypeScriptTypes } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Marked, Renderer } from 'marked';
 
@@ -37,7 +46,26 @@ const PARTS = [
   { path: 'docs/reference/index.html', label: 'Reference', under: 'docs/reference/' },
   { path: 'docs/explanation/index.html', label: 'Explanation', under: 'docs/explanation/' },
   { path: 'index.html#the-example-sites', label: 'Examples', under: null },
+  { path: 'playground/index.html', label: 'Playground', under: 'playground/' },
 ];
+
+/** The playground's page, and where it finds HyperSpace 3D's viewer: beside this site on the same origin (srajpal.github.io). */
+export const PLAYGROUND = 'playground/index.html';
+const PLAYGROUND_VIEWER = '../../hypersol-hyperspace-3d/viewer/index.html?from=parent';
+/** The playground's own files, copied beside its page. */
+const PLAYGROUND_FILES = ['playground.js', 'playground.css', 'first.holoml'];
+/** The playground's checker: each module, and the source it is made from. */
+export const CHECKER = {
+  'parser.js': 'packages/parser/src/index.ts',
+  'schema.js': 'packages/schema/src/index.ts',
+  'rules.js': 'packages/schema/src/rules.ts',
+};
+/**
+ * The playground's content policy: its own scripts, styles, and fetches,
+ * and frames of its own origin (the viewer); nothing else.
+ */
+export const PLAYGROUND_CSP =
+  "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'";
 
 const read = (file) => readFileSync(join(ROOT, file), 'utf8').replace(/\r\n/g, '\n');
 const escapeHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -203,10 +231,12 @@ function render(page, byPath, links, problems) {
       return href;
     }
     if (href.startsWith(SITE)) {
-      const [path, anchor = ''] = href.slice(SITE.length).split('#');
+      // A query (the playground's ?preset=) is kept on the link, and the file is checked without it.
+      const [address, anchor = ''] = href.slice(SITE.length).split('#');
+      const [path, query = ''] = address.split('?');
       const target = path === '' || path.endsWith('/') ? `${path}index.html` : path;
       links.push({ from: page.path, to: target, anchor });
-      return relative(page.path, target) + (anchor ? `#${anchor}` : '');
+      return relative(page.path, target) + (query ? `?${query}` : '') + (anchor ? `#${anchor}` : '');
     }
     if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return href;
     const [path, anchor = ''] = href.split('#');
@@ -311,8 +341,8 @@ function specPage(html, headings) {
   );
 }
 
-/** The page around the content: the bar, the path to it, and the footer. */
-function layout(page, html, headings) {
+/** The page around the content: the bar, the path to it, and the footer; `head` adds to the head (the playground's). */
+function layout(page, html, headings, head = '') {
   const title = plain(headings.find((h) => h.depth === 1)?.inner ?? 'HoloML');
   const home = page.path === 'index.html';
   const root = relative(page.path, 'index.html').replace(/index\.html$/, '');
@@ -343,8 +373,8 @@ function layout(page, html, headings) {
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="stylesheet" href="${root}style.css">
 <script src="${root}code.js" defer></script>
-</head>
-<body class="${page.path === 'spec/index.html' ? 'spec' : home ? 'home' : 'guide'}">
+${head}</head>
+<body class="${page.path === 'spec/index.html' ? 'spec' : page.path === PLAYGROUND ? 'playground' : home ? 'home' : 'guide'}">
 <a class="skip" href="#main">Skip to the content</a>
 <header class="bar">
 <nav aria-label="HoloML">
@@ -367,6 +397,50 @@ ${html}</main>
 </body>
 </html>
 `;
+}
+
+/**
+ * One of the checker's sources as a plain JavaScript module, for the
+ * playground: its types taken out by Node itself (nothing added to the
+ * code), and its imports of the others by their new names.
+ */
+export function checkerModule(source) {
+  const js = stripTypeScriptTypes(read(source));
+  return `// Made by site/build.mjs from ${source}, its types taken out; the source is the one to change.\n${js.replace(/(from\s+'\.\/[\w-]+)\.ts'/g, "$1.js'")}`;
+}
+
+/** The example sites' names and titles, for the playground's presets. */
+function examplesWithTitles(sites) {
+  return sites
+    .map((s) => ({ name: s.name, title: /<title>([^<]*)<\/title>/.exec(read(`examples/${s.name}/index.holoml`))?.[1]?.trim() ?? s.name }))
+    .sort((a, b) => a.title.localeCompare(b.title, 'en'));
+}
+
+/** The playground into the site: its page in the site's frame, its files, and the checker's modules. */
+function playground(out, sites, links) {
+  const dir = join(out, 'playground');
+  mkdirSync(join(dir, 'holoml'), { recursive: true });
+  for (const [name, source] of Object.entries(CHECKER)) writeFileSync(join(dir, 'holoml', name), checkerModule(source));
+  for (const file of PLAYGROUND_FILES) cpSync(join(ROOT, 'site/playground', file), join(dir, file));
+  const presets = [
+    '<option value="first">A first page</option>',
+    ...examplesWithTitles(sites).map((e) => {
+      links.push({ from: PLAYGROUND, to: `${e.name}/index.holoml`, anchor: '' });
+      return `<option value="${escapeHtml(e.name)}">${escapeHtml(e.title)}</option>`;
+    }),
+  ].join('\n');
+  const body = read('site/playground/index.html').replace('{{presets}}', presets).replace('{{viewer}}', escapeHtml(PLAYGROUND_VIEWER));
+  if (body.includes('{{')) throw new Error('site/playground/index.html has a placeholder the builder does not fill');
+  const head = [
+    `<meta http-equiv="Content-Security-Policy" content="${PLAYGROUND_CSP}">`,
+    '<link rel="stylesheet" href="playground.css">',
+    '<script type="module" src="playground.js"></script>',
+    '',
+  ].join('\n');
+  const page = { source: 'site/playground/index.html', path: PLAYGROUND };
+  const html = layout(page, body, [{ depth: 1, id: 'playground', inner: 'Playground' }], head);
+  writeFileSync(join(out, PLAYGROUND), html);
+  return html;
 }
 
 /** The ids a page has, for checking links to its parts. */
@@ -447,13 +521,14 @@ export function buildSite(out = join(ROOT, '_site'), { examples = true } = {}) {
     const from = join(ROOT, 'examples', site.name);
     cpSync(from, join(out, site.name), { recursive: true, filter: (src) => isPublished(from, src) });
   }
+  made.set(PLAYGROUND, playground(out, sites, links));
   writeFileSync(join(out, '.nojekyll'), '');
   const inSite = (to) => (!examples && sites.some((s) => to.startsWith(`${s.name}/`)) ? join(ROOT, 'examples', to) : join(out, to));
   for (const { from, to, anchor } of links) {
     if (!existsSync(inSite(to))) problems.push(`${from}: a link to ${to}, which the site does not have`);
     else if (anchor && made.has(to) && !idsOf(made.get(to)).has(anchor)) problems.push(`${from}: a link to ${to}#${anchor}, a part that page does not have`);
   }
-  return { out, pages: [...made.keys()], problems: [...new Set(problems)] };
+  return { out, pages: [...made.keys()].filter((p) => p !== PLAYGROUND), playground: PLAYGROUND, problems: [...new Set(problems)] };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

@@ -15,6 +15,17 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
+### Added
+
+- A playground on the site, https://srajpal.github.io/holoml/playground/
+  (issue #58): a page's text beside its scene, checked as you type by
+  the parser and the checker (written for the browser by the site's
+  builder with Node's own type stripping), drawn by HyperSpace 3D's
+  viewer on the same site; a first page and the seven examples as
+  presets (`?preset=`), and nothing sent anywhere. Linked from every
+  page's bar, the home page, the README, and each example's front
+  page; the guide "Try a page in the playground".
+
 ### Changed
 
 - The documents brought up to date with 0.3 and the browser: the

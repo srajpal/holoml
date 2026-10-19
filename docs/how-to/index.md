@@ -34,4 +34,5 @@ Each guide does one thing, assuming you know how a page is put together
 
 ## Tools
 
+- [Try a page in the playground](playground.md)
 - [Write HoloML in VS Code](vscode.md)
