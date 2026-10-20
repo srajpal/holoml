@@ -36,7 +36,7 @@ export interface FakeScene {
   frames(count: number, ms?: number): void;
   /** Runs a script of the page (its path), as the page would. */
   run(script: string): Promise<void>;
-  /** What stands in for the page's window: `location`, `sessionStorage`, and what the script puts there. */
+  /** What stands in for the page's window: `location`, `document` (its `baseURI`, the page's address), `sessionStorage`, and what the script puts there. */
   window: Record<string, unknown>;
   /**
    * How many elements the scene takes in all: what `holoml.add` would put
@@ -106,6 +106,8 @@ export function fakeScene(file: string, { search = '', reducedMotion = false } =
   const storage = new Map<string, string>();
   const window: Record<string, unknown> = {
     location: { search },
+    // The page's own address, as a script reads it in every viewer (the browser's issue #125).
+    document: { baseURI: `${pathToFileURL(file).href}${search}` },
     sessionStorage: { getItem: (k: string) => storage.get(k) ?? null, setItem: (k: string, v: string) => void storage.set(k, v) },
     addEventListener: () => undefined,
   };
@@ -132,7 +134,7 @@ export function fakeScene(file: string, { search = '', reducedMotion = false } =
     },
     async run(script) {
       const g = globalThis as Record<string, unknown>;
-      Object.assign(g, { holoml, window, location: window.location, sessionStorage: window.sessionStorage });
+      Object.assign(g, { holoml, window, location: window.location, document: window.document, sessionStorage: window.sessionStorage });
       // A new address each time, so that the script runs again for each test.
       await import(/* @vite-ignore */ `${pathToFileURL(script).href}?run=${++runs}`);
     },

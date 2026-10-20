@@ -1,0 +1,31 @@
+<h1>Playground</h1>
+<p>Write a HoloML page on the left and see it drawn on the right. The checker reads it as you type and lists its problems with their lines and columns. Nothing you write leaves this page: the scene is drawn by <a href="https://github.com/srajpal/hypersol-hyperspace-3d">HyperSpace 3D</a>'s viewer, on this same site, and only the models your page names are fetched.</p>
+<div class="pg-layout">
+<section class="pg-editor" aria-labelledby="pg-page">
+<div class="pg-tools">
+<h2 id="pg-page">The page</h2>
+<label for="pg-preset">Start from</label>
+<select id="pg-preset">
+{{presets}}
+</select>
+</div>
+<div class="pg-code">
+<pre class="pg-lines" id="pg-lines" aria-hidden="true">1</pre>
+<textarea id="pg-text" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="The page's HoloML" aria-describedby="pg-keys"></textarea>
+</div>
+<p class="pg-keys" id="pg-keys">Tab moves on from the text. Ctrl+] and Ctrl+[ indent and outdent the lines chosen, and Ctrl+Enter draws the page now (⌘ in place of Ctrl on a Mac).</p>
+<h2 id="pg-problems-title">Problems</h2>
+<p class="pg-count" id="pg-count" role="status">No problems.</p>
+<ol class="pg-problems" id="pg-problems" aria-labelledby="pg-problems-title"></ol>
+</section>
+<section class="pg-scene" aria-labelledby="pg-scene-title">
+<div class="pg-tools">
+<h2 id="pg-scene-title">The scene</h2>
+<label class="pg-switch"><input type="checkbox" id="pg-live" checked> Draw as I type</label>
+<button type="button" id="pg-run">Run</button>
+</div>
+<p class="pg-note" id="pg-note" hidden></p>
+<div class="pg-frame" id="pg-frame" data-viewer="{{viewer}}"></div>
+</section>
+</div>
+<noscript><p>The playground needs JavaScript to check and draw the page. Every example opens without it, from the <a href="../index.html#the-example-sites">home page</a>.</p></noscript>

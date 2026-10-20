@@ -265,4 +265,12 @@ describe('E4: the sneaker store (shoe.js)', () => {
     scene.emit('click', left(scene.find('turn-over')));
     expect(scene.find('cart').text).toBe('Cart: 1 pair · $120');
   });
+
+  it("takes the colour from the page's own address, not the document's, as in the viewer on the web (the browser's issue #125)", async () => {
+    const scene = fakeScene(`${EXAMPLES}sneaker-store/shoe.holoml`, { search: '?colour=ember' });
+    // There the document is the viewer's, …/viewer/?page=<the page's address>.
+    scene.window.location = { search: '?page=https%3A%2F%2Fsrajpal.github.io%2Fholoml%2Fsneaker-store%2Fshoe.holoml%3Fcolour%3Dember' };
+    await scene.run(`${EXAMPLES}sneaker-store/shoe.js`);
+    expect(scene.find('colour').value).toBe('ember');
+  });
 });

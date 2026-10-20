@@ -1,13 +1,17 @@
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, parse as parsePath, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, parse as parsePath, relative, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { MARKER, buildSite, highlightHoloml, isPublished, pages, refusal } from './build.mjs';
+import { parse as parseSource } from '../packages/parser/src/index.ts';
+import { check as checkSource } from '../packages/schema/src/index.ts';
+import { CHECKER, MARKER, PLAYGROUND, PLAYGROUND_CSP, buildSite, checkerModule, highlightHoloml, isPublished, pages, refusal } from './build.mjs';
 
 /** The site (browser milestone 22), built into a folder of its own for these checks. */
 let out = '';
-let built: { pages: string[]; problems: string[] } = { pages: [], problems: [] };
+let built: { pages: string[]; playground: string; problems: string[] } = { pages: [], playground: '', problems: [] };
+/** The guides' pages and the playground's (holoml #58), for what every page of the site must be. */
+const everyPage = () => [...built.pages, built.playground];
 const html = (path: string) => readFileSync(join(out, path), 'utf8');
 
 beforeAll(() => {
@@ -213,7 +217,7 @@ describe("the example sites' own pages: for browsers that do not show HoloML, a 
 
 describe('Y6: for everyone', () => {
   it('every page says its language, has a title, one main heading, and a way past the bar', () => {
-    for (const path of built.pages) {
+    for (const path of everyPage()) {
       const page = html(path);
       expect(page, path).toContain('<html lang="en-GB">');
       expect(/<title>([^<]+)<\/title>/.exec(page)?.[1]?.trim(), path).toBeTruthy();
@@ -224,7 +228,7 @@ describe('Y6: for everyone', () => {
   });
 
   it('headings go down one level at a time', () => {
-    for (const path of built.pages) {
+    for (const path of everyPage()) {
       const levels = [...html(path).matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
       const skips = levels.flatMap((l, i) => (i > 0 && l > levels[i - 1]! + 1 ? [`h${levels[i - 1]} to h${l}`] : []));
       expect(skips, path).toEqual([]);
@@ -232,7 +236,7 @@ describe('Y6: for everyone', () => {
   });
 
   it('every picture has its text, and ids are unique', () => {
-    for (const path of built.pages) {
+    for (const path of everyPage()) {
       const page = html(path);
       for (const img of page.matchAll(/<img\b[^>]*>/g)) expect(img[0], path).toMatch(/\salt="[^"]+"/);
       const ids = [...page.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]!);
@@ -303,6 +307,60 @@ describe('Y6: for everyone', () => {
   });
 });
 
+describe('the playground as built (holoml #58: PG6 and PG7 in the page)', () => {
+  const page = () => html(PLAYGROUND);
+
+  it("is at playground/, in every page's bar, with its script, its styles, and the checker beside it", () => {
+    expect(built.playground).toBe('playground/index.html');
+    for (const file of ['playground.js', 'playground.css', 'first.holoml', 'holoml/parser.js', 'holoml/schema.js', 'holoml/rules.js']) {
+      expect(existsSync(join(out, 'playground', file)), file).toBe(true);
+    }
+    for (const path of everyPage()) expect(html(path), path).toMatch(/<li><a href="(?:\.\.\/)*(?:playground\/)?index\.html"(?: aria-current="page"| class="here")?>Playground<\/a><\/li>/);
+    expect(page()).toContain('<a href="index.html" aria-current="page">Playground</a>');
+  });
+
+  it('asks nothing of another site: its policy allows only its own scripts, styles, fetches, and frames', () => {
+    const p = page();
+    expect(p).toContain(`<meta http-equiv="Content-Security-Policy" content="${PLAYGROUND_CSP}">`);
+    expect(PLAYGROUND_CSP).toBe("default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'");
+    expect(p.match(/<script\b[^>]*>/gi)).toEqual(['<script src="../code.js" defer>', '<script type="module" src="playground.js">']);
+    const fetched = [...p.matchAll(/<(?:img|script|link|source|iframe|video|audio)\b[^>]*\s(?:src|href)="([^"]*)"/gi)].map((m) => m[1]!);
+    expect(fetched.filter((u) => /^[a-z][a-z0-9+.-]*:|^\/\//i.test(u))).toEqual([]);
+    expect(p).not.toMatch(/\sstyle="/);
+    // The viewer, on the same origin beside this site, takes its page from this one.
+    expect(p).toContain('data-viewer="../../hypersol-hyperspace-3d/viewer/index.html?from=parent"');
+    const css = readFileSync(join(out, 'playground', 'playground.css'), 'utf8');
+    expect(css).not.toMatch(/@import|url\(|#[0-9a-f]{3,6}\b/i);
+    const js = readFileSync(join(out, 'playground', 'playground.js'), 'utf8');
+    expect(js).not.toMatch(/https?:|XMLHttpRequest|WebSocket|sendBeacon|localStorage|document\.cookie/);
+    // It fetches only the presets, by addresses relative to itself, and talks to the viewer on its own origin only.
+    expect([...js.matchAll(/\bfetch\(([^,]+),/g)].map((m) => m[1])).toEqual(['sourceOf(name)']);
+    expect([...js.matchAll(/postMessage\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['waiting, location.origin']);
+    expect(js).toContain('e.origin !== location.origin');
+  });
+
+  it('offers the first page and every example site as presets, each at its address in the site', () => {
+    const values = [...page().matchAll(/<option value="([^"]+)">/g)].map((m) => m[1]!);
+    expect(values[0]).toBe('first');
+    expect(values.slice(1).sort()).toEqual([...EXAMPLES].sort());
+    for (const name of values.slice(1)) expect(existsSync(join(out, name, 'index.holoml')), name).toBe(true);
+  });
+
+  it('names every control, reads its problems out, and leaves the text by Tab', () => {
+    const p = page();
+    expect(p).toMatch(/<label for="pg-preset">Start from<\/label>\s*<select id="pg-preset">/);
+    expect(p).toMatch(/<textarea id="pg-text"[^>]*\saria-label="The page's HoloML"[^>]*\saria-describedby="pg-keys"/);
+    expect(p).toMatch(/<p class="pg-count" id="pg-count" role="status">/);
+    expect(p).toMatch(/<label class="pg-switch"><input type="checkbox" id="pg-live" checked> Draw as I type<\/label>/);
+    expect(p).toMatch(/<button type="button" id="pg-run">Run<\/button>/);
+    // The line numbers are for the eye; screen readers have the problems' lines and columns.
+    expect(p).toMatch(/<pre class="pg-lines" id="pg-lines" aria-hidden="true">/);
+    const js = readFileSync(join(out, 'playground', 'playground.js'), 'utf8');
+    // The Tab key is left alone: it moves on, as everywhere on the site.
+    expect(js).not.toMatch(/['"]Tab['"]/);
+  });
+});
+
 describe('Y1: the specification as a page', () => {
   it('has its contents, with every numbered section and appendix', () => {
     const page = html('spec/index.html');
@@ -341,5 +399,75 @@ describe('the HoloML in code blocks is coloured without changing it', () => {
     const coloured = (highlightHoloml(text) as string).replace(/<[^>]+>/g, '');
     const decoded = coloured.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
     expect(decoded).toBe(text);
+  });
+});
+
+/*
+ * The playground's checker (holoml #58, check PG3's ground): the parser's
+ * and the checker's sources as the builder writes them for the browser
+ * (checkerModule: Node's own type stripping) answer as the sources do.
+ */
+type Parse = (text: string) => unknown;
+type Check = (doc: unknown) => unknown[];
+let checkerDir = '';
+let parseModule: Parse;
+let checkModule: Check;
+
+beforeAll(async () => {
+  checkerDir = mkdtempSync(join(tmpdir(), 'holoml-checker-'));
+  for (const [name, source] of Object.entries(CHECKER as Record<string, string>)) writeFileSync(join(checkerDir, name), checkerModule(source) as string);
+  parseModule = ((await import(pathToFileURL(join(checkerDir, 'parser.js')).href)) as { parse: Parse }).parse;
+  checkModule = ((await import(pathToFileURL(join(checkerDir, 'schema.js')).href)) as { check: Check }).check;
+});
+
+afterAll(() => {
+  if (checkerDir) rmSync(checkerDir, { recursive: true, force: true });
+});
+
+/** Every HoloML file under a folder of the repository. */
+function holomlFiles(folder: string): string[] {
+  return readdirSync(join(ROOT, folder), { withFileTypes: true, recursive: true })
+    .filter((e) => e.isFile() && e.name.endsWith('.holoml'))
+    .map((e) => relative(ROOT, join(e.parentPath, e.name)).split('\\').join('/'))
+    .filter((f) => !f.split('/').includes('tools'));
+}
+
+/** What a reader says of a page: its one syntax error, or the checker's problems. */
+function answer(parse: Parse, check: Check, text: string): unknown {
+  try {
+    return { problems: check(parse(text)) };
+  } catch (e) {
+    const err = e as { code?: string; detail?: string; position?: unknown };
+    return { error: err.code, detail: err.detail, position: err.position };
+  }
+}
+
+describe('the checker the playground runs', () => {
+  it('is written as plain modules: no TypeScript imports, nothing from Node', () => {
+    for (const name of Object.keys(CHECKER as Record<string, string>)) {
+      const js = readFileSync(join(checkerDir, name), 'utf8');
+      expect(js, name).not.toMatch(/from\s+'[^']*\.ts'/);
+      expect(js, name).not.toMatch(/from\s+'node:|require\(/);
+      expect(js, name).not.toMatch(/\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon/);
+    }
+  });
+
+  it('answers as the sources do, for every conformance sample, example page, and the first page', () => {
+    const files = [...holomlFiles('conformance'), ...holomlFiles('examples'), 'site/playground/first.holoml'];
+    expect(files.length).toBeGreaterThan(150);
+    let errors = 0;
+    for (const file of files) {
+      const text = readFileSync(join(ROOT, file), 'utf8');
+      const fromSource = answer(parseSource as Parse, checkSource as Check, text);
+      expect(answer(parseModule, checkModule, text), file).toEqual(fromSource);
+      if ('error' in (fromSource as object)) errors++;
+    }
+    // The syntax-error samples are among them, so a thrown error's code and place are compared too.
+    expect(errors).toBeGreaterThan(10);
+  });
+
+  it("the playground's first page has no problems", () => {
+    const text = readFileSync(join(ROOT, 'site/playground/first.holoml'), 'utf8');
+    expect(answer(parseModule, checkModule, text)).toEqual({ problems: [] });
   });
 });

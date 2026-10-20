@@ -30,7 +30,7 @@ way: the viewer's address, `?page=`, and your page's address. For a
 page you are still writing, serve it from your own computer: an http
 address on `localhost` or `127.0.0.1` is fetched too.
 
-Three things to know:
+Five things to know:
 
 - **Another site's page shows without its scripts.** The viewer's page
   runs scripts only from its own site, so a page of HoloML's examples
@@ -45,6 +45,15 @@ Three things to know:
 - **The page's limits are the viewer's.** A page is read up to 2 MB of
   text, as in HyperSpace 3D, and the limits of the specification's
   section on resources apply to its models and pictures.
+- **A link to another HoloML page opens in the viewer.** It goes to the
+  viewer's own address with `?page=` and the next page's, so Back
+  returns and the link can be copied; a link to an ordinary web page
+  goes to that page, as anywhere.
+- **A script reads its page's address from `document.baseURI`.** In the
+  viewer, `location` is the viewer's own address (`…/viewer/?page=…`),
+  so a page that takes something from its query, as the sneaker store's
+  shoe takes `?colour=`, reads `new URL(document.baseURI).searchParams`,
+  which is the page's own address in HyperSpace 3D too.
 
 Without WebGL 2 the viewer says the page cannot be drawn, as HyperSpace
 3D does.

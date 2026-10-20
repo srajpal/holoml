@@ -15,8 +15,26 @@ both. The specification's own list of changes is its
 
 ## [Unreleased]
 
+### Added
+
+- A playground on the site, https://srajpal.github.io/holoml/playground/
+  (issue #58): a page's text beside its scene, checked as you type by
+  the parser and the checker (written for the browser by the site's
+  builder with Node's own type stripping), drawn by HyperSpace 3D's
+  viewer on the same site; a first page and the seven examples as
+  presets (`?preset=`), and nothing sent anywhere. Linked from every
+  page's bar, the home page, the README, and each example's front
+  page; the guide "Try a page in the playground".
+
 ### Changed
 
+- The sneaker store's shoe page and Blockworld read their page's
+  address from `document.baseURI`, not `location`, so `?colour=`,
+  `?seed=`, and `?hour=` work in HyperSpace 3D's viewer on an ordinary
+  browser's page too, where `location` is the viewer's own address (the
+  browser's issue #125, which opens a link to another HoloML page in
+  that viewer). The guides "Show a HoloML page in an ordinary browser"
+  and "Try a page in the playground" say how links behave there.
 - The documents brought up to date with 0.3 and the browser: the
   accessibility page says what 0.3 added (names, languages) in place of
   what 0.2 lacked; HyperSpace 3D reads compressed models (since its

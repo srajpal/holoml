@@ -11,6 +11,11 @@ HoloML is experimental. It has one renderer so far, HyperSpace 3D, and
 until version 1.0 a later version may change or remove what an earlier
 one has. What a page written for 0.1, 0.2, or 0.3 means will not change.
 
+Try it without installing anything: the
+[playground](https://srajpal.github.io/holoml/playground/) has a page's
+text on the left, checked as you type, and its scene on the right
+([how to use it](how-to/playground.md)).
+
 ```holoml
 <holoml version="0.3">
   <head>
@@ -52,37 +57,44 @@ the repository.
   [The showroom](https://srajpal.github.io/holoml/showroom/): five
   cars in a round hall, one on a turntable, each to walk around in three
   colours. [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/showroom/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=showroom) ·
   [Source](../examples/showroom/).
 - ![Blockworld: an island of blocks, from above one corner](../site/pictures/blockworld.jpg)
   [Blockworld](https://srajpal.github.io/holoml/blockworld/): a small
   block game, with a script, sound, day and night, and a speed slider.
   [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/blockworld/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=blockworld) ·
   [Source](../examples/blockworld/).
 - ![The sofa studio: a sofa in blue linen, in a sunlit room](../site/pictures/sofa-studio.jpg)
   [The sofa studio](https://srajpal.github.io/holoml/sofa-studio/): a
   shop page, where the sofa's fabric and wood change in place.
   [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/sofa-studio/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=sofa-studio) ·
   [Source](../examples/sofa-studio/).
 - ![Harbour Loft: the living room, with the harbour through the windows](../site/pictures/harbour-loft.jpg)
   [Harbour Loft](https://srajpal.github.io/holoml/harbour-loft/): a flat
   to tour, with doors and lamps to click, panels, and a floor plan.
   [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/harbour-loft/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=harbour-loft) ·
   [Source](../examples/harbour-loft/).
 - ![The sneaker store: a bay of blue shoes, the hall beyond](../site/pictures/sneaker-store.jpg)
   [The sneaker store](https://srajpal.github.io/holoml/sneaker-store/): a
   shoe in ten colourways on shelves that load as you come near.
   [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/sneaker-store/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=sneaker-store) ·
   [Source](../examples/sneaker-store/).
 - ![The ocean tunnel: a shark over the glass of a tunnel under the water](../site/pictures/aquarium.jpg)
   [The ocean tunnel](https://srajpal.github.io/holoml/aquarium/): an
   aquarium to walk through, with 30 fish, water, and feeding.
   [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/aquarium/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=aquarium) ·
   [Source](../examples/aquarium/).
 - ![Words in a room: welcome signs in Arabic, English, and Hebrew on three walls](../site/pictures/words.jpg)
   [Words in a room](https://srajpal.github.io/holoml/words/) (0.3):
   welcome signs in English, Arabic, and Hebrew, each in its own language
   and direction.
   [Open it here](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/words/index.holoml) ·
+  [Edit it in the playground](https://srajpal.github.io/holoml/playground/?preset=words) ·
   [Source](../examples/words/).
 
 The pictures were taken in HyperSpace 3D; the models in them are

@@ -1,0 +1,14 @@
+<holoml version="0.3" lang="en">
+  <head>
+    <title>A first page</title>
+  </head>
+  <scene background="#0b0f1e">
+    <viewpoint position="0 2.2 9" look-at="0 1 0" mode="orbit" />
+    <light type="ambient" intensity="0.4" />
+    <light type="directional" position="4 8 5" intensity="1.2" />
+    <model src="models/quellis.glb" rotation="0 30 0" scale="1.8" label="The Quellis, a four-door car">
+      <material name="Paint" color="#c0182a" metalness="0.5" roughness="0.45" />
+    </model>
+    <label position="0 2.6 0">The Quellis: change its colour on the left</label>
+  </scene>
+</holoml>

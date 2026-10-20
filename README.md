@@ -132,7 +132,11 @@ browser with WebGL 2 through HyperSpace 3D's viewer on a plain page,
 https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page= followed
 by the example's address (each example's front page has the link;
 [Show a HoloML page in an ordinary browser](docs/how-to/in-a-browser.md)
-explains it, and how to link your own page).
+explains it, and how to link your own page). The
+[playground](https://srajpal.github.io/holoml/playground/) on the site
+has a page's text beside its scene, checked as you type, starting from
+a first page or any example
+([Try a page in the playground](docs/how-to/playground.md)).
 
 The packages are not published to npm yet.
 
