@@ -10,7 +10,8 @@ const size = holoml.find('size');
 const price = holoml.find('price');
 const cart = holoml.find('cart');
 
-const asked = new URLSearchParams(location.search).get('colour');
+// The page's own address is document.baseURI: in the viewer on an ordinary browser's page, location is the viewer's.
+const asked = new URL(document.baseURI).searchParams.get('colour');
 if (asked && colour.options.includes(asked)) colour.value = asked;
 
 function show() {

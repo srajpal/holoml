@@ -58,6 +58,10 @@ scripts run only from this site. A page in the playground lives at its
 preset's address, so `models/quellis.glb` in the first page is the
 showroom's, and a page of Harbour Loft names Harbour Loft's files.
 
+A link in the scene to another HoloML page opens that page in the
+scene's place, by the viewer's own address, as it does on the web; the
+text on the left stays as it was, and **Run** draws it again.
+
 ## The keys
 
 - **Tab** leaves the text for the next control, as everywhere on the
@@ -78,8 +82,5 @@ showroom's, and a page of Harbour Loft names Harbour Loft's files.
   in HyperSpace 3D, or in the viewer with `?page=` and a `localhost`
   address ([Show a HoloML page in an ordinary
   browser](in-a-browser.md)).
-- Follow a link to another HoloML page: the viewer on a plain page
-  does not open the next page itself yet, so a link in the scene leaves
-  the playground's scene for the file.
 - Draw without WebGL 2. In a browser without it the problems still
   work, and the scene's place says why it is empty.

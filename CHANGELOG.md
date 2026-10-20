@@ -28,6 +28,13 @@ both. The specification's own list of changes is its
 
 ### Changed
 
+- The sneaker store's shoe page and Blockworld read their page's
+  address from `document.baseURI`, not `location`, so `?colour=`,
+  `?seed=`, and `?hour=` work in HyperSpace 3D's viewer on an ordinary
+  browser's page too, where `location` is the viewer's own address (the
+  browser's issue #125, which opens a link to another HoloML page in
+  that viewer). The guides "Show a HoloML page in an ordinary browser"
+  and "Try a page in the playground" say how links behave there.
 - The documents brought up to date with 0.3 and the browser: the
   accessibility page says what 0.3 added (names, languages) in place of
   what 0.2 lacked; HyperSpace 3D reads compressed models (since its
