@@ -5,6 +5,12 @@ way you write HTML: a 3D model, a place to stand, some lights, a few
 labels and links. A HoloML-aware browser renders it as a space you can
 walk or orbit around.
 
+![Nine seconds of Harbour Loft, a HoloML page, in HyperSpace 3D: through the door in the brick wall, up to the roof terrace, and the harbour full of boats](https://raw.githubusercontent.com/srajpal/hypersol-hyperspace-3d/main/docs/video/hyperspace-3d.gif)
+
+*Harbour Loft, one of the examples below, in HyperSpace 3D; the GIF
+and a one-minute tour are made by that repository's `pnpm
+screenshots:video` (its docs/video).*
+
 Apache 2.0 for code. CC BY 4.0 for the specification text.
 
 **Status: experimental; versions 0.1, 0.2, and 0.3 are written down.**
@@ -32,12 +38,6 @@ and direction; written down with it, for every version, are the
 minimum limits every browser meets, and compressed models are glTF
 files a browser may read at any version. Files use the extension
 `.holoml`.
-
-![Nine seconds of Harbour Loft, a HoloML page, in HyperSpace 3D: through the door in the brick wall, up to the roof terrace, and the harbour full of boats](https://raw.githubusercontent.com/srajpal/hypersol-hyperspace-3d/main/docs/video/hyperspace-3d.gif)
-
-*Harbour Loft, one of the examples below, in HyperSpace 3D; the GIF
-and a one-minute tour are made by that repository's `pnpm
-screenshots:video` (its docs/video).*
 
 ## Why a new language
 
