@@ -43,6 +43,8 @@ let drawTimer = 0;
 /** What the frame is to draw when it asks; null when nothing waits. */
 let waiting = null;
 let frame = null;
+/** Whether the scene drawn last had problems (Run and Ctrl+Enter draw a page that has them). */
+let drawnWithProblems = false;
 const webgl2 = (() => {
   try {
     return document.createElement('canvas').getContext('webgl2') !== null;
@@ -136,7 +138,7 @@ function checkNow() {
   count.classList.toggle('pg-bad', problems.length > 0);
   number(new Set(problems.map((p) => p.line)));
   scene.classList.toggle('pg-stale', problems.length > 0 && frame !== null);
-  if (problems.length > 0 && frame !== null) say('The page has a problem: the scene shows the last version without one.');
+  if (problems.length > 0 && frame !== null) say(drawnWithProblems ? 'The page has a problem: the scene shows an earlier version.' : 'The page has a problem: the scene shows the last version without one.');
   else if (note.dataset.kind === 'stale') say('');
   return problems.length;
 }
@@ -151,12 +153,14 @@ function say(message, kind = 'stale') {
 /** Draws the page: a frame of the viewer (again, if there is one), given the text when it asks. */
 function draw() {
   clearTimeout(drawTimer);
+  // Without WebGL 2 nothing is drawn, and the note keeps saying why; the problems are in their list.
+  if (!webgl2) return;
   if (last.syntax) {
     say('The page has a mistake in its syntax, so it cannot be drawn: see Problems.');
     return;
   }
-  if (!webgl2) return;
-  waiting = { holomlPlayground: 1, text: text.value, base: baseOf(current) };
+  drawnWithProblems = last.problems.length > 0;
+  waiting ={ holomlPlayground: 1, text: text.value, base: baseOf(current) };
   scene.classList.remove('pg-stale');
   say('');
   if (frame === null) {
@@ -195,7 +199,8 @@ function edited() {
 /** Indents or outdents the lines the selection touches. */
 function indent(out) {
   const { selectionStart: start, selectionEnd: end, value } = text;
-  const from = value.lastIndexOf('\n', start - 1) + 1;
+  // lastIndexOf from -1 still looks at the first character: a caret at the very start is on the first line.
+  const from = start === 0 ? 0 : value.lastIndexOf('\n', start - 1) + 1;
   const toEnd = value.indexOf('\n', end > start && value[end - 1] === '\n' ? end - 1 : end);
   const to = toEnd < 0 ? value.length : toEnd;
   const block = value.slice(from, to).split('\n');
@@ -234,6 +239,8 @@ live.addEventListener('change', () => {
 /** Loads a preset from this site into the text; draws it. */
 async function load(name) {
   const asked = name;
+  // The text as it was when the page was asked for: what is typed while it loads is not replaced without asking.
+  const before = text.value;
   count.textContent = 'Loading the page…';
   let body;
   try {
@@ -242,9 +249,16 @@ async function load(name) {
     body = await response.text();
   } catch (e) {
     count.textContent = `The page could not be loaded: ${e?.message ?? e}.`;
+    // The menu names the page the text is from.
+    if (preset.value === asked) preset.value = current;
     return;
   }
   if (preset.value !== asked) return; // Another was chosen meanwhile.
+  if (text.value !== before && !confirm('Replace your changes with this page?')) {
+    preset.value = current;
+    checkNow();
+    return;
+  }
   current = name;
   text.value = given = body;
   text.scrollTop = 0;

@@ -176,7 +176,18 @@ describe('E4: Blockworld (game.js)', () => {
     await scene.run(`${EXAMPLES}blockworld/game.js`);
     return { scene, game: scene.window.blockworld as Blockworld };
   };
-  const at = (scene: FakeScene, x: number, y: number, z: number) =>
+
+  it("takes the seed and the hour from the page's own address, not the document's, as in the viewer on the web (the browser's issue #125)", async () => {
+    const scene = fakeScene(`${EXAMPLES}blockworld/index.holoml`, { search: '?seed=12&hour=21', reducedMotion: true });
+    // There the document is the viewer's, …/viewer/?page=<the page's address>.
+    scene.window.location = { search: '?page=https%3A%2F%2Fsrajpal.github.io%2Fholoml%2Fblockworld%2Findex.holoml%3Fseed%3D12%26hour%3D21' };
+    await scene.run(`${EXAMPLES}blockworld/game.js`);
+    expect((scene.window.blockworld as { seed: number }).seed).toBe(12);
+    scene.frames(1);
+    expect(scene.find('clock').text).toBe('Day 1, 21:00 (the clock stands still)');
+  });
+
+  const at =(scene: FakeScene, x: number, y: number, z: number) =>
     scene.things.find((t) => t.kind === 'model' && (t.position as number[]).every((v, a) => v === [x, y, z][a]! + 0.5)) ?? null;
   /** Stands beside a column and clicks on top of its highest block with the right button: places what is in hand there. */
   const placeOn = (scene: FakeScene, game: Blockworld, x: number, z: number): [number, number, number] => {

@@ -25,6 +25,12 @@ both. The specification's own list of changes is its
   presets (`?preset=`), and nothing sent anywhere. Linked from every
   page's bar, the home page, the README, and each example's front
   page; the guide "Try a page in the playground".
+- "Open it here" on each example's front page, in the README, and on
+  the documentation's home page: the example in HyperSpace 3D's viewer
+  on a plain web page, so it opens in any browser with WebGL 2
+  (hypersol-hyperspace-3d#91); and a how-to guide, "Show a HoloML page
+  in an ordinary browser", on the link, what a page of another site
+  gets there, and what the viewer sends (#55).
 
 ### Changed
 
@@ -47,15 +53,23 @@ both. The specification's own list of changes is its
 - The README's and the documentation index's sample pages say
   `version="0.3"`, the version to write today; they said 0.1 and 0.2
   (#54).
+- The GIF of Harbour Loft is at the top of the README, under its first
+  paragraph, as the browser's issue #93 asked; it was after the status.
 
-### Added
+### Fixed
 
-- "Open it here" on each example's front page, in the README, and on
-  the documentation's home page: the example in HyperSpace 3D's viewer
-  on a plain web page, so it opens in any browser with WebGL 2
-  (hypersol-hyperspace-3d#91); and a how-to guide, "Show a HoloML page
-  in an ordinary browser", on the link, what a page of another site
-  gets there, and what the viewer sends (#55).
+- The playground (review of 2026-10-21): without WebGL 2, Ctrl+Enter
+  on a page with a mistake in its syntax no longer takes the place of
+  the note that says why nothing is drawn (the next key left no note);
+  text typed while a preset loads is not replaced without asking; a
+  preset that fails to load leaves the menu on the page shown; Ctrl+]
+  with the caret at the very start of a text whose first line is empty
+  indents that line, not the second; and after Run draws a page that
+  has problems, the note no longer calls that scene the last version
+  without one. Their checks are in the browser repository's
+  web-viewer.e2e.ts (PG4, PG5, PG7, PG8).
+- Blockworld's `?seed=` and `?hour=`, read from the page's own address
+  (`document.baseURI`), have a test, as the shoe page's `?colour=` has.
 
 ## [0.3.1] - 2026-10-09
 
