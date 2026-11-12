@@ -22,10 +22,10 @@
     "@gltf-transform/cli": "4.5.1",
     "@types/node": "^24.19.2",
     "draco3dgltf": "1.5.9",
-    "eslint": "^10.13.0",
-    "marked": "18.1.1",
+    "eslint": "^10.14.0",
+    "marked": "18.1.2",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.2",
+    "typescript-eslint": "^8.72.1",
     "vitest": "^5.0.5"
   }
 }
