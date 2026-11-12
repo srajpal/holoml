@@ -34,7 +34,9 @@ for fully 3D websites; files use the extension `.holoml`.
 
 - No preview: open a page in
   [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d) to
-  see it.
+  see it, or paste its text into the
+  [playground](https://srajpal.github.io/holoml/playground/) on HoloML's
+  site, which draws it beside the text.
 - No network: the extension sends nothing anywhere, collects no
   telemetry, and never fetches the files a page names. It runs no code
   from the files it opens, so it works in untrusted workspaces too.
