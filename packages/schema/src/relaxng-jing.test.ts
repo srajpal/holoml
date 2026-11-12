@@ -29,9 +29,17 @@ const SCHEMA = join(ROOT, 'spec/holoml.rnc');
 const java = spawnSync('java', ['-version'], { encoding: 'utf8' }).status === 0;
 if (!java && process.env['CI']) throw new Error('Java is needed for the RELAX NG checks (Jing), and the automatic builds have it.');
 
+/**
+ * Java's own limit on how deep XML may nest, lifted (0 is no limit):
+ * newer Java stops at 100 elements, and the sample `valid-deepest` is
+ * deeper on purpose, so Jing stopped before the schema was asked
+ * (GitHub's Linux machines, 2026-11-11). The schema is what is checked.
+ */
+const NO_DEPTH_LIMIT = '-Djdk.xml.maxElementDepth=0';
+
 /** Runs Jing on the schema and any documents; its exit status and what it said. */
 function jing(...files: string[]): { status: number | null; out: string } {
-  const r = spawnSync('java', ['-jar', JAR, '-c', SCHEMA, ...files], { encoding: 'utf8' });
+  const r = spawnSync('java', [NO_DEPTH_LIMIT, '-jar', JAR, '-c', SCHEMA, ...files], { encoding: 'utf8' });
   return { status: r.status, out: `${r.stdout}${r.stderr}`.trim() };
 }
 

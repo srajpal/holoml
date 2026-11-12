@@ -168,9 +168,11 @@ means is unchanged.
 
 ## [0.2.2] - 2026-09-30
 
-HoloML 0.2, third edition, tagged v0.2.2 on 2026-10-01. The language is the same;
-this release follows a review of the parser, the checker, the
-specification, and the conformance samples (HyperSpace 3D's prompt 134).
+HoloML 0.2, third edition (finished 2026-09-30, tagged v0.2.2 on
+2026-10-01, published as a GitHub release on 2026-10-08, UTC). The
+language is the same; this release follows a review of the parser,
+the checker, the specification, and the conformance samples
+(HyperSpace 3D's prompt 134).
 
 ### Security
 
@@ -294,7 +296,9 @@ Reported differently, in pages that already had a mistake:
 
 ## [0.2.1] - 2026-09-29
 
-HoloML 0.2, second edition. Not tagged. The language is the same.
+HoloML 0.2, second edition. Not tagged: there is no v0.2.1, and its
+changes are in v0.2.2, so its link at the end of this file is the same
+comparison as 0.2.2's, from v0.2.0 to v0.2.2. The language is the same.
 
 ### Changed
 
