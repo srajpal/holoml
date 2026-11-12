@@ -7,50 +7,11 @@ walk or orbit around.
 
 ![Nine seconds of Harbour Loft, a HoloML page, in HyperSpace 3D: through the door in the brick wall, up to the roof terrace, and the harbour full of boats](https://raw.githubusercontent.com/srajpal/hypersol-hyperspace-3d/main/docs/video/hyperspace-3d.gif)
 
-*Harbour Loft, one of the examples below, in HyperSpace 3D; the GIF
-and a one-minute tour are made by that repository's `pnpm
-screenshots:video` (its docs/video).*
+[Try it in the playground](https://srajpal.github.io/holoml/playground/) ·
+[Open Harbour Loft in your browser](https://srajpal.github.io/hypersol-hyperspace-3d/viewer/?page=https://srajpal.github.io/holoml/harbour-loft/index.holoml) ·
+[Read the specification](https://srajpal.github.io/holoml/spec/)
 
-Apache 2.0 for code. CC BY 4.0 for the specification text.
-
-**Status: experimental; versions 0.1, 0.2, and 0.3 are written down.**
-HoloML has one renderer so far, and until version 1.0 a later version
-may change or remove what an earlier one has; what a page written for
-0.1, 0.2, or 0.3 means will not change.
-[SPEC.md](SPEC.md) describes the language, in the form of W3C
-specifications, with its grammar and its scene API in Web IDL; this
-repository also has a parser, a checker, conformance samples, guides,
-and example sites. The specification and the guides are published at
-https://srajpal.github.io/holoml/ (the specification at
-https://srajpal.github.io/holoml/spec/). HoloML is the
-markup language of
-[HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d)
-(short: HyperSpace 3D), the open-source 3D browser built alongside it,
-which shows HoloML pages. Version 0.2 grew with the browser's example
-sites: scripts, sound, text on the screen, walls and gravity, the
-animation of lights, shadows, textured materials, choices that change a
-material in place, light from the surroundings, text of more than one
-line on a board, doors and lamps that work with a click, places to go
-to, a sky, a floor plan, models that load as the viewer comes near,
-water, and sounds from a place. Version 0.3 gives things names for
-screen readers, a lighter model for far away, and text in any language
-and direction; written down with it, for every version, are the
-minimum limits every browser meets, and compressed models are glTF
-files a browser may read at any version. Files use the extension
-`.holoml`.
-
-## Why a new language
-
-HTML describes documents on a flat page. Existing 3D formats (glTF, USD,
-X3D) describe assets and scenes for tools, not pages for people. HoloML
-sits in between: a small, readable, view-source-friendly language that a
-web author can hand-write, that links to other pages, and that a browser
-can render without a game engine.
-
-The name is the spirit: a markup language for things you look into, not
-at. See the story in the browser repository's README.
-
-## A page
+A page looks like this:
 
 ```
 <holoml version="0.3">
@@ -66,6 +27,40 @@ at. See the story in the browser repository's README.
   </scene>
 </holoml>
 ```
+
+**Status: experimental.** Versions 0.1, 0.2, and 0.3 are written down
+in [SPEC.md](SPEC.md), and one browser shows them so far,
+[HyperSol HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d).
+Until version 1.0 a later version may change or remove what an earlier
+one has; what a page written for 0.1, 0.2, or 0.3 means will not change.
+[What each version has](#what-the-language-covers) is below, and
+[CHANGELOG.md](CHANGELOG.md) lists each release.
+
+Apache 2.0 for code. CC BY 4.0 for the specification text.
+
+## Why a new language
+
+HTML describes documents on a flat page. Existing 3D formats (glTF, USD,
+X3D) describe assets and scenes for tools, not pages for people. HoloML
+sits in between: a small, readable, view-source-friendly language that a
+web author can hand-write, that links to other pages, and that a browser
+can render without a game engine.
+
+The name is the spirit: a markup language for things you look into, not
+at. See the story in the browser repository's README.
+
+## What the language covers
+
+[SPEC.md](SPEC.md) describes the language, in the form of W3C
+specifications, with its grammar and its scene API (what a page's
+script may call) in Web IDL, the notation of web APIs; this repository
+also has a parser, a checker, conformance samples, guides, and example
+sites. The specification and the guides are published at
+https://srajpal.github.io/holoml/ (the specification at
+https://srajpal.github.io/holoml/spec/). HoloML is the markup language
+of HyperSol HyperSpace 3D (short: HyperSpace 3D), the open-source 3D
+browser built alongside it, which shows HoloML pages; version 0.2 grew
+with that browser's example sites. Files use the extension `.holoml`.
 
 Version 0.1 covers 3D models (glTF 2.0), groups, where the viewer starts
 (orbit or walk), lights, labels, links, changing a model's materials,
@@ -138,6 +133,10 @@ has a page's text beside its scene, checked as you type, starting from
 a first page or any example
 ([Try a page in the playground](docs/how-to/playground.md)).
 
+The GIF at the top of this page is Harbour Loft in HyperSpace 3D; it
+and a one-minute tour are made by that repository's `pnpm
+screenshots:video` (its docs/video).
+
 The packages are not published to npm yet.
 
 ## Writing HoloML in VS Code
@@ -150,7 +149,9 @@ written for you, the outline, colour swatches, and going to a `#name`.
 It is not in the Marketplace: `pnpm --filter holoml-vscode package`
 makes `packages/vscode/holoml-vscode.vsix`, which VS Code installs with
 "Install from VSIX...". It shows no preview (open a page in HyperSpace
-3D for that), and it never goes on the network.
+3D for that, or paste its text into the
+[playground](https://srajpal.github.io/holoml/playground/), which draws
+it beside the text), and it never goes on the network.
 [Write HoloML in VS Code](docs/how-to/vscode.md) has the details.
 
 ## Testing
@@ -164,8 +165,8 @@ pnpm lint
 pnpm typecheck
 ```
 
-885 unit, conformance, documentation, site, example, and VS Code
-extension tests passed on 2026-10-10 on Windows 11. The RELAX NG
+897 unit, conformance, documentation, site, example, and VS Code
+extension tests passed on 2026-11-11 on Windows 11. The RELAX NG
 schema is also checked by Jing, the reference validator (a copy in
 `tools/jing/`), which needs Java (run with Java 17 here); without Java those checks
 are skipped and say so (GitHub's machines have it). GitHub Actions runs
