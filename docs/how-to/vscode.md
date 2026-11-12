@@ -86,6 +86,12 @@ The extension shows no preview. To see a page, open it in
 [HyperSpace 3D](https://github.com/srajpal/hypersol-hyperspace-3d): choose
 "Open a HoloML file…" in its menu, or drop the file on its window. With the
 page open in both, save in VS Code and reload in the browser.
+Or paste the page's text into the
+[playground](https://srajpal.github.io/holoml/playground/) on
+HoloML's site, which draws it beside the text in any browser with
+WebGL 2. The playground reads no files from the computer:
+[Try a page in the playground](playground.md) says where a page's
+addresses lead there.
 
 It also never goes on the network. It sends nothing anywhere, collects
 nothing, and does not fetch the files a page names, even those on the
