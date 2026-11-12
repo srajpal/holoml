@@ -102,7 +102,9 @@ after they ran; on Windows and Linux in GitHub Actions,
   is checked by Jing (tools/jing/, its SHA-256 checked), which needs
   Java (run with Java 17 here; GitHub's machines have it): without Java
   those checks are skipped and say so, and in GitHub Actions (CI set) a
-  missing Java fails the run (HyperSpace 3D milestone 25, prompt 170)
+  missing Java fails the run (HyperSpace 3D milestone 25, prompt 170).
+  The test lifts Java's own limit on nesting (`jdk.xml.maxElementDepth`,
+  100 in newer Java), as the deepest valid sample is deeper (2026-11-12)
 - Lint and type check: `pnpm lint` and `pnpm typecheck` (both clean)
 - The VS Code extension: `pnpm --filter holoml-vscode package` makes
   packages/vscode/holoml-vscode.vsix (first run 2026-10-03); `pnpm
